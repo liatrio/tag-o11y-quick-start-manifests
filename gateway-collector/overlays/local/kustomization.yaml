@@ -1,0 +1,26 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+configMapGenerator:
+  - name: collector-config
+    files:
+      - colconfig.yaml
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: collector-config
+      fieldPath: data.[colconfig.yaml]
+
+    targets:
+      - select:
+          kind: OpenTelemetryCollector
+          name: otel-kubernetes-collector
+        fieldPaths:
+          - spec.config
+        options:
+          create: true

@@ -1,0 +1,9 @@
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-kubernetes-collector
+spec:
+  image: ghcr.io/liatrio/liatrio-otel-collector:0.49.0-amd64
+  mode: deployment
+  serviceAccount: otel-kubernetes-collector
