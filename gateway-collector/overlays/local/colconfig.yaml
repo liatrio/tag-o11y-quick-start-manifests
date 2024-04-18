@@ -63,15 +63,15 @@ exporters:
     sampling_thereafter: 500
 
   prometheusremotewrite:
-    endpoint: http://prometheus.grafana-lgtm/api/prom/push
+    endpoint: http://grafana-lgtm.default.svc.cluster.local:9090/api/v1/write
     resource_to_telemetry_conversion:
       enabled: true
 
   otlphttp/otel:
-    endpoint: http://traces-grpc.grafana-lgtm/otlp
+    endpoint: http://grafana-lgtm.default.svc.cluster.local:4317/otlp
 
   loki:
-    endpoint: http://loki.grafana-lgtm/loki/api/v1/push
+    endpoint: http://grafana-lgtm.default.svc.cluster.local:3100/loki/api/v1/push
 
 service:
   extensions: [health_check, pprof, zpages]
