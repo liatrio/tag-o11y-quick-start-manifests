@@ -36,6 +36,88 @@ spec:
             requests:
               cpu: 200m
               memory: 64Mi
+          volumeMounts:
+            - name: provisioning1
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/defaults.ini
+              subPath: defaults.ini
+            - name: provisioning1
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo.yaml
+              subPath: demo.yaml
+            - name: provisioning1
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/delivery-demo-dashboard.json
+              subPath: delivery-demo-dashboard.json
+            - name: provisioning1
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/demo-dashboard.json
+              subPath: demo-dashboard.json
+            - name: provisioning1
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/dora-demo-dashboard.json
+              subPath: dora-demo-dashboard.json
+            - name: provisioning2
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/opentelemetry-collector-data-flow.json
+              subPath: opentelemetry-collector-data-flow.json
+            - name: provisioning2
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/opentelemetry-collector.json
+              subPath: opentelemetry-collector.json
+            - name: provisioning2
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/spanmetrics-dashboard.json
+              subPath: spanmetrics-dashboard.json
+            
+          # - name: demo-yaml
+          #   mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo.yaml
+          #   subPath: demo.yaml
+          # - name: defaults-ini
+          #   mountPath: /otel-lgtm/grafana-v10.4.1/conf/defaults.ini
+          #   subPath: defaults.ini
+          # - name: delivery-demo-dashboard
+          #   mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/delivery-demo-dashboard.json
+          #   subPath: delivery-demo-dashboard.json
+          # - name: demo-dashboard
+          #   mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/demo-dashboard.json
+          #   subPath: demo-dashboard.json
+          # - name: dora-demo-dashboard
+          #   mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/dora-demo-dashboard.json
+          #   subPath: dora-demo-dashboard.json
+          # - name: opentelemetry-collector-data-flow
+          #   mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/open-telemetry-collector-data-flow.json
+          #   subPath: open-telemetry-collector-data-flow.json
+          # - name: opentelemetry-collector
+          #   mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/opentelemetry-collector.json
+          #   subPath: opentelemetry-collector.json
+          # - name: spanmetrics-dashboard
+          #   mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/spanmetrics-dashboard.json
+          #   subPath: spanmetrics-dashboard.json
+          
+      volumes:
+        - name: provisioning1
+          configMap:
+            name: provisioning1
+        - name: provisioning2
+          configMap:
+            name: provisioning2
+      # - name: demo-yaml
+      #   configMap:
+      #     name: demo-yaml
+      # - name: defaults-ini
+      #   configMap:
+      #     name: defaults-ini
+      # - name: delivery-demo-dashboard
+      #   configMap:
+      #     name: delivery-demo-dashboard
+      # - name: demo-dashboard
+      #   configMap:
+      #     name: demo-dashboard
+      # - name: dora-demo-dashboard
+      #   configMap:
+      #     name: dora-demo-dashboard
+      # - name: opentelemetry-collector-data-flow
+      #   configMap:
+      #     name: opentelemetry-collector-data-flow
+      # - name: opentelemetry-collector
+      #   configMap:
+      #     name: opentelemetry-collector
+      # - name: spanmetrics-dashboard
+      #   configMap:
+      #     name: spanmetrics-dashboard
 ---
 
 apiVersion: v1
