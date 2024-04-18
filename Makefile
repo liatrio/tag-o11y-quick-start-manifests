@@ -3,7 +3,7 @@
 deploy:
 	kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml
 	kubectl apply -k ./otel-operator
-	kubectl apply -k ./gateway-collector/overlays/local/ --prune -l app=grafana
+	kubectl apply -k ./gateway-collector/overlays/local/ --prune -l app=grafana --prune-allowlist core/v1/ConfigMap
 destroy:
 	kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml
 	kubectl delete -k ./otel-operator
