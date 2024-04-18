@@ -12,4 +12,4 @@ patches:
       kind: Namespace
 
 resources:
-  - https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.92.1/opentelemetry-operator.yaml
+  - https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.98.0/opentelemetry-operator.yaml

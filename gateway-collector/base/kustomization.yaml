@@ -16,6 +16,9 @@ generatorOptions:
     app: grafana
 
 
+
+#kubectl apply annotation is too large with all the files in a single configmap, broke it up.  
+#Having them all in individual configmaps didn't seem ideal either.
 configMapGenerator:
   - name: provisioning1
     files:

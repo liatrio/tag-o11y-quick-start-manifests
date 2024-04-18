@@ -5,6 +5,5 @@ kind: Kustomization
 namespace: opentelemetry-operator-system
 
 resources:
-  # - cert-manager
   - upstream
   - rbac.yaml

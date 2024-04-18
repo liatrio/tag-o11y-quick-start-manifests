@@ -5,6 +5,12 @@ kind: Kustomization
 resources:
   - ../../base
 
+
+generatorOptions:
+  disableNameSuffixHash: false
+  labels:
+    app: otel-collector
+
 configMapGenerator:
   - name: collector-config
     files:
