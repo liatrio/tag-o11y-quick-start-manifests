@@ -11,5 +11,8 @@ patches:
     target:
       kind: Namespace
 
+namespace: opentelemetry-operator-system
+
 resources:
   - https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.98.0/opentelemetry-operator.yaml
+  - rbac.yaml

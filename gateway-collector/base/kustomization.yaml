@@ -34,28 +34,4 @@ configMapGenerator:
       - grafana/provisioning/dashboards/demo/opentelemetry-collector.json
       - grafana/provisioning/dashboards/demo/spanmetrics-dashboard.json
 
-  # - name: demo-yaml
-  #   files:
-  #     - grafana/provisioning/dashboards/demo.yaml
-  # - name: defaults-ini
-  #   files:
-  #     - grafana/defaults.ini
-  # - name: delivery-demo-dashboard
-  #   files:
-  #     - grafana/provisioning/dashboards/demo/delivery-demo-dashboard.json
-  # - name: demo-dashboard
-  #   files:
-  #     - grafana/provisioning/dashboards/demo/demo-dashboard.json
-  # - name: dora-demo-dashboard
-  #   files:
-  #     - grafana/provisioning/dashboards/demo/dora-demo-dashboard.json
-  # - name: opentelemetry-collector-data-flow
-  #   files:
-  #     - grafana/provisioning/dashboards/demo/opentelemetry-collector-data-flow.json
-  # - name: pentelemetry-collector
-  #   files:
-  #     - grafana/provisioning/dashboards/demo/opentelemetry-collector.json
-  # - name: spanmetrics-dashboard
-  #   files:
-  #     - grafana/provisioning/dashboards/demo/spanmetrics-dashboard.json
 

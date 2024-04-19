@@ -5,7 +5,6 @@ kind: Kustomization
 resources:
   - ../../base
 
-
 generatorOptions:
   disableNameSuffixHash: false
   labels:

@@ -7,12 +7,30 @@ extensions:
 
   zpages:
     endpoint: 0.0.0.0:55679
+  
+  bearertokenauth/github:
+    token: ${env:GH_PAT}
 
 receivers:
   otlp:
     protocols:
       grpc:
       http:
+
+  # gitprovider:
+  #   initial_delay: 1s
+  #   collection_interval: 60s
+  #   scrapers:
+  #     github:
+  #       github_org: ${env:GH_ORG}
+  #       search_query: ${env:SEARCH_QUERY}
+  #       metrics:
+  #         git.repository.contributor.count:
+  #           enabled: true
+  #       ## You can specify a custom endpoint URL full list of client settings: https://github.com/open-telemetry/opentelemetry-collector/tree/main/config/confighttp#client-configuration
+  #       #endpoint: "https://mygitlabenterprise.com"
+  #       auth:
+  #           authenticator: bearertokenauth/github
 
   prometheus:
     config:
@@ -74,9 +92,11 @@ exporters:
     endpoint: http://grafana-lgtm.default.svc.cluster.local:3100/loki/api/v1/push
 
 service:
+  ## Add bearertokenauth/* if you want to use bearer token auth extensions
   extensions: [health_check, pprof, zpages]
   pipelines:
     metrics:
+      ## Add gitprovider if you want to use gitprovider receiver
       receivers: [otlp, prometheus, spanmetrics]
       processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env]
       exporters: [debug, prometheusremotewrite]
