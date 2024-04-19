@@ -44,6 +44,9 @@ spec:
               mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo.yaml
               subPath: demo.yaml
             - name: provisioning1
+              mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/engineering-effectiveness-metrics.json
+              subPath: engineering-effectiveness-metrics.json
+            - name: provisioning1
               mountPath: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo/delivery-demo-dashboard.json
               subPath: delivery-demo-dashboard.json
             - name: provisioning1

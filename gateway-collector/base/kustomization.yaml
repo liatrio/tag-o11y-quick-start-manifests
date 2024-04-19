@@ -24,6 +24,7 @@ configMapGenerator:
     files:
       - grafana/provisioning/dashboards/demo.yaml
       - grafana/defaults.ini
+      - grafana/provisioning/dashboards/demo/engineering-effectiveness-metrics.json
       - grafana/provisioning/dashboards/demo/delivery-demo-dashboard.json
       - grafana/provisioning/dashboards/demo/demo-dashboard.json
       - grafana/provisioning/dashboards/demo/dora-demo-dashboard.json

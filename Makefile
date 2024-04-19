@@ -10,6 +10,7 @@ apply-all:
 	@sleep 20
 	kubectl apply -k ./gateway-collector/overlays/local/
 	kubectl apply -k ./gateway-collector/overlays/local/ --prune -l app=grafana -l app=otel-collector --prune-allowlist core/v1/ConfigMap
+	@echo "The command has been executed successfully. The Engineering Effectiveness Metrics Dashboard can be found at: http://localhost:3000"
 apply-cert-manager:
 	kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml
 apply-operator:
