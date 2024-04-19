@@ -8,8 +8,9 @@ extensions:
   zpages:
     endpoint: 0.0.0.0:55679
   
-  bearertokenauth/github:
-    token: ${env:GH_PAT}
+  ## Add when using gitprovider receiver with a private repository
+  # bearertokenauth/github:
+  #   token: ${env:GH_PAT}
 
 receivers:
   otlp:
