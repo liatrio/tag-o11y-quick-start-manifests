@@ -1,6 +1,6 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: collector-demo
+  name: collector
   labels:
-    name: collector-demo
+    name: collector

@@ -4,14 +4,13 @@
 # also adding the sleep commands to allow the webhooks to become ready before applying the resources that rely on them
 # https://github.com/cert-manager/cert-manager/issues/1873  https://github.com/cert-manager/cert-manager/pull/4171
 apply-default:
-	kustomize build ./otel-operator/ | kubectl apply -f -
+	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
 	@while ! kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - ; do sleep 10; done 
 	kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - --prune -l app=grafana -l app=otel-collector --prune-allowlist core/v1/ConfigMap
 	@echo "The command has been executed successfully. The Engineering Effectiveness Metrics Dashboard can be found at: http://localhost:3000"
 apply-traces:
-	kustomize build ./otel-operator/ | kubectl apply -f -
-	@while ! kustomize build ./gateway-collector/overlays/local-traces/ | kubectl apply -f - ; do sleep 10; done 
-	kustomize build ./gateway-collector/overlays/local-traces/ | kubectl apply -f - --prune -l app=grafana -l app=otel-collector --prune-allowlist core/v1/ConfigMap
+	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
+	@while ! kustomize build ./gateway-collector/overlays/local-traces/ | kubectl apply --server-side -f - ; do sleep 10; done 
 	@echo "The command has been executed successfully. The Tofu Controller Traces Dashboard can be found at: http://localhost:3000"
 
 delete-default:
