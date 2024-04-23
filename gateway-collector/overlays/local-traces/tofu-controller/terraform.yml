@@ -1,0 +1,18 @@
+apiVersion: infra.contrib.fluxcd.io/v1alpha2
+kind: Terraform
+metadata:
+  name: 
+spec:
+  path: #path to module in the repository
+  interval: 10m
+  approvePlan: auto
+  destroyResourcesOnDeletion: true
+  sourceRef:
+    kind: GitRepository
+    name: 
+  runnerPodTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tf-runner
+        app.kubernetes.io/created-by: tf-controller
+
