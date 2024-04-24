@@ -8,9 +8,9 @@ extensions:
   zpages:
     endpoint: 0.0.0.0:55679
   
-  ## Add when using gitprovider receiver with a private repository
-  # bearertokenauth/github:
-  #   token: ${env:GH_PAT}
+  # Add when using gitprovider receiver with a private repository
+  bearertokenauth/github:
+    token: ${env:GH_PAT}
 
 receivers:
   otlp:
@@ -18,20 +18,20 @@ receivers:
       grpc:
       http:
 
-  # gitprovider:
-  #   initial_delay: 1s
-  #   collection_interval: 60s
-  #   scrapers:
-  #     github:
-  #       github_org: ${env:GH_ORG}
-  #       search_query: ${env:SEARCH_QUERY}
-  #       metrics:
-  #         git.repository.contributor.count:
-  #           enabled: true
-  #       ## You can specify a custom endpoint URL full list of client settings: https://github.com/open-telemetry/opentelemetry-collector/tree/main/config/confighttp#client-configuration
-  #       #endpoint: ${env:ALTERNATE_URL} #"https://mygitlabenterprise.com"
-  #       auth:
-  #           authenticator: bearertokenauth/github
+  gitprovider:
+    initial_delay: 1s
+    collection_interval: 60s
+    scrapers:
+      github:
+        github_org: ${env:GITHUB_ORG}
+        search_query: ${env:SEARCH_QUERY}
+        metrics:
+          git.repository.contributor.count:
+            enabled: true
+        ## You can specify a custom endpoint URL full list of client settings: https://github.com/open-telemetry/opentelemetry-collector/tree/main/config/confighttp#client-configuration
+        #endpoint: ${env:ALTERNATE_URL} #"https://mygitlabenterprise.com"
+        auth:
+            authenticator: bearertokenauth/github
 
   prometheus:
     config:
@@ -82,23 +82,23 @@ exporters:
     sampling_thereafter: 500
 
   prometheusremotewrite:
-    endpoint: http://grafana-lgtm.default.svc.cluster.local:9090/api/v1/write
+    endpoint: http://grafana-lgtm.collector.svc.cluster.local:9090/api/v1/write
     resource_to_telemetry_conversion:
       enabled: true
 
   otlphttp/otel:
-    endpoint: http://grafana-lgtm.default.svc.cluster.local:4317/otlp
+    endpoint: http://grafana-lgtm.collector.svc.cluster.local:4317/otlp
 
   loki:
-    endpoint: http://grafana-lgtm.default.svc.cluster.local:3100/loki/api/v1/push
+    endpoint: http://grafana-lgtm.collector.svc.cluster.local:3100/loki/api/v1/push
 
 service:
   ## Add bearertokenauth/* if you want to use bearer token auth extensions
-  extensions: [health_check, pprof, zpages]
+  extensions: [health_check, pprof, zpages, bearertokenauth/github]
   pipelines:
     metrics:
       ## Add gitprovider if you want to use gitprovider receiver
-      receivers: [otlp, prometheus, spanmetrics]
+      receivers: [otlp, prometheus, spanmetrics, gitprovider]
       processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env]
       exporters: [debug, prometheusremotewrite]
 
