@@ -9,8 +9,8 @@ extensions:
     endpoint: 0.0.0.0:55679
   
   # Add when using gitprovider receiver with a private repository
-  bearertokenauth/github:
-    token: ${env:GH_PAT}
+  # bearertokenauth/github:
+  #   token: ${env:GH_PAT}
 
 receivers:
   otlp:
@@ -30,8 +30,8 @@ receivers:
             enabled: true
         ## You can specify a custom endpoint URL full list of client settings: https://github.com/open-telemetry/opentelemetry-collector/tree/main/config/confighttp#client-configuration
         #endpoint: ${env:ALTERNATE_URL} #"https://mygitlabenterprise.com"
-        auth:
-            authenticator: bearertokenauth/github
+        # auth:
+        #     authenticator: bearertokenauth/github
 
   prometheus:
     config:
@@ -94,10 +94,9 @@ exporters:
 
 service:
   ## Add bearertokenauth/* if you want to use bearer token auth extensions
-  extensions: [health_check, pprof, zpages, bearertokenauth/github]
+  extensions: [health_check, pprof, zpages]
   pipelines:
     metrics:
-      ## Add gitprovider if you want to use gitprovider receiver
       receivers: [otlp, prometheus, spanmetrics, gitprovider]
       processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env]
       exporters: [debug, prometheusremotewrite]
