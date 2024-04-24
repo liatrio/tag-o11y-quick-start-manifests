@@ -42,6 +42,13 @@ make delete-traces
 
 
 ## Configuration
+
+#### Secrets and Variables
+
+- To be able to use features like the `gitproviderreceiver` in the default configuration, it requires you to have certain values setup in a secret or config map that are made available to the collector. You can do this by creating a secret called `collector-auth` which will hold all of the tokens and keys needed for your configuration including GitHub PAT for accessing private repositories.
+
+- You can also create a config map called `gitproviderreceiver-config` that will house your specific org name, search query, and alternate url to search for repositories in, referenced by ${env:<your_variable_name>} format.  These values can be updated accordingly in the `gateway-collector/overlays/local/colconfig.yaml` file.  These values aren't very sensitive so updating the config directly is fine too.
+
 #### Dashboards
 If you wish to add additional dashboards to the Grafana instance, you can do so by:
 1.  Adding them to the `gateway-collector/base/grafana/provisioning/dashboards/demo` directory

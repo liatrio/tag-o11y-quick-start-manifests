@@ -29,7 +29,7 @@ receivers:
   #         git.repository.contributor.count:
   #           enabled: true
   #       ## You can specify a custom endpoint URL full list of client settings: https://github.com/open-telemetry/opentelemetry-collector/tree/main/config/confighttp#client-configuration
-  #       #endpoint: "https://mygitlabenterprise.com"
+  #       #endpoint: ${env:ALTERNATE_URL} #"https://mygitlabenterprise.com"
   #       auth:
   #           authenticator: bearertokenauth/github
 
