@@ -1,9 +1,9 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: 
+  name: demo-source
 spec:
   interval: 1m
-  url: # url for repository
+  url: https://github.com/rhoofard/terraform-modules
   ref:
-    branch:
+    branch: main

@@ -51,10 +51,10 @@ If you wish to add additional dashboards to the Grafana instance, you can do so 
 
 #### Tofu Controller
 
-To be able to use the Tofu Controller after deploying the `traces` configuration, you will need to do the following.
+To be able to use the Tofu Controller after deploying the `traces` configuration with your own terraform, you will need to do the following.
 
-1. Update the `source_control.yml` file in the `local-traces` overlay so that it points towards a repository with terraform resources inside of it, then in that directory run `kubectl apply -f source_control.yml` to create it.
+1. Update the `source_control.yml` file in the `local-traces` overlay so that it points towards a repository with terraform resources inside of it.
 2. Update the `terraform.yml` file so it references the name of the object you created with the `source_control.yml` file in the `sourceRef` field.  Then update the `path` field with the specific path to the terraform resources you want to use inside the repository.
-3. Run `kubectl apply -f terraform.yml` to create it.
+3. Run `make deploy-traces` to update the resources in the cluster with the new configuration.
 >  - For the purposes of the tracing demo these will by default be configured to apply null resources to the cluster since deploying resources to a cloud provider requires an additional auth setup that is not done here. 
 >  - Deploying kubernetes resources is also possible but requires you to update the `tf-runner` service account with a cluster role that has permissions to act on those resources.
