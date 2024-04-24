@@ -15,7 +15,7 @@ spec:
         app: grafana-lgtm
     spec:
       containers:
-        - image: grafana/otel-lgtm
+        - image: grafana/otel-lgtm:v10.4.1
           imagePullPolicy: IfNotPresent
           name: grafana-lgtm
           ports:

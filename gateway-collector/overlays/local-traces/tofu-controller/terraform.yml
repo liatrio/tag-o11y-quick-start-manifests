@@ -2,14 +2,15 @@ apiVersion: infra.contrib.fluxcd.io/v1alpha2
 kind: Terraform
 metadata:
   name: 
+  namespace: 
 spec:
-  path: #path to module in the repository
+  path: # path to the Terraform configuration
   interval: 10m
   approvePlan: auto
   destroyResourcesOnDeletion: true
   sourceRef:
     kind: GitRepository
-    name: 
+    name: # name of the GitRepository resource you want to use to fetch the Terraform configuration
   runnerPodTemplate:
     metadata:
       labels:
