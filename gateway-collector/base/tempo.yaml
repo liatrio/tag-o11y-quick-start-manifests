@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tempo
+  name: tempo
+spec:
+  selector:
+    matchLabels:
+      app: tempo
+  template:
+    metadata:
+      labels:
+        app: tempo
+    spec:
+      containers:
+        - name: tempo
+          image: grafana/tempo:latest
+          imagePullPolicy: IfNotPresent
+          args: [ -config.file=/conf/tempo.yaml ]
+          # command: [ "/bin/sh", "-c", "--" ]
+          # args: [ "while true; do sleep 30; done;" ]
+          ports:
+            - containerPort: 4317
+              name: grpc
+              protocol: TCP
+            - containerPort: 4318
+              name: http
+              protocol: TCP
+            - containerPort: 3200
+              name: tempo
+              protocol: TCP
+          volumeMounts:
+            - name: tempo-config
+              mountPath: "/conf"
+              
+      volumes:
+        - name: tempo-config
+          configMap:
+            name: tempo-config
+        
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempo
+spec:
+  ports:
+    - port: 4317
+      protocol: TCP
+      targetPort: grpc
+      name: grpc
+    - port: 4318
+      protocol: TCP
+      targetPort: http
+      name: http
+    - port: 3200
+      protocol: TCP
+      targetPort: tempo
+      name: tempo
+  selector:
+    app: tempo
+  sessionAffinity: None
+  type: LoadBalancer

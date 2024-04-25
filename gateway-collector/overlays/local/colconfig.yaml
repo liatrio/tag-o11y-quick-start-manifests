@@ -7,42 +7,86 @@ extensions:
 
   zpages:
     endpoint: 0.0.0.0:55679
-  
-  # Add when using gitprovider receiver with a private repository
-  # bearertokenauth/github:
-  #   token: ${env:GH_PAT}
+
+  bearertokenauth/o11y:
+    token: ${env:GH_PAT}
+
+  bearertokenauth/backstage:
+    token: ${env:GH_PAT}
+
+  bearertokenauth/autogov:
+    token: ${env:GH_PAT}
+
+  bearertokenauth/operations:
+    token: ${env:GH_PAT}
 
 receivers:
-  otlp:
-    protocols:
-      grpc:
-      http:
+  ## Webhookevent receiver is used to connect to a GitHub App and receive json event logs
+  ## The processors are used to extract/filter all the meaningful data from those logs
+  webhookevent:
+    endpoint: 0.0.0.0:8088
+    path: /events
+    health_path: /healthcheck
 
-  gitprovider:
-    initial_delay: 1s
-    collection_interval: 60s
+  gitprovider/o11y:
+    initial_delay: 10s
+    collection_interval: 300s
     scrapers:
       github:
-        github_org: ${env:GITHUB_ORG}
-        search_query: ${env:SEARCH_QUERY}
+        github_org: liatrio
+        search_query: org:liatrio topic:o11y archived:false
+        auth:
+          authenticator: bearertokenauth/o11y
         metrics:
           git.repository.contributor.count:
             enabled: true
-        ## You can specify a custom endpoint URL full list of client settings: https://github.com/open-telemetry/opentelemetry-collector/tree/main/config/confighttp#client-configuration
-        #endpoint: ${env:ALTERNATE_URL} #"https://mygitlabenterprise.com"
-        # auth:
-        #     authenticator: bearertokenauth/github
+
+  gitprovider/backstage:
+    initial_delay: 10s
+    collection_interval: 300s
+    scrapers:
+      github:
+        github_org: liatrio
+        search_query: org:liatrio topic:backstage archived:false
+        auth:
+          authenticator: bearertokenauth/backstage
+        metrics:
+          git.repository.contributor.count:
+            enabled: true
+
+  gitprovider/autogov:
+    initial_delay: 10s
+    collection_interval: 300s
+    scrapers:
+      github:
+        github_org: liatrio
+        search_query: org:liatrio topic:automated-governance archived:false
+        auth:
+          authenticator: bearertokenauth/autogov
+        metrics:
+          git.repository.contributor.count:
+            enabled: true
+
+  gitprovider/operations:
+    initial_delay: 10s
+    collection_interval: 300s
+    scrapers:
+      github:
+        github_org: liatrio
+        search_query: org:liatrio topic:operations archived:false
+        auth:
+          authenticator: bearertokenauth/operations
+        metrics:
+          git.repository.contributor.count:
+            enabled: true
 
   prometheus:
     config:
       scrape_configs:
-        - job_name: dev-otel-gateway-collector
+        - job_name: otel-delivery-collector
           scrape_interval: 10s
           static_configs:
             - targets: [0.0.0.0:8888]
-
-  k8s_cluster:
-    collection_interval: 10s
 
 processors:
   memory_limiter:
@@ -54,26 +98,124 @@ processors:
     send_batch_size: 100
     timeout: 10s
 
-  resource/env:
+  resource/o11y:
     attributes:
-      - key: environment.name
-        value: dev
+      - key: team.name
+        value: tag-o11y
         action: upsert
 
-  resource/logs:
+  resource/backstage:
     attributes:
-      - key: loki.resource.labels
-        action: insert
-        value: service.name
+      - key: team.name
+        value: tag-devex
+        action: upsert
 
-  filter/duration_milliseconds_bucket:
+  resource/autogov:
+    attributes:
+      - key: team.name
+        value: tag-autogov
+        action: upsert
+
+  resource/operations:
+    attributes:
+      - key: team.name
+        value: operations
+        action: upsert
+
+  filter/ottl:
     error_mode: ignore
     metrics:
-      datapoint:
-        - metric.name == "duration_milliseconds_bucket"
+      metric:
+        - name == "rpc.server.duration"
 
-connectors:
-  spanmetrics:
+  transform:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "") where name == "queueSize"
+          - set(description, "") where name == "http.client.duration"
+
+  # transform/deployments:
+  #   log_statements:
+  #     - context: log
+  #       statements:
+  #         - merge_maps(attributes, ParseJSON(body), "upsert")
+  #         - set(attributes["name"], attributes["workflow"]["name"]) where attributes["workflow"]["name"] != nil
+  #         - set(attributes["created_at"], attributes["deployment"]["created_at"]) where attributes["deployment"]["created_at"] != nil
+  #         - set(attributes["status"], attributes["deployment_status"]["state"]) where attributes["deployment_status"]["state"] != nil
+  #         - set(attributes["sha"], attributes["deployment"]["sha"]) where attributes["deployment"]["sha"] != nil
+  #         - set(attributes["user"], attributes["deployment"]["creator"]["login"]) where attributes["deployment"]["creator"]["login"] != nil
+  #         - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
+  #         - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
+  #         - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
+
+  # transform/pull_requests:
+  #   log_statements:
+  #     - context: log
+  #       statements:
+  #         - merge_maps(attributes, ParseJSON(body), "upsert")
+  #         - set(attributes["title"], attributes["pull_request"]["title"]) where attributes["pull_request"]["title"] != nil
+  #         - set(attributes["merged_at"], attributes["pull_request"]["merged_at"]) where attributes["pull_request"]["merged_at"] != nil
+  #         - set(attributes["sha"], attributes["pull_request"]["merge_commit_sha"]) where attributes["pull_request"]["merge_commit_sha"] != nil
+  #         - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
+  #         - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
+  #         - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
+
+
+  # transform/issues:
+  #   log_statements:
+  #     - context: log
+  #       statements:
+  #         - merge_maps(attributes, ParseJSON(body), "upsert")
+  #         - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
+  #         - set(attributes["created_at"], attributes["issue"]["created_at"]) where attributes["issue"]["created_at"] != nil
+  #         - set(attributes["closed_at"], attributes["issue"]["closed_at"]) where attributes["issue"]["closed_at"] != nil
+  #         - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
+  #         - set(attributes["issue_labels"], attributes["issue"]["labels"]) where attributes["issue"]["labels"] != nil
+  #         - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
+  #         - set(attributes["title"], attributes["issue"]["title"]) where attributes["issue"]["title"] != nil
+
+  # attributes/deployments:
+  #   actions:
+  #     - action: upsert
+  #       key: loki.attribute.labels
+  #       value: repository.name, status, user, name, created_at, repository.owner, sha
+
+  # attributes/issues:
+  #   actions:
+  #     - action: upsert
+  #       key: loki.attribute.labels
+  #       value: repository.name, action, created_at, closed_at, repository.owner, issue_labels, title
+
+  # attributes/pull_requests:
+  #   actions:
+  #     - action: upsert
+  #       key: loki.attribute.labels
+  #       value: repository.name, action, merged_at, sha, repository.owner, title
+
+  # filter/deployments:
+  #   logs:
+  #     include:
+  #       match_type: regexp
+  #       record_attributes:
+  #         - key: status
+  #           value: success|failure
+
+  # filter/pull_requests:
+  #   logs:
+  #     include:
+  #       match_type: strict
+  #       record_attributes:
+  #         - key: action
+  #           value: closed
+
+  # filter/issues:
+  #   logs:
+  #     exclude:
+  #       match_type: regexp
+  #       record_attributes:
+  #         - key: action
+  #           value: reopened|labeled
 
 exporters:
   debug:
@@ -81,32 +223,56 @@ exporters:
     sampling_initial: 2
     sampling_thereafter: 500
 
+  # otlp:
+  #   endpoint: http://tempo.collector.svc.cluster.local:4317
+  #   tls:
+  #     insecure: true
+  
   prometheusremotewrite:
-    endpoint: http://grafana-lgtm.collector.svc.cluster.local:9090/api/v1/write
+    endpoint: http://prometheus.collector.svc.cluster.local:9090/api/v1/write
+    add_metric_suffixes: false
     resource_to_telemetry_conversion:
       enabled: true
+    tls:
+      insecure: true
 
-  otlphttp/otel:
-    endpoint: http://grafana-lgtm.collector.svc.cluster.local:4317/otlp
-
-  loki:
-    endpoint: http://grafana-lgtm.collector.svc.cluster.local:3100/loki/api/v1/push
+  # loki:
+  #   endpoint: http://loki.collector.svc.cluster.local:3100/loki/api/v1/push
 
 service:
-  ## Add bearertokenauth/* if you want to use bearer token auth extensions
-  extensions: [health_check, pprof, zpages]
+  extensions: [health_check, pprof, zpages, bearertokenauth/o11y, bearertokenauth/backstage, bearertokenauth/autogov, bearertokenauth/operations]
   pipelines:
     metrics:
-      receivers: [otlp, prometheus, spanmetrics, gitprovider]
-      processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env]
+      receivers: [gitprovider/o11y]
+      processors: [memory_limiter, batch, resource/o11y]
       exporters: [debug, prometheusremotewrite]
 
-    logs:
-      receivers: [otlp]
-      processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env, resource/logs]
-      exporters: [debug, loki]
+    metrics/backstage:
+      receivers: [gitprovider/backstage]
+      processors: [memory_limiter, batch, resource/backstage]
+      exporters: [debug, prometheusremotewrite]
 
-    traces:
-      receivers: [otlp]
-      processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env, resource/logs]
-      exporters: [debug, otlphttp/otel, spanmetrics]
+    metrics/autogov:
+      receivers: [gitprovider/autogov]
+      processors: [memory_limiter, batch, resource/autogov]
+      exporters: [debug, prometheusremotewrite]
+
+    metrics/operations:
+      receivers: [gitprovider/operations]
+      processors: [memory_limiter, batch, resource/operations]
+      exporters: [debug, prometheusremotewrite]
+
+    # logs/deployments:
+    #   receivers: [webhookevent]
+    #   processors: [transform/deployments, attributes/deployments, filter/deployments]
+    #   exporters: [debug, otlp]
+
+    # logs/pull_requests:
+    #   receivers: [webhookevent]
+    #   processors: [transform/pull_requests, attributes/pull_requests, filter/pull_requests]
+    #   exporters: [debug, otlp]
+
+    # logs/issues:
+    #   receivers: [webhookevent]
+    #   processors: [transform/issues, attributes/issues, filter/issues]
+    #   exporters: [debug, otlp]

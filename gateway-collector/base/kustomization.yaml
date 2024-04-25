@@ -10,7 +10,10 @@ resources:
   - rbac.yaml
   - sa.yaml
   - netpol.yaml
-  - grafana-lgtm.yaml
+  - grafana.yaml
+  - prometheus.yaml
+  - tempo.yaml
+  - loki.yaml
 
 
 generatorOptions:
@@ -23,18 +26,50 @@ generatorOptions:
 # kubectl apply annotation is too large with all the files in a single configmap so its been broken up.  
 # Having them all in individual configmaps didn't seem ideal either.
 configMapGenerator:
-  - name: provisioning1
+  - name: grafana-ini
+    files:
+      - grafana/grafana.ini
+  - name: demo-yaml
     files:
       - grafana/provisioning/dashboards/demo.yaml
-      - grafana/defaults.ini
+  - name: engineering-effectiveness-metrics-json
+    files:
       - grafana/provisioning/dashboards/demo/engineering-effectiveness-metrics.json
+  - name: delivery-demo-dashboard-json
+    files:
       - grafana/provisioning/dashboards/demo/delivery-demo-dashboard.json
+  - name: demo-dashboard-json
+    files:
       - grafana/provisioning/dashboards/demo/demo-dashboard.json
+  - name: dora-demo-dashboard-json
+    files:
       - grafana/provisioning/dashboards/demo/dora-demo-dashboard.json
-  - name: provisioning2
+  - name: opentelemetry-collector-data-flow-json
     files:
       - grafana/provisioning/dashboards/demo/opentelemetry-collector-data-flow.json
+  - name: opentelemetry-collector-json
+    files:
       - grafana/provisioning/dashboards/demo/opentelemetry-collector.json
+  - name: spanmetrics-dashboard-json
+    files:
       - grafana/provisioning/dashboards/demo/spanmetrics-dashboard.json
+  - name: loki-datasource
+    files:
+      - grafana/provisioning/datasources/loki.yaml
+  - name: prometheus-datasource
+    files:
+      - grafana/provisioning/datasources/default.yaml  
+  - name: tempo-datasource
+    files:
+      - grafana/provisioning/datasources/tempo.yaml
+  - name: tempo-config
+    files:
+      - grafana/tempo.yaml
+  - name: prometheus-config
+    files:
+      - grafana/prometheus.yaml
+  - name: loki-config
+    files:
+      - grafana/loki-config.yaml
 
 

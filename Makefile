@@ -14,11 +14,12 @@ apply-traces:
 	@echo "The command has been executed successfully. The Tofu Controller Traces Dashboard can be found at: http://localhost:3000"
 
 delete-default:
-	kustomize build ./gateway-collector/overlays/local/ | kubectl delete -f - 
-	kustomize build ./otel-operator/ | kubectl delete -f -
+	kustomize build ./gateway-collector/overlays/local/ | kubectl delete --ignore-not-found -f - 
+	kustomize build ./otel-operator/ | kubectl delete --ignore-not-found -f -
 delete-traces:
-	kustomize build ./gateway-collector/overlays/local-traces/ | kubectl delete -f - 
-	kustomize build ./otel-operator/ | kubectl delete -f -
+	kubectl patch terraforms.infra.contrib.fluxcd.io demo -n flux-system -p '{"metadata":{"finalizers":null}}' --type=merge
+	kustomize build ./gateway-collector/overlays/local-traces/ | kubectl delete --ignore-not-found -f - 
+	kustomize build ./otel-operator/ | kubectl delete --ignore-not-found -f -
 	kubectl delete -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml
 
 delete-cert-manager:

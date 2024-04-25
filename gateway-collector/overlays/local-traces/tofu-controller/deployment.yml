@@ -39,7 +39,7 @@ spec:
             - name: "OTEL_EXPORTER_OTLP_PROTOCOL"
               value: "grpc"
             - name: "OTEL_EXPORTER_OTLP_ENDPOINT"
-              value: "http://grafana-lgtm.collector.svc.cluster.local:4317"
+              value: "http://tempo.collector.svc.cluster.local:4317"
 
           image: ghcr.io/liatrio/tofu-controller:v0.0.4
           imagePullPolicy: IfNotPresent

@@ -11,4 +11,4 @@ providers:
     disableDeletion: false
     editable: true
     options:
-      path: /otel-lgtm/grafana-v10.4.1/conf/provisioning/dashboards/demo
+      path: /etc/grafana/provisioning/dashboards/demo
