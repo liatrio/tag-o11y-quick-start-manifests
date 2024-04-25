@@ -1,6 +1,15 @@
 # we use --prune to clean up orphaned config maps.  Opted to keep the suffix hash Kustomize adds to generated config maps
 # so changes to the config maps trigger a pod rollout and there's no need to manually restart them to get the new config
 
+default:
+	kustomize build ./cert-manager/ | kubectl apply -f -
+	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-webhook
+
+	kustomize build ./otel-operator/ | kubectl apply -f -
+	kubectl wait --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
+	
+	kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f -
+
 apply-default:
 	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
 	@while ! kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - ; do sleep 10; done 
