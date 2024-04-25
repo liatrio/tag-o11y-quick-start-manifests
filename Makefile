@@ -8,7 +8,7 @@ default:
 	kustomize build ./otel-operator/ | kubectl apply -f -
 	kubectl wait --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
 	
-	kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f -
+	kustomize build ./gateway-collector/overlays/basic/ | kubectl apply -f -
 
 apply-default:
 	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
