@@ -5,14 +5,7 @@ kind: Kustomization
 namespace: collector
 
 resources:
-  - namespace.yml
-  - gateway.yaml
-  - rbac.yaml
-  - sa.yaml
-  - netpol.yaml
-  - prometheus.yaml
-  - tempo.yaml
-  - loki.yaml
+  - grafana.yaml
 
 
 
@@ -26,14 +19,20 @@ generatorOptions:
 # kubectl apply annotation is too large with all the files in a single configmap so its been broken up.  
 # Having them all in individual configmaps didn't seem ideal either.
 configMapGenerator:
-  - name: tempo-config
+  - name: grafana-ini
     files:
-      - grafana/tempo.yaml
-  - name: prometheus-config
+      - grafana.ini
+  - name: demo-yaml
     files:
-      - grafana/prometheus.yaml
-  - name: loki-config
+      - provisioning/dashboards/demo.yaml
+  - name: loki-datasource
     files:
-      - grafana/loki-config.yaml
+      - provisioning/datasources/loki.yaml
+  - name: prometheus-datasource
+    files:
+      - provisioning/datasources/default.yaml  
+  - name: tempo-datasource
+    files:
+      - provisioning/datasources/tempo.yaml
 
 
