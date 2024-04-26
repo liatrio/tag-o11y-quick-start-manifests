@@ -13,7 +13,13 @@ receivers:
     protocols:
       grpc:
       http:
-
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: dev-otel-gateway-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets: [0.0.0.0:8888]
 processors:
   memory_limiter:
     check_interval: 1s

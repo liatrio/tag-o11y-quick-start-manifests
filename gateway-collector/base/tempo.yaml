@@ -17,7 +17,7 @@ spec:
         - name: tempo
           image: grafana/tempo:latest
           imagePullPolicy: IfNotPresent
-          args: [ -config.file=/conf/tempo.yaml ]
+          args: [ -config.file=/conf/tempo-config.yaml ]
           # command: [ "/bin/sh", "-c", "--" ]
           # args: [ "while true; do sleep 30; done;" ]
           ports:

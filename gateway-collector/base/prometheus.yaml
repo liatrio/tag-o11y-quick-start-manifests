@@ -53,17 +53,17 @@ spec:
           imagePullPolicy: IfNotPresent
           args: 
             - "--web.enable-remote-write-receiver"
-            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--config.file=/etc/prometheus/prometheus-config.yaml"
             - "--storage.tsdb.path=/prometheus/"
-            
+
           ports:
             - containerPort: 9090
               name: prometheus
               protocol: TCP
           volumeMounts:
             - name: prometheus-config
-              mountPath: /etc/prometheus/prometheus.yml
-              subPath: prometheus.yaml
+              mountPath: /etc/prometheus/prometheus-config.yaml
+              subPath: prometheus-config.yaml
             - name: prometheus-storage
               mountPath: /prometheus
       volumes:

@@ -25,27 +25,6 @@ configMapGenerator:
   - name: demo-yaml
     files:
       - provisioning/dashboards/demo.yaml
-  - name: engineering-effectiveness-metrics-json
-    files:
-      - provisioning/dashboards/demo/engineering-effectiveness-metrics.json
-  - name: delivery-demo-dashboard-json
-    files:
-      - provisioning/dashboards/demo/delivery-demo-dashboard.json
-  - name: demo-dashboard-json
-    files:
-      - provisioning/dashboards/demo/demo-dashboard.json
-  - name: dora-demo-dashboard-json
-    files:
-      - provisioning/dashboards/demo/dora-demo-dashboard.json
-  - name: opentelemetry-collector-data-flow-json
-    files:
-      - provisioning/dashboards/demo/opentelemetry-collector-data-flow.json
-  - name: opentelemetry-collector-json
-    files:
-      - provisioning/dashboards/demo/opentelemetry-collector.json
-  - name: spanmetrics-dashboard-json
-    files:
-      - provisioning/dashboards/demo/spanmetrics-dashboard.json
   - name: loki-datasource
     files:
       - provisioning/datasources/loki.yaml

@@ -28,12 +28,12 @@ generatorOptions:
 configMapGenerator:
   - name: tempo-config
     files:
-      - grafana/tempo.yaml
+      - provisioning/tempo-config.yaml
   - name: prometheus-config
     files:
-      - grafana/prometheus.yaml
+      - provisioning/prometheus-config.yaml
   - name: loki-config
     files:
-      - grafana/loki-config.yaml
+      - provisioning/loki-config.yaml
 
 
