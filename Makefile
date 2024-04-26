@@ -44,6 +44,8 @@ delete-traces:
 	kustomize build ./gateway-collector/overlays/local-traces/ | kubectl delete --ignore-not-found -f - 
 	kustomize build ./otel-operator/ | kubectl delete --ignore-not-found -f -
 	kubectl delete -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml
+	kustomize build ./cert-manager/ | kubectl delete --ignore-not-found -f -
+
 
 delete-cert-manager:
 	kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml
