@@ -25,9 +25,9 @@ configMapGenerator:
   - name: demo-yaml
     files:
       - provisioning/dashboards/demo.yaml
-  - name: delivery-demo-dashboard-json
+  - name: engineering-effectiveness-metrics-json
     files:
-      - provisioning/dashboards/demo/delivery-demo-dashboard.json
+      - provisioning/dashboards/demo/engineering-effectiveness-metrics.json
   - name: loki-datasource
     files:
       - provisioning/datasources/loki.yaml

@@ -95,7 +95,7 @@ spec:
           projected:
             sources:
               - configMap:
-                  name: delivery-demo-dashboard-json
+                  name: engineering-effectiveness-metrics-json
 ---
 apiVersion: v1
 kind: Service
