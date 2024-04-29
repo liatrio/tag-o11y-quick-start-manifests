@@ -54,9 +54,10 @@ apply-default:
 	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
 	@kubectl wait --timeout=180s --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
 	@while ! kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - ; do sleep 10; done 
-	@kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - --prune -l app=grafana -l app=otel-collector --prune-allowlist core/v1/ConfigMap
+	@kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - --prune -l app=grafana --prune-allowlist core/v1/ConfigMap
 	@kubectl wait --timeout=120s --for condition=Available -n collector deployment/grafana
 	@echo "The command has been executed successfully. The Engineering Effectiveness Metrics Dashboard can be found at: http://localhost:3000"
+
 apply-traces:
 	@kustomize build ./cert-manager/ | kubectl apply -f -
 	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
