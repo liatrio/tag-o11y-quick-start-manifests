@@ -11,13 +11,20 @@ This set of manifests deploys the [Grafana lgtm image](https://github.com/grafan
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/): Local instance of Docker and k8s.
 - [k3d](https://k3d.io/v5.6.3/): a lightweight wrapper to run k3s (Rancher Lab’s minimal k8s distribution) in docker.
 
+To deploy the Grafana LGTM stack with no dashboards or other configurations, run:
+
+```bash
+make apply-basic
+```
+
+
 To deploy the services with just the Engineering Effectiveness Dashboards configuration and dashboards, run:
 
 ```bash
 make apply-default
 ```
 
-To create those services with the addition of an instrumented Tofu Controller, run:
+To create the services with the addition of an instrumented Tofu Controller, run:
 
 ```bash
 make apply-traces
@@ -30,9 +37,12 @@ make apply-traces
 To shutdown the services, run one of the following commands based on what you deployed originally:
 
 ```bash
+make delete-basic
+```
+
+```bash
 make delete-default
 ```
-or
 
 ```bash
 make delete-traces
@@ -51,8 +61,8 @@ make delete-traces
 
 #### Dashboards
 If you wish to add additional dashboards to the Grafana instance, you can do so by:
-1.  Adding them to the `gateway-collector/base/grafana/provisioning/dashboards/demo` directory
-2.  Update the kustomization.yml in the base configuration with the new file that will be added to the generated configmap, preferably in the one with fewer entries.
+1.  Adding them to the `gateway-collector/overlays/<your_configuration>/grafana/provisioning/dashboards/demo` directory
+2.  Update the kustomization.yml in your configuration with the new file that will be added to the generated configmap
 3.  Mount it inside the grafana-lgtm.yaml file like the others so it will be made available to the Grafana instance.
 4.  Run `make apply-<your_configuration>` to apply the changes to the config maps which will also automatically update the grafana-lgtm deployment.
 

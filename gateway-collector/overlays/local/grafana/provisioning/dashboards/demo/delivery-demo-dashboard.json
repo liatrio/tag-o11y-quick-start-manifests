@@ -11,12 +11,6 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
         "type": "dashboard"
       }
     ]
@@ -24,8 +18,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 24,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "datasource": {
@@ -46,11 +40,15 @@
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "light-orange",
+                "value": 3
+              },
+              {
+                "color": "dark-orange",
                 "value": 5
               },
               {
-                "color": "dark-red",
+                "color": "red",
                 "value": 7
               }
             ]
@@ -59,15 +57,16 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 3,
+        "h": 8,
+        "w": 12,
         "x": 0,
         "y": 0
       },
-      "id": 7,
+      "id": 1,
       "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -76,35 +75,146 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "11.0.0-preview",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "gitprovider-metrics"
+            "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(organization_name) (git_repository_branch_count{organization_name=\"$organization\", repository_name=~\"$repo\"})",
+          "expr": "ceil(avg by(team_name) (git_repository_branch_count{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"}))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-12be8e8c-5d52-4ee5-8ea8-7b4a5dfbac4f-0",
-          "legendFormat": "{{organization_name}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Average Branch Count",
-      "type": "gauge"
+      "title": "Open Branches",
+      "type": "stat"
     },
     {
-      "datasource": {},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "light-orange",
+                "value": 3
+              },
+              {
+                "color": "dark-orange",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 7
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.0.0-preview",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "git_repository_branch_count{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Open Branches",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -120,27 +230,33 @@
               },
               {
                 "color": "yellow",
-                "value": 200
+                "value": 7
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 10
               },
               {
                 "color": "red",
-                "value": 500
+                "value": 11
               }
             ]
-          }
+          },
+          "unit": "d"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 21,
-        "x": 3,
-        "y": 0
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
       },
-      "id": 6,
+      "id": 5,
       "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -149,36 +265,37 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto",
-        "text": {}
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "11.0.0-preview",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "gitprovider-metrics"
+            "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(repository_name) (git_repository_branch_time{organization_name=\"$organization\", repository_name=~\"$repo\"}) / 24",
+          "expr": "avg by(team_name) (git_repository_pull_request_time_open{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"} / 86400)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-12be8e8c-5d52-4ee5-8ea8-7b4a5dfbac4f-0",
-          "legendFormat": "{{repository_name}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Average Branch Age Per Repo In Days",
-      "type": "gauge"
+      "title": "Avg Pull Request Open Time (days)",
+      "type": "stat"
     },
     {
-      "datasource": {},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -192,7 +309,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 100,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -206,11 +323,11 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
+            "showPoints": "auto",
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -225,121 +342,30 @@
                 "value": null
               },
               {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 7
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "gitprovider-metrics"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_contributor_count{organization_name=\"$organization\", repository_name=~\"$repo\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "key": "Q-08537169-6de5-41f1-b2d6-693fc148edad-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Contributor Count",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {},
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+                "color": "yellow",
+                "value": 7
+              },
               {
-                "color": "green",
-                "value": null
+                "color": "semi-dark-orange",
+                "value": 10
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 11
               }
             ]
-          }
+          },
+          "unit": "d"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 7
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
       },
-      "id": 2,
+      "id": 12,
       "options": {
         "legend": {
           "calcs": [],
@@ -348,127 +374,31 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.0.0-preview",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "gitprovider-metrics"
+            "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "git_repository_branch_count{organization_name=\"$organization\", repository_name=~\"$repo\"}",
+          "expr": "git_repository_pull_request_time_open{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"} / 86400",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-12be8e8c-5d52-4ee5-8ea8-7b4a5dfbac4f-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Branch Count",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {},
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 7
-      },
-      "id": 1,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "gitprovider-metrics"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_branch_time{organization_name=\"$organization\", repository_name=~\"$repo\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Branch Age",
+      "title": "Avg Pull Request Open Time (days)",
       "type": "timeseries"
     },
     {
@@ -489,7 +419,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 100,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -503,11 +433,113 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
+            "showPoints": "auto",
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 16
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.0.0-preview",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "git_repository_branch_time{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Contributor Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -531,12 +563,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 8,
-        "x": 0,
+        "x": 8,
         "y": 16
       },
-      "id": 9,
+      "id": 13,
       "options": {
         "legend": {
           "calcs": [],
@@ -545,6 +577,108 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.0.0-preview",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "git_repository_branch_count{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Contributor Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 16
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -553,16 +687,186 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "gitprovider-metrics"
+            "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "git_repository_pull_request_open_count{organization_name=\"$organization\", repository_name=~\"$repo\"}",
+          "expr": "git_repository_count{organization_name=~\"liatrio\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Repository Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 3,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.0.0-preview",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "git_repository_branch_time{organization_name=~\"liatrio\", repository_name=~\"$repository\"} / 86400",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Average Age Per Repo in Days",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 32
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "git_repository_pull_request_count{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\", pull_request_state=~\"open\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -589,7 +893,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 100,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -603,11 +907,11 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
+            "showPoints": "auto",
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -626,17 +930,18 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 8,
         "x": 8,
-        "y": 16
+        "y": 32
       },
-      "id": 10,
+      "id": 8,
       "options": {
         "legend": {
           "calcs": [],
@@ -645,6 +950,7 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -653,119 +959,21 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "gitprovider-metrics"
+            "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "git_repository_pull_request_open_time{organization_name=\"$organization\", repository_name=~\"$repo\"}",
+          "expr": "git_repository_pull_request_time_open{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"} / 2",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
       "title": "Open Pull Request Age",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {},
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 16
-      },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "gitprovider-metrics"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_count{organization_name=\"$organization\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "key": "Q-02c41670-371f-491d-a64b-bc9b29c20bc3-0",
-          "legendFormat": "{{organization_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Repo Count",
       "type": "timeseries"
     },
     {
@@ -786,7 +994,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 100,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -800,11 +1008,11 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
+            "showPoints": "auto",
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -828,12 +1036,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 8,
-        "x": 0,
-        "y": 25
+        "x": 16,
+        "y": 32
       },
-      "id": 11,
+      "id": 2,
       "options": {
         "legend": {
           "calcs": [],
@@ -842,6 +1050,7 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -850,16 +1059,115 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "gitprovider-metrics"
+            "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "git_repository_pull_request_merged_count{organization_name=\"$organization\", repository_name=~\"$repo\"}",
+          "expr": "git_repository_pull_request_time_to_approval{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"} / 86400",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Pull Request Approval Time (days)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 39
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "git_repository_pull_request_count{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\", pull_request_state=~\"merged\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -886,7 +1194,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 100,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -900,11 +1208,11 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
+            "showPoints": "auto",
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -923,17 +1231,18 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 8,
         "x": 8,
-        "y": 25
+        "y": 39
       },
-      "id": 12,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [],
@@ -942,6 +1251,7 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -950,16 +1260,15 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "gitprovider-metrics"
+            "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "git_repository_pull_request_merged_time{organization_name=\"$organization\", repository_name=~\"$repo\"}",
+          "expr": "git_repository_pull_request_time_to_merge{organization_name=~\"liatrio\", repository_name=~\"$repository\", team_name=~\"$team\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -967,110 +1276,8 @@
       ],
       "title": "Merged Pull Request Age",
       "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "webstore-metrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 25
-      },
-      "id": 13,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "gitprovider-metrics"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_pull_request_approved_time{organization_name=\"$organization\", repository_name=~\"$repo\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Approved Pull Request Age",
-      "type": "timeseries"
     }
   ],
-  "refresh": "5s",
-  "revision": 1,
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -1079,18 +1286,17 @@
         "current": {
           "selected": true,
           "text": [
-            "liatrio"
+            "All"
           ],
           "value": [
-            "liatrio"
+            "$__all"
           ]
         },
         "datasource": {
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "label_values(organization_name)",
-        "description": "The organization name resource attribute for metrics. ",
+        "definition": "label_values($organization)",
         "hide": 0,
         "includeAll": true,
         "label": "organization",
@@ -1099,7 +1305,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(organization_name)",
+          "query": "label_values($organization)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -1110,12 +1316,50 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
-        "definition": "label_values({organization_name=\"$organization\"},team_name)",
-        "description": "The name of the team ",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "webstore-metrics"
+        },
+        "definition": "label_values(repository_name)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "repository",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(repository_name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "webstore-metrics"
+        },
+        "definition": "label_values(team_name)",
         "hide": 0,
         "includeAll": true,
         "label": "team",
@@ -1124,39 +1368,8 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({organization_name=\"$organization\"},team_name)",
+          "query": "label_values(team_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "allValue": "",
-        "current": {
-          "selected": true,
-          "text": [
-            "aws-managed-services"
-          ],
-          "value": [
-            "aws-managed-services"
-          ]
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "webstore-metrics"
-        },
-        "definition": "label_values({organization_name=~\"$organization\"}, repository_name) ",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "repo",
-        "options": [],
-        "query": {
-          "query": "label_values({organization_name=~\"$organization\"}, repository_name) ",
-          "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "",
@@ -1167,13 +1380,14 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-6h",
     "to": "now"
   },
+  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {},
-  "timezone": "",
-  "title": "Delivery Metrics Demo Dashboard",
-  "uid": "xFKTrZzIk",
-  "version": 1,
+  "timezone": "browser",
+  "title": "Delivery-Metrics",
+  "uid": "edk669cm62dq8e",
+  "version": 4,
   "weekStart": ""
 }

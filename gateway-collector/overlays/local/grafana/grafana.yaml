@@ -31,7 +31,7 @@ spec:
           - 0
       containers:
         - name: grafana
-          image: grafana/grafana:latest
+          image: grafana/grafana:11.0.0-preview-ubuntu
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -98,16 +98,6 @@ spec:
                   name: engineering-effectiveness-metrics-json
               - configMap:
                   name: delivery-demo-dashboard-json
-              - configMap:
-                  name: demo-dashboard-json
-              - configMap:
-                  name: dora-demo-dashboard-json
-              - configMap:
-                  name: opentelemetry-collector-data-flow-json
-              - configMap:
-                  name: opentelemetry-collector-json
-              - configMap:
-                  name: spanmetrics-dashboard-json
 ---
 apiVersion: v1
 kind: Service
