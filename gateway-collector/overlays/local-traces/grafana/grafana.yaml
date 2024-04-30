@@ -66,6 +66,8 @@ spec:
               mountPath: /etc/grafana/provisioning/datasources
             - name: demo-yaml
               mountPath: /etc/grafana/provisioning/dashboards
+            - name: dashboards
+              mountPath: /etc/grafana/provisioning/dashboards/demo
             - name: grafana-ini
               mountPath: /etc/grafana/provisioning
 
@@ -90,6 +92,11 @@ spec:
                   name: loki-datasource
               - configMap:
                   name: tempo-datasource
+        - name: dashboards
+          projected:
+            sources:
+              - configMap:
+                  name: opentofu-controller-demo-json
 ---
 apiVersion: v1
 kind: Service
