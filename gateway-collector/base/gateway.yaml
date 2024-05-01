@@ -1,0 +1,18 @@
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-kubernetes-collector
+spec:
+  image: ghcr.io/liatrio/liatrio-otel-collector:0.51.0-amd64
+  mode: deployment
+  serviceAccount: otel-kubernetes-collector
+  envFrom:
+    # This is where you can provide the secrets and tokens required for authentication
+    - secretRef:
+        name: collector-auth
+        optional: true
+    # This is where you can specify variables to configure the gitproviderreceiver like GH_ORG or SEARCH_QUERY
+    - configMapRef:
+        name: gitproviderreceiver-config
+        optional: true

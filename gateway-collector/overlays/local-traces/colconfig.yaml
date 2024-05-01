@@ -1,0 +1,95 @@
+---
+extensions:
+  health_check:
+
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  zpages:
+    endpoint: 0.0.0.0:55679
+  
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: dev-otel-gateway-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets: [0.0.0.0:8888]
+
+  k8s_cluster:
+    collection_interval: 10s
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 75
+    spike_limit_percentage: 15
+
+  batch:
+    send_batch_size: 100
+    timeout: 10s
+
+  resource/env:
+    attributes:
+      - key: environment.name
+        value: dev
+        action: upsert
+
+  resource/logs:
+    attributes:
+      - key: loki.resource.labels
+        action: insert
+        value: service.name
+
+  filter/duration_milliseconds_bucket:
+    error_mode: ignore
+    metrics:
+      datapoint:
+        - metric.name == "duration_milliseconds_bucket"
+
+connectors:
+  spanmetrics:
+
+exporters:
+  debug:
+    verbosity: basic
+    sampling_initial: 2
+    sampling_thereafter: 500
+
+  prometheusremotewrite:
+    endpoint: http://prometheus.collector.svc.cluster.local:9090/api/v1/write
+    resource_to_telemetry_conversion:
+      enabled: true
+
+  otlphttp/otel:
+    endpoint: http://tempo.collector.svc.cluster.local:4317
+    tls:
+      insecure: true
+
+  loki:
+    endpoint: http://loki.collector.svc.cluster.local:3100/loki/api/v1/push
+
+service:
+  extensions: [health_check, pprof, zpages]
+  pipelines:
+    metrics:
+      receivers: [otlp, prometheus, spanmetrics]
+      processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env]
+      exporters: [debug, prometheusremotewrite]
+
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env, resource/logs]
+      exporters: [debug, loki]
+
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, filter/duration_milliseconds_bucket, batch, resource/env, resource/logs]
+      exporters: [debug, otlphttp/otel, spanmetrics]
