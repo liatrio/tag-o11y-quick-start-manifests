@@ -13,7 +13,7 @@ urls = @echo "\
 .PHONY: default
 default: cert-manager otel-operator
 	kubectl apply -k ./collectors/gateway/
-	kubectl wait --timeout=120s --for condition=Available -n collector deployment/grafana
+	kubectl apply -k ./apps/
 	$(call urls)
 
 .PHONY: %-silent
@@ -22,8 +22,7 @@ default: cert-manager otel-operator
 
 .PHONY: cert-manager
 cert-manager:
-	# kubectl apply -k ./cluster-infra/cert-manager/
-	kustomize build ./cluster-infra/cert-manager/ | kubectl apply -f -
+	kubectl apply -k ./cluster-infra/cert-manager/
 	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager
 	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-cainjector
 	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-webhook
@@ -31,7 +30,7 @@ cert-manager:
 .PHONY: otel-operator
 otel-operator:
 	kubectl apply -k ./cluster-infra/otel-operator/
-	kubectl wait --for condition=Available -n otel-operator deployment/opentelemetry-operator-controller-manager
+	kubectl wait --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
 
 apply-basic:
 	@kustomize build ./cert-manager/ | kubectl apply -f -

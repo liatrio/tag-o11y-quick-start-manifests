@@ -18,15 +18,15 @@ spec:
           image: grafana/loki:latest
           imagePullPolicy: IfNotPresent
           args:
-            - "-config.file=/etc/loki/loki-config.yaml"
+            - "-config.file=/etc/loki/config.yaml"
           ports:
             - containerPort: 3100
               name: loki
               protocol: TCP
           volumeMounts:
-            - name: loki-config
-              mountPath: /etc/loki/loki-config.yaml
-              subPath: loki-config.yaml
+            - name: config
+              mountPath: /etc/loki/config.yaml
+              subPath: config.yaml
       volumes:
         - name: config
           configMap:

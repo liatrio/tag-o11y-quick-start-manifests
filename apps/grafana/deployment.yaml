@@ -68,6 +68,5 @@ spec:
           configMap:
             name: demo-yaml
         - name: datasources
-          projected:
-            configMap:
-              name: datasources
+          configMap:
+            name: datasources

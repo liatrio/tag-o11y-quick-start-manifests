@@ -16,6 +16,28 @@ patches:
         path: /spec/serviceAccount
         value: otel-collector
 
+configMapGenerator:
+  - name: gateway-collector-config
+    files:
+      - colconfig.yaml
+    options:
+      annotations:
+        config.kubernetes.io/local-config: "true"
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: gateway-collector-config
+      fieldPath: data.[colconfig.yaml]
+
+    targets:
+      - select:
+          kind: OpenTelemetryCollector
+        fieldPaths:
+          - spec.config
+        options:
+          create: true
+
 resources:
   - ../../cluster-infra/namespace
   - ../base/

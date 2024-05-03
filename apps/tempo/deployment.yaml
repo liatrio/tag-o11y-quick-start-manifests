@@ -17,7 +17,7 @@ spec:
         - name: tempo
           image: grafana/tempo:latest
           imagePullPolicy: IfNotPresent
-          args: [-config.file=/conf/tempo-config.yaml]
+          args: [-config.file=/conf/config.yaml]
           ports:
             - containerPort: 4317
               name: grpc
@@ -29,7 +29,7 @@ spec:
               name: tempo
               protocol: TCP
           volumeMounts:
-            - name: tempo-config
+            - name: config
               mountPath: "/conf"
 
       volumes:
