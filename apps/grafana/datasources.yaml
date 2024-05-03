@@ -1,0 +1,37 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: webstore-metrics
+    type: prometheus
+    url: http://prometheus.prometheus.svc.cluster.local:9090/
+    editable: true
+    isDefault: true
+    jsonData:
+      exemplarTraceIdDestinations:
+        - datasourceUid: webstore-traces
+          name: trace_id
+  - name: loki-webhookreceiver
+    uid: loki
+    type: loki
+    url: http://loki.loki.svc.cluster.local:3100/
+    editable: true
+    isDefault: false
+  - name: Tempo
+    type: tempo
+    access: proxy
+    orgId: 1
+    url: http://tempo.tempo.svc.cluster.local:3200/
+    basicAuth: false
+    isDefault: false
+    version: 1
+    editable: false
+    apiVersion: 1
+    uid: tempo
+    jsonData:
+      httpMethod: GET
+      serviceMap:
+        datasourceUid: prometheus
