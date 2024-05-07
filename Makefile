@@ -32,6 +32,10 @@ otel-operator:
 	kubectl apply -k ./cluster-infra/otel-operator/
 	kubectl wait --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
 
+.PHONY: gpr
+gpr: default
+	kubectl apply -k ./collectors/gitproviderreceiver/
+
 apply-basic:
 	@kustomize build ./cert-manager/ | kubectl apply -f -
 	@kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-webhook

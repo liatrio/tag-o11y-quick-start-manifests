@@ -21,6 +21,31 @@ configMapGenerator:
   - name: datasources
     files:
       - datasources.yaml
-  - name: demo-yaml
+  - name: providers
     files:
-      - provisioning/dashboards/demo.yaml
+      - dashboards/providers.yaml
+
+  # Demo Dashboards
+  - name: dashboard-demo
+    files:
+      - dashboards/demo/demo.json
+  - name: dashboard-opentelemetry-collector-data-flow
+    files:
+      - dashboards/demo/opentelemetry-collector-data-flow.json
+  - name: dashboard-opentelemetry-collector
+    files:
+      - dashboards/demo/opentelemetry-collector.json
+  - name: dashboard-spanmetrics
+    files:
+      - dashboards/demo/spanmetrics.json
+
+  # GitProviderReceiver dashboards
+  - name: dashboard-gpr-delivery-metrics
+    files:
+      - dashboards/gpr/delivery-metrics.json
+  - name: dashboard-gpr-dora-metrics
+    files:
+      - dashboards/gpr/dora-metrics.json
+  - name: dashboard-gpr-engineering-effectiveness-metrics
+    files:
+      - dashboards/gpr/engineering-effectiveness-metrics.json

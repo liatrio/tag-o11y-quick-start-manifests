@@ -52,10 +52,28 @@ spec:
               mountPath: /var/lib/grafana
             - name: datasources
               mountPath: /etc/grafana/provisioning/datasources
-            - name: demo-yaml
-              mountPath: /etc/grafana/provisioning/dashboards
             - name: grafana-ini
               mountPath: /etc/grafana/provisioning
+            - name: providers
+              mountPath: /etc/grafana/provisioning/dashboards
+
+            # Demo Dashboards
+            - name: dashboard-demo
+              mountPath: /etc/grafana/provisioning/dashboards/demo/demo.json
+            - name: dashboard-opentelemetry-collector-data-flow
+              mountPath: /etc/grafana/provisioning/dashboards/demo/opentelemetry-collector-data-flow.json
+            - name: dashboard-opentelemetry-collector
+              mountPath: /etc/grafana/provisioning/dashboards/demo/opentelemetry-collector.json
+            - name: dashboard-spanmetrics
+              mountPath: /etc/grafana/provisioning/dashboards/demo/spanmetrics.json
+
+            # GitProviderReceiver dashboards
+            - name: dashboard-gpr-delivery-metrics
+              mountPath: /etc/grafana/provisioning/dashboards/gpr/delivery-metrics.json
+            - name: dashboard-gpr-dora-metrics
+              mountPath: /etc/grafana/provisioning/dashboards/gpr/dora-metrics.json
+            - name: dashboard-gpr-engineering-effectiveness-metrics
+              mountPath: /etc/grafana/provisioning/dashboards/gpr/engineering-effectiveness-metrics.json
 
       volumes:
         - name: pv
@@ -64,9 +82,34 @@ spec:
         - name: grafana-ini
           configMap:
             name: grafana-ini
-        - name: demo-yaml
-          configMap:
-            name: demo-yaml
         - name: datasources
           configMap:
             name: datasources
+        - name: providers
+          configMap:
+            name: providers
+
+        # Demo Dashboards
+        - name: dashboard-demo
+          configMap:
+            name: dashboard-demo
+        - name: dashboard-opentelemetry-collector-data-flow
+          configMap:
+            name: dashboard-opentelemetry-collector-data-flow
+        - name: dashboard-opentelemetry-collector
+          configMap:
+            name: dashboard-opentelemetry-collector
+        - name: dashboard-spanmetrics
+          configMap:
+            name: dashboard-spanmetrics
+
+        # GitProviderReceiver dashboards
+        - name: dashboard-gpr-delivery-metrics
+          configMap:
+            name: dashboard-gpr-delivery-metrics
+        - name: dashboard-gpr-dora-metrics
+          configMap:
+            name: dashboard-gpr-dora-metrics
+        - name: dashboard-gpr-engineering-effectiveness-metrics
+          configMap:
+            name: dashboard-gpr-engineering-effectiveness-metrics
