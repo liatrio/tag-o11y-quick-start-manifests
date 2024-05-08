@@ -2,9 +2,11 @@ apiVersion: infra.contrib.fluxcd.io/v1alpha2
 kind: Terraform
 metadata:
   name: demo
+  labels:
+    tracing.attributes/team: o11y
 spec:
   path: ./null/
-  interval: 10m
+  interval: 5m
   approvePlan: auto
   destroyResourcesOnDeletion: true
   sourceRef:
@@ -15,4 +17,5 @@ spec:
       labels:
         app.kubernetes.io/name: tf-runner
         app.kubernetes.io/created-by: tf-controller
+        tracing.attributes/team: o11y
 
