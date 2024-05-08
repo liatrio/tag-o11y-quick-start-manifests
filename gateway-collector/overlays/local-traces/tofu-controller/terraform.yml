@@ -17,5 +17,3 @@ spec:
       labels:
         app.kubernetes.io/name: tf-runner
         app.kubernetes.io/created-by: tf-controller
-        tracing.attributes/team: o11y
-
