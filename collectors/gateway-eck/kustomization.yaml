@@ -6,6 +6,8 @@ namespace: collector
 
 resources:
   - ../base/
+  - ingress.yaml
+
 
 patches:
   - target:
@@ -14,10 +16,17 @@ patches:
     patch: |-
       - op: replace
         path: /metadata/name
-        value: gateway
+        value: gateway-eck
       - op: add
         path: /spec/serviceAccount
         value: otel-collector
+      - op: add
+        path: /spec/envFrom
+        value: 
+          - secretRef:
+              name: eck-stack-apm-server-apm-token
+              namespace: elastic-system
+
 
 configMapGenerator:
   - name: collector-config

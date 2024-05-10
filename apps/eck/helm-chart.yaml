@@ -1,0 +1,263 @@
+---
+# Source: eck-stack/charts/eck-fleet-server/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fleet-server
+  namespace: "elastic-system"
+  labels:
+    helm.sh/chart: eck-fleet-server-0.10.0
+    app.kubernetes.io/name: eck-fleet-server
+    app.kubernetes.io/instance: eck-stack
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: eck-stack/charts/eck-fleet-server/templates/cluster-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fleet-server
+  labels:
+    helm.sh/chart: eck-fleet-server-0.10.0
+    app.kubernetes.io/name: eck-fleet-server
+    app.kubernetes.io/instance: eck-stack
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    - namespaces
+    - nodes
+    verbs:
+    - get
+    - watch
+    - list
+  - apiGroups:
+    - apps
+    resources:
+    - replicasets
+    verbs:
+    - get
+    - watch
+    - list
+  - apiGroups:
+    - batch
+    resources:
+    - jobs
+    verbs:
+    - get
+    - watch
+    - list
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leases
+    verbs:
+    - get
+    - create
+    - update
+---
+# Source: eck-stack/charts/eck-fleet-server/templates/cluster-role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fleet-server
+  labels:
+    helm.sh/chart: eck-fleet-server-0.10.0
+    app.kubernetes.io/name: eck-fleet-server
+    app.kubernetes.io/instance: eck-stack
+    app.kubernetes.io/managed-by: Helm
+subjects:
+  - kind: ServiceAccount
+    name: fleet-server
+    namespace: "elastic-system"
+roleRef:
+  kind: ClusterRole
+  name: fleet-server
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: eck-stack/charts/eck-fleet-server/templates/fleet-server.yaml
+apiVersion: agent.k8s.elastic.co/v1alpha1
+kind: Agent
+metadata:
+  name: fleet-server
+  labels:
+    helm.sh/chart: eck-fleet-server-0.10.0
+    app.kubernetes.io/name: eck-fleet-server
+    app.kubernetes.io/instance: eck-stack
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    eck.k8s.elastic.co/license: basic
+spec:
+  version: 8.13.0
+  mode: fleet
+  fleetServerEnabled: true
+  deployment:
+    podTemplate:
+      spec:
+        automountServiceAccountToken: true
+        securityContext:
+          runAsUser: 0
+        serviceAccountName: fleet-server
+    replicas: 1
+  elasticsearchRefs:
+  - name: elasticsearch
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  kibanaRef:
+    name: kibana
+  policyID: fleet-server-policy
+---
+# Source: eck-stack/charts/eck-apm-server/templates/apmserver.yaml
+apiVersion: apm.k8s.elastic.co/v1
+kind: ApmServer
+metadata:
+  name: eck-stack-apm-server
+  labels:
+    helm.sh/chart: eck-apm-server-0.10.0
+    app.kubernetes.io/name: apm-server
+    app.kubernetes.io/instance: eck-stack
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    eck.k8s.elastic.co/license: basic
+spec:
+  version: 8.13.0
+  count: 1
+  http:
+    service:
+      spec:
+        ports:
+        - name: http
+          port: 8200
+          targetPort: 8200
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  elasticsearchRef:
+    name: elasticsearch
+  kibanaRef:
+    name: kibana
+---
+# Source: eck-stack/charts/eck-elasticsearch/templates/elasticsearch.yaml
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch
+  labels:
+    helm.sh/chart: eck-elasticsearch-0.10.0
+    app.kubernetes.io/name: eck-elasticsearch
+    app.kubernetes.io/instance: eck-stack
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    eck.k8s.elastic.co/license: basic
+spec:
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  version: 8.13.0
+  nodeSets:
+    
+    - config:
+        node.store.allow_mmap: false
+      count: 1
+      name: default
+      podTemplate:
+        spec:
+          containers:
+          - name: elasticsearch
+            resources:
+              limits:
+                memory: 2Gi
+              requests:
+                memory: 2Gi
+---
+# Source: eck-stack/charts/eck-kibana/templates/kibana.yaml
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  labels:
+    helm.sh/chart: eck-kibana-0.10.0
+    app.kubernetes.io/name: eck-kibana
+    app.kubernetes.io/instance: eck-stack
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    eck.k8s.elastic.co/license: basic
+spec:
+  version: 8.13.0
+  config:
+    xpack.fleet.agentPolicies:
+    - description: Static agent policy for Fleet Server
+      id: fleet-server-policy
+      monitoring_enabled:
+      - logs
+      - metrics
+      name: Fleet Server Policy
+      package_policies:
+      - name: fleet_server-1
+        package:
+          name: fleet_server
+      - name: system-1
+        package:
+          name: system
+      - name: elastic_agent-1
+        package:
+          name: elastic_agent
+      - name: docker-1
+        package:
+          name: docker
+    - description: Static agent policy for the APM Server integration
+      id: agent-policy-apm-server
+      monitoring_enabled:
+      - logs
+      - metrics
+      name: Agent Policy APM Server
+      package_policies:
+      - name: system-1
+        package:
+          name: system
+      - name: elastic_agent-1
+        package:
+          name: elastic_agent
+      - inputs:
+        - type: apm
+          vars:
+          - name: host
+            value: 0.0.0.0:8200
+          - name: url
+            value: http://eck-stack-apm-server-apm-http.elastic-system.svc:8200
+        name: apm-1
+        package:
+          name: apm
+    xpack.fleet.agents.fleet_server.hosts:
+    - http://fleet-server-agent-http.elastic-system.svc:8220
+    xpack.fleet.outputs:
+    - hosts:
+      - http://elasticsearch-es-http.elastic-system.svc:9200
+      id: fleet-default-output
+      is_default: true
+      is_default_monitoring: true
+      name: default
+      type: elasticsearch
+    xpack.fleet.packages:
+    - name: fleet_server
+      version: latest
+    - name: system
+      version: latest
+    - name: elastic_agent
+      version: latest
+    - name: docker
+      version: latest
+    - name: apm
+      version: latest
+  count: 1
+  elasticsearchRef:
+    name: elasticsearch
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+

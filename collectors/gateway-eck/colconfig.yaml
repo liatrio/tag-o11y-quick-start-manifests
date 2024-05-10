@@ -1,0 +1,27 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 2000
+  batch:
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlphttp:
+    endpoint: "http://eck-stack-apm-server-apm-http.elastic-system.svc:8200"
+    headers:
+      Authorization: 'Bearer $secret-token'
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug, otlphttp]
+    metrics:
+      receivers: [otlp]
+      exporters: [debug, otlphttp]

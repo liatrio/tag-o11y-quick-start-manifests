@@ -1,0 +1,78 @@
+---
+extensions:
+  health_check:
+
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+  bearertokenauth:
+    token: ${env:GH_PAT}
+
+receivers:
+  gitprovider:
+    initial_delay: 10s
+    collection_interval: 300s
+    scrapers:
+      github:
+        github_org: liatrio
+        search_query: org:liatrio topic:o11y archived:false
+        auth:
+          authenticator: bearertokenauth
+        metrics:
+          git.repository.contributor.count:
+            enabled: true
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 75
+    spike_limit_percentage: 15
+
+  batch:
+    send_batch_size: 100
+    timeout: 10s
+
+  resource/o11y:
+    attributes:
+      - key: team.name
+        value: tag-o11y
+        action: upsert
+
+  filter/ottl:
+    error_mode: ignore
+    metrics:
+      metric:
+        - name == "rpc.server.duration"
+
+  transform:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "") where name == "queueSize"
+          - set(description, "") where name == "http.client.duration"
+
+exporters:
+  debug:
+    verbosity: basic
+    sampling_initial: 2
+    sampling_thereafter: 500
+
+  otlp:
+    endpoint: http://gateway-collector.collector.svc.cluster.local:4317
+    tls:
+      insecure: true
+
+service:
+  extensions:
+    - health_check
+    - pprof
+    - zpages
+    - bearertokenauth
+  pipelines:
+    metrics:
+      receivers: [gitprovider]
+      processors: [memory_limiter, batch, resource/o11y]
+      exporters: [debug, otlp]
