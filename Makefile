@@ -52,15 +52,16 @@ apply-default:
 	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
 	@kubectl wait --timeout=180s --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
 	@while ! kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - ; do sleep 10; done 
-	@kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - --prune -l app=grafana -l app=otel-collector --prune-allowlist core/v1/ConfigMap
+	@kustomize build ./gateway-collector/overlays/local/ | kubectl apply -f - --prune -l app=grafana --prune-allowlist core/v1/ConfigMap
 	@kubectl wait --timeout=120s --for condition=Available -n collector deployment/grafana
 	@echo "The command has been executed successfully. The Engineering Effectiveness Metrics Dashboard can be found at: http://localhost:3000"
+
 apply-traces:
 	@kustomize build ./cert-manager/ | kubectl apply -f -
 	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
 	@if ! kubectl create -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml; then echo "Tofu Controller CRDS already installed"; fi
 	@while ! kustomize build ./gateway-collector/overlays/local-traces/ | kubectl apply -f - ; do sleep 10; done 
-	@kustomize build ./gateway-collector/overlays/local-traces/ | kubectl apply -f - --prune -l app=grafana -l app=otel-collector --prune-allowlist core/v1/ConfigMap
+	@kustomize build ./gateway-collector/overlays/local-traces/ | kubectl apply -f - --prune -l app=grafana --prune-allowlist core/v1/ConfigMap
 	@kubectl wait --timeout=120s --for condition=Available -n collector deployment/grafana
 	@echo "The command has been executed successfully. The Tofu Controller Traces Dashboard can be found at: http://localhost:3000"
 

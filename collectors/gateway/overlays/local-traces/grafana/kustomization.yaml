@@ -25,6 +25,9 @@ configMapGenerator:
   - name: demo-yaml
     files:
       - provisioning/dashboards/demo.yaml
+  - name: opentofu-controller-demo-json
+    files:
+      - provisioning/dashboards/demo/opentofu-controller-demo.json
   - name: loki-datasource
     files:
       - provisioning/datasources/loki.yaml

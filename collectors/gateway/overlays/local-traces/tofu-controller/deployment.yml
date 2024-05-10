@@ -33,7 +33,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: RUNNER_POD_IMAGE
-              value: ghcr.io/liatrio/tf-runner:v0.0.4
+              value: ghcr.io/liatrio/tf-runner:latest
             - name: "OTEL_TRACES_EXPORTER" 
               value: "otlp"
             - name: "OTEL_EXPORTER_OTLP_PROTOCOL"
@@ -41,7 +41,7 @@ spec:
             - name: "OTEL_EXPORTER_OTLP_ENDPOINT"
               value: "http://tempo.collector.svc.cluster.local:4317"
 
-          image: ghcr.io/liatrio/tofu-controller:v0.0.4
+          image: ghcr.io/liatrio/tofu-controller:v0.0.5
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

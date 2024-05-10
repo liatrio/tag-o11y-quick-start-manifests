@@ -96,8 +96,6 @@ spec:
             sources:
               - configMap:
                   name: engineering-effectiveness-metrics-json
-              - configMap:
-                  name: delivery-demo-dashboard-json
 ---
 apiVersion: v1
 kind: Service
