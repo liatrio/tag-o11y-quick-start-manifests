@@ -1,0 +1,8 @@
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: collector
+spec:
+  image: ghcr.io/liatrio/liatrio-otel-collector:0.51.0-amd64
+  mode: deployment
