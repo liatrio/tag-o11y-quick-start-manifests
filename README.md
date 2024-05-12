@@ -1,40 +1,101 @@
-# liatrio-otel-lgtm
+# tag-o11y-quick-start-manifests
 
-This set of manifests deploys the [Grafana lgtm image](https://github.com/grafana/docker-otel-lgtm) with the dashboards from our [opentelemetry demo](https://github.com/liatrio/opentelemetry-demo/tree/main).  While there is a collector running in this image already, we have opted to use an external one based on the [Liatrio distribution](https://github.com/liatrio/liatrio-otel-collector).
+This set of manifests gets a local obersvability stack up and running quickly.
+It installs the following services into your local kubernetes cluster:
 
-## Installation
+* Grafana
+* Prometheus
+* Tempo
+* Loki
+* Certificate Manager
+* OpenTelemetry Controller
+* Liatrio OpenTelemetry Collector
+* NGrok Ingress and API Gateway Controller
 
-### Prerequisites
+# Getting Started
 
-> You need access to a kubernetes (k8s) cluster. Here are a few options for running k8s locally:
+## Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/): Local instance of Docker and k8s.
-- [k3d](https://k3d.io/v5.6.3/): a lightweight wrapper to run k3s (Rancher Lab’s minimal k8s distribution) in docker.
+1. Run kubernetes locally. Here are a few options:
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/): Local
+  instance of Docker and k8s.
+- [k3d](https://k3d.io/v5.6.3/): a lightweight wrapper to run k3s (Rancher
+  Lab’s minimal k8s distribution) in docker.
+2. Have kubectl installed
+3. Have kustomize installed
+4. If using DORA, have NGROK configured with a domain and update the
+   configuration accordingly.
 
-To deploy the Grafana LGTM stack with no dashboards or other configurations, run:
+## Deploy
+
+### Quick Start
+
+To deploy the basic set of configuration with the LGTM stack and a Gateway
+OpenTelemetry Collector, run:
+
+```bash
+make
+```
+
+### Git Provider Receiver (GitHub)
+
+To deploy the GitProvider Receiver:
+1. Create a GitHub PAT
+2. Create a `.env` file at the root containing the PAT
+3. Create a kubernetes secret with that PAT by running
+```bash
+kubectl create secret generic github-path --from-file=GH_PAT=./.env \
+--namespace collector
+```
+4. Run `make gpr`
+
+### Git Provider Receiver (GitLab)
+
+<!-- TODO: Add instructions for GitLab -->
+
+### DORA 
+
+<!-- TODO: Add instructions for GitLab -->
+
+--- 
+
+<!-- TODO: Edit this as it's now deprecated -->
+
+## Destroy
+
+> You need access to a kubernetes (k8s) cluster. Here are a few options for
+> running k8s locally:
+
+
+To deploy the Grafana LGTM stack with no dashboards or other configurations,
+run:
 
 ```bash
 make apply-basic
 ```
 
 
-To deploy the services with just the Engineering Effectiveness Dashboards configuration and dashboards, run:
+To deploy the services with just the Engineering Effectiveness Dashboards
+configuration and dashboards, run:
 
 ```bash
 make apply-default
 ```
 
-To create the services with the addition of an instrumented Tofu Controller, run:
+To create the services with the addition of an instrumented Tofu Controller,
+run:
 
 ```bash
 make apply-traces
 ```
 
-> :bulb: **Tip:** After running either of those commands, you can access the Grafana dashboard at `http://localhost:3000`.
+> :bulb: **Tip:** After running either of those commands, you can access the
+> Grafana dashboard at `http://localhost:3000`.
 
 ## Shutdown
 
-To shutdown the services, run one of the following commands based on what you deployed originally:
+To shutdown the services, run one of the following commands based on what you
+deployed originally:
 
 ```bash
 make delete-basic
@@ -51,27 +112,41 @@ make delete-traces
 > :bulb: **Tip:** If the commands fail try re-running with `sudo`.
 
 
+<!-- TODO: Edit this as it's now deprecated -->
+
 ## Configuration
 
-#### Secrets and Variables
-
-- To be able to use features like the `gitproviderreceiver` in the default configuration, it requires you to have certain values setup in a secret or config map that are made available to the collector. You can do this by creating a secret called `collector-auth` which will hold all of the tokens and keys needed for your configuration including GitHub PAT for accessing private repositories.
-
-- You can also create a config map called `gitproviderreceiver-config` that will house your specific org name, search query, and alternate url to search for repositories in, referenced by ${env:<your_variable_name>} format.  These values can be updated accordingly in the `gateway-collector/overlays/local/colconfig.yaml` file.  These values aren't very sensitive so updating the config directly is fine too.
-
 #### Dashboards
-If you wish to add additional dashboards to the Grafana instance, you can do so by:
-1.  Adding them to the `gateway-collector/overlays/<your_configuration>/grafana/provisioning/dashboards/demo` directory
-2.  Update the kustomization.yml in your configuration with the new file that will be added to the generated configmap
-3.  Mount it inside the grafana-lgtm.yaml file like the others so it will be made available to the Grafana instance.
-4.  Run `make apply-<your_configuration>` to apply the changes to the config maps which will also automatically update the grafana-lgtm deployment.
+If you wish to add additional dashboards to the Grafana instance, you can do so
+by:
+
+1.  Adding them to the
+    `gateway-collector/overlays/<your_configuration>/grafana/provisioning/dashboards/demo`
+    directory
+2.  Update the kustomization.yml in your configuration with the new file that
+    will be added to the generated configmap
+3.  Mount it inside the grafana-lgtm.yaml file like the others so it will be
+    made available to the Grafana instance.
+4.  Run `make apply-<your_configuration>` to apply the changes to the config
+    maps which will also automatically update the grafana-lgtm deployment.
 
 #### Tofu Controller
 
-To be able to use the Tofu Controller after deploying the `traces` configuration with your own terraform, you will need to do the following.
+To be able to use the Tofu Controller after deploying the `traces`
+configuration with your own terraform, you will need to do the following.
 
-1. Update the `source_control.yml` file in the `local-traces` overlay so that it points towards a repository with terraform resources inside of it.
-2. Update the `terraform.yml` file so it references the name of the object you created with the `source_control.yml` file in the `sourceRef` field.  Then update the `path` field with the specific path to the terraform resources you want to use inside the repository.
-3. Run `make deploy-traces` to update the resources in the cluster with the new configuration.
->  - For the purposes of the tracing demo these will by default be configured to apply null resources to the cluster since deploying resources to a cloud provider requires an additional auth setup that is not done here. 
->  - Deploying kubernetes resources is also possible but requires you to update the `tf-runner` service account with a cluster role that has permissions to act on those resources.
+1. Update the `source_control.yml` file in the `local-traces` overlay so that
+   it points towards a repository with terraform resources inside of it.
+2. Update the `terraform.yml` file so it references the name of the object you
+   created with the `source_control.yml` file in the `sourceRef` field.  Then
+   update the `path` field with the specific path to the terraform resources
+   you want to use inside the repository.
+3. Run `make deploy-traces` to update the resources in the cluster with the new
+configuration.
+
+>  - For the purposes of the tracing demo these will by default be configured
+>    to apply null resources to the cluster since deploying resources to a
+>    cloud provider requires an additional auth setup that is not done here. 
+>  - Deploying kubernetes resources is also possible but requires you to update
+>  the `tf-runner` service account with a cluster role that has permissions to
+>  act on those resources.

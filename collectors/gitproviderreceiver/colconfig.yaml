@@ -24,6 +24,8 @@ receivers:
         metrics:
           git.repository.contributor.count:
             enabled: true
+          git.repository.cve.count:
+            enabled: true
 
 processors:
   memory_limiter:
@@ -40,19 +42,6 @@ processors:
       - key: team.name
         value: tag-o11y
         action: upsert
-
-  filter/ottl:
-    error_mode: ignore
-    metrics:
-      metric:
-        - name == "rpc.server.duration"
-
-  transform:
-    metric_statements:
-      - context: metric
-        statements:
-          - set(description, "") where name == "queueSize"
-          - set(description, "") where name == "http.client.duration"
 
 exporters:
   debug:
@@ -73,6 +62,12 @@ service:
     - bearertokenauth
   pipelines:
     metrics:
-      receivers: [gitprovider]
-      processors: [memory_limiter, batch, resource/o11y]
-      exporters: [debug, otlp]
+      receivers:
+        - gitprovider
+      processors:
+        - memory_limiter
+        - batch
+        - resource/o11y
+      exporters:
+        - debug
+        - otlp

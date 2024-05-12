@@ -36,6 +36,10 @@ otel-operator:
 gpr: default
 	kubectl apply -k ./collectors/gitproviderreceiver/
 
+.PHONY: dora
+dora: default
+	kubectl apply -k ./collectors/webhook/
+
 apply-basic:
 	@kustomize build ./cert-manager/ | kubectl apply -f -
 	@kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-webhook
