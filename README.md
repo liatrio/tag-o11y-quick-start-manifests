@@ -25,6 +25,8 @@ It installs the following services into your local kubernetes cluster:
 3. Have kustomize installed
 4. If using DORA, have NGROK configured with a domain and update the
    configuration accordingly.
+5. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
+6. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
 
 ## Deploy
 
@@ -54,6 +56,34 @@ kubectl create secret generic github-path --from-file=GH_PAT=./.env \
 <!-- TODO: Add instructions for GitLab -->
 
 ### DORA 
+
+The DORA Collector leverages the WebHook Events OpenTelemetry Receiver. As
+events occur (like deployments) the event LogRecords are sent to the collector.
+In order to enable sending of data from locations like GitHub, you have to be
+able to route to your local installation of this collector. In this repository
+we've defaulted to leveraging NGrok for this configuration. As such this
+presumes that you have a free NGrok account, an API Key, and an AuthToken.
+
+1. From the [NGrok dashboard](https://dashboard.ngrok.com/) get your [API Key](https://dashboard.ngrok.com/api) from NGrok.
+2. Get your [Auth Token](https://dashboard.ngrok.com/api) from NGrok.
+3. Get your [free permanent domain](https://dashboard.ngrok.com/cloud-edge/domains) from NGrok.
+4. Export your env vars:
+
+```bash
+export NGROK_AUTHTOKEN=authtoken
+export NGROK_API_KEY=apikey
+```
+5. Run `make ngrok` to setup the controller. 
+6. Update the [webhook route config](./collectors/webhook/ngrok-route.yaml)
+   with your permanent domain in the host rules (see example below):
+```yaml
+spec:
+  ingressClassName: ngrok
+  rules:
+    # Change this to match your NGrok permanent domain
+    - host: example.ngrok-free.app
+```
+7. Run `make dora`
 
 <!-- TODO: Add instructions for GitLab -->
 
