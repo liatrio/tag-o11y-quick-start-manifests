@@ -45,6 +45,7 @@ To deploy the GitProvider Receiver:
 1. Create a GitHub PAT
 2. Create a `.env` file at the root containing the PAT
 3. Create a kubernetes secret with that PAT by running
+
 ```bash
 kubectl create secret generic github-path --from-file=GH_PAT=./.env \
 --namespace collector

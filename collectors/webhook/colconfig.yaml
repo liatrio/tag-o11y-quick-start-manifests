@@ -47,19 +47,6 @@ processors:
   #         - set(description, "") where name == "queueSize"
   #         - set(description, "") where name == "http.client.duration"
 
-  # transform/deployments:
-  #   log_statements:
-  #     - context: log
-  #       statements:
-  #         - merge_maps(attributes, ParseJSON(body), "upsert")
-  #         - set(attributes["name"], attributes["workflow"]["name"]) where attributes["workflow"]["name"] != nil
-  #         - set(attributes["created_at"], attributes["deployment"]["created_at"]) where attributes["deployment"]["created_at"] != nil
-  #         - set(attributes["status"], attributes["deployment_status"]["state"]) where attributes["deployment_status"]["state"] != nil
-  #         - set(attributes["sha"], attributes["deployment"]["sha"]) where attributes["deployment"]["sha"] != nil
-  #         - set(attributes["user"], attributes["deployment"]["creator"]["login"]) where attributes["deployment"]["creator"]["login"] != nil
-  #         - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
-  #         - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
-  #         - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
   #
   # transform/pull_requests:
   #   log_statements:
@@ -109,6 +96,42 @@ processors:
         - not IsMatch(body, "issue")
         # - not IsMatch(body, "issue") or not IsMatch(body, "deployment")
 
+  transform/gha-deployments:
+    log_statements:
+      - context: log
+        statements:
+          - set(body, ParseJSON(body)) where body != nil
+          - keep_keys(body, ["deployment", "sha", "ref", "deployment_status", "workflow", "worflow_run", "topics", "repository"])
+          - keep_keys(body["deployment"], ["url", "id", "task", "environment", "created_at", "updated_at"]) where body["deployment"] != nil
+          - keep_keys(body["deployment_status"], ["state", "url", "environment"]) where body["deployment_status"] != nil
+          - keep_keys(body["workflow"], ["name", "path", "url"]) where body["workflow"] != nil
+          - keep_keys(body["workflow_run"], ["head_branch", "head_sha", "display_title", "run_number", "status", "workflow_id"]) where body["workflow_run"] != nil
+          - keep_keys(body["repository"], ["name", "full_name", "owner"]) where body["repository"] != nil
+          - keep_keys(body["repository"]["owner"], ["login"]) where body["repository"]["owner"] != nil
+          - set(attributes["repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
+          - set(attributes["repository.owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
+          - set(attributes["topics"], body["repository"]["topics"]) where body["repository"]["topics"] != nil
+          - set(attributes["deployment.state"], body["deployment_status"]["state"]) where body["deployment_status"]["state"] != nil
+          - set(attributes["deployment.environment"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
+
+  attributes/gha-deployments:
+    actions:
+      - action: upsert
+        key: loki.attribute.labels
+        value: deployment.state, deployment.environment, topics
+
+  resource/gha-deployments:
+    attributes:
+      - action: upsert
+        key: loki.resource.labels
+        value: environment.name, repository.name, repository.owner
+
+  filter/gha-deployments:
+    error_mode: ignore
+    logs:
+      log_record:
+        - not IsMatch(body, "deployment")
+
 exporters:
   debug:
     verbosity: detailed
@@ -139,10 +162,17 @@ service:
         - debug
         - otlp
 
-#    logs/deployments:
-#      receivers: [webhookevent]
-#      processors: [transform/deployments, attributes/deployments, filter/deployments]
-#      exporters: [debug, otlp]
+    logs/gha-deployments:
+      receivers:
+        - webhookevent
+      processors:
+        - transform/gha-deployments
+        - filter/gha-deployments
+        - attributes/gha-deployments
+        - resource/gha-deployments
+      exporters:
+        - debug
+        - otlp
 #
 #    logs/pull_requests:
 #      receivers: [webhookevent]
