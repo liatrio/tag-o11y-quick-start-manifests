@@ -2,17 +2,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: http-collector-ingress
+  name: http-kibana-ingress
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
   - http:
       paths:
-      - path: /v1/traces
+      - path: /
         pathType: Prefix
         backend:
           service:
-            name: gateway-eck-collector
+            name: kibana-kb-http
             port:
-              number: 4318
+              number: 5601

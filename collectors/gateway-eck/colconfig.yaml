@@ -15,7 +15,7 @@ exporters:
   otlphttp:
     endpoint: "http://eck-stack-apm-server-apm-http.elastic-system.svc:8200"
     headers:
-      Authorization: 'Bearer $secret-token'
+      Authorization: "Bearer ${env:secret-token}"
 
 service:
   pipelines:

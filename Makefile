@@ -48,6 +48,9 @@ eck-operator:
 .PHONY: eck
 eck: cert-manager otel-operator eck-operator
 	kubectl apply -k ./apps/eck/
+	sleep 10
+	kubectl wait --for condition=Available --timeout=600s -n elastic-system deployment/eck-stack-apm-server-apm-server
+	./scripts/copy-adm-secret.sh
 	kubectl apply -k ./collectors/gateway-eck/
 
 .PHONY: dora

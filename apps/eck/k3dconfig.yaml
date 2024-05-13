@@ -1,0 +1,11 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: otel-demo
+ports:
+  - port: 4318:80
+    nodeFilters:
+      - loadbalancer
+  - port: 5601:80
+    nodeFilters:
+      - loadbalancer
