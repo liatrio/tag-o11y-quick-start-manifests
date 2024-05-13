@@ -1,0 +1,15 @@
+---
+# Add 'documentation' label to any change to *.md files
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: '**/*.md'
+
+# Add 'github_actions' label to any change .github/ directory
+github_actions:
+  - changed-files:
+      - any-glob-to-any-file: .github/**
+
+# Add 'build' to any config files or makefiles
+make:
+  - changed-files:
+      - any-glob-to-any-file: '**/Makefile*'

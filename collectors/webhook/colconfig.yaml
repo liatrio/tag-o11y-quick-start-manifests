@@ -1,0 +1,180 @@
+---
+extensions:
+  health_check:
+
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+receivers:
+  ## Webhookevent receiver is used to connect to a GitHub App and receive json event logs
+  ## The processors are used to extract/filter all the meaningful data from those logs
+  webhookevent:
+    endpoint: 0.0.0.0:8088
+    path: /events
+    health_path: /healthcheck
+
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: otel-webhook-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets: [0.0.0.0:8888]
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 75
+    spike_limit_percentage: 15
+
+  batch:
+    send_batch_size: 100
+    timeout: 10s
+
+  # filter/ottl:
+  #   error_mode: ignore
+  #   metrics:
+  #     metric:
+  #       - name == "rpc.server.duration"
+
+  # transform:
+  #   metric_statements:
+  #     - context: metric
+  #       statements:
+  #         - set(description, "") where name == "queueSize"
+  #         - set(description, "") where name == "http.client.duration"
+
+  #
+  # transform/pull_requests:
+  #   log_statements:
+  #     - context: log
+  #       statements:
+  #         - merge_maps(attributes, ParseJSON(body), "upsert")
+  #         - set(attributes["title"], attributes["pull_request"]["title"]) where attributes["pull_request"]["title"] != nil
+  #         - set(attributes["merged_at"], attributes["pull_request"]["merged_at"]) where attributes["pull_request"]["merged_at"] != nil
+  #         - set(attributes["sha"], attributes["pull_request"]["merge_commit_sha"]) where attributes["pull_request"]["merge_commit_sha"] != nil
+  #         - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
+  #         - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
+  #         - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
+
+  # Issue transformation to get LogRecord Events from GitHub
+  transform/issues:
+    log_statements:
+      - context: log
+        statements:
+          - set(body, ParseJSON(body)) where body != nil
+          - keep_keys(body, ["issue", "action", "resources", "instrumentation_scope", "repository"])
+          - keep_keys(body["repository"], ["name", "full_name", "owner", "topics"]) where body["repository"] != nil
+          - keep_keys(body["repository"]["owner"], ["login"]) where body["repository"]["owner"] != nil
+          - keep_keys(body["issue"], ["created_at", "closed_at", "labels", "number", "repository_url", "state"]) where body["issue"] != nil
+          - set(attributes["repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
+          - set(attributes["repository.owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
+          - set(attributes["action"], body["action"]) where body["action"] != nil
+          - set(attributes["created_at"], body["issue"]["created_at"]) where body["issue"]["created_at"] != nil
+          - set(attributes["closed_at"], body["issue"]["closed_at"]) where body["issue"]["closed_at"] != nil
+          - set(attributes["topics"], body["repository"]["topics"]) where body["repository"]["topics"] != nil
+
+  attributes/issues:
+    actions:
+      - action: upsert
+        key: loki.attribute.labels
+        value: action, created_at, closed_at, issue_labels, topics
+
+  resource/issues:
+    attributes:
+      - action: upsert
+        key: loki.resource.labels
+        value: environment.name, repository.name, repository.owner
+
+  filter/issues:
+    error_mode: ignore
+    logs:
+      log_record:
+        - not IsMatch(body, "issue")
+        # - not IsMatch(body, "issue") or not IsMatch(body, "deployment")
+
+  transform/gha-deployments:
+    log_statements:
+      - context: log
+        statements:
+          - set(body, ParseJSON(body)) where body != nil
+          - keep_keys(body, ["deployment", "sha", "ref", "deployment_status", "workflow", "worflow_run", "topics", "repository"])
+          - keep_keys(body["deployment"], ["url", "id", "task", "environment", "created_at", "updated_at"]) where body["deployment"] != nil
+          - keep_keys(body["deployment_status"], ["state", "url", "environment"]) where body["deployment_status"] != nil
+          - keep_keys(body["workflow"], ["name", "path", "url"]) where body["workflow"] != nil
+          - keep_keys(body["workflow_run"], ["head_branch", "head_sha", "display_title", "run_number", "status", "workflow_id"]) where body["workflow_run"] != nil
+          - keep_keys(body["repository"], ["name", "full_name", "owner"]) where body["repository"] != nil
+          - keep_keys(body["repository"]["owner"], ["login"]) where body["repository"]["owner"] != nil
+          - set(attributes["repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
+          - set(attributes["repository.owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
+          - set(attributes["topics"], body["repository"]["topics"]) where body["repository"]["topics"] != nil
+          - set(attributes["deployment.state"], body["deployment_status"]["state"]) where body["deployment_status"]["state"] != nil
+          - set(attributes["deployment.environment"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
+
+  attributes/gha-deployments:
+    actions:
+      - action: upsert
+        key: loki.attribute.labels
+        value: deployment.state, deployment.environment, topics
+
+  resource/gha-deployments:
+    attributes:
+      - action: upsert
+        key: loki.resource.labels
+        value: environment.name, repository.name, repository.owner
+
+  filter/gha-deployments:
+    error_mode: ignore
+    logs:
+      log_record:
+        - not IsMatch(body, "deployment")
+
+exporters:
+  debug:
+    verbosity: detailed
+    sampling_initial: 2
+    sampling_thereafter: 500
+
+  otlp:
+    endpoint: http://gateway-collector.collector.svc.cluster.local:4317
+    tls:
+      insecure: true
+
+service:
+  extensions:
+    - health_check
+    - pprof
+    - zpages
+
+  pipelines:
+    logs/issues:
+      receivers:
+        - webhookevent
+      processors:
+        - transform/issues
+        - filter/issues
+        - attributes/issues
+        - resource/issues
+      exporters:
+        - debug
+        - otlp
+
+    logs/gha-deployments:
+      receivers:
+        - webhookevent
+      processors:
+        - transform/gha-deployments
+        - filter/gha-deployments
+        - attributes/gha-deployments
+        - resource/gha-deployments
+      exporters:
+        - debug
+        - otlp
+#
+#    logs/pull_requests:
+#      receivers: [webhookevent]
+#      processors: [transform/pull_requests, attributes/pull_requests, filter/pull_requests]
+#      exporters: [debug, otlp]

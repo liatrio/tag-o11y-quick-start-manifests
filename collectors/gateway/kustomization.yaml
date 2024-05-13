@@ -5,7 +5,10 @@ kind: Kustomization
 namespace: collector
 
 resources:
+  - ../../cluster-infra/namespace
   - ../base/
+  - rbac.yaml
+  - sa.yaml
 
 patches:
   - target:

@@ -9,6 +9,9 @@ urls = @echo "\
 	Tempo: http://localhost:4317\n\
 	Prometheus: http://localhost:9090\
 "
+NGROK_NS=ngrok-ingress
+NGROK_AT = ${NGROK_AUTHTOKEN}
+NGROK_AK = ${NGROK_API_KEY}
 
 .PHONY: default
 default: cert-manager otel-operator
@@ -46,6 +49,21 @@ eck-operator:
 eck: cert-manager otel-operator eck-operator
 	kubectl apply -k ./apps/eck/
 	kubectl apply -k ./collectors/gateway-eck/
+
+.PHONY: dora
+dora: default
+	kubectl apply -k ./collectors/webhook/
+
+.PHONY: ngrok
+ngrok:
+	helm repo add ngrok https://ngrok.github.io/kubernetes-ingress-controller
+	kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+	helm upgrade -i ngrok-ingress-controller ngrok/kubernetes-ingress-controller \
+		--namespace ngrok-ingress \
+		--create-namespace \
+		--set credentials.apiKey="$(NGROK_AK)" \
+		--set credentials.authtoken="$(NGROK_AT)"
+
 
 apply-basic:
 	@kustomize build ./cert-manager/ | kubectl apply -f -

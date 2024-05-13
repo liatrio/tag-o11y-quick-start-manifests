@@ -6,6 +6,8 @@ namespace: collector
 
 resources:
   - ../base/
+  - sa.yaml
+  - ngrok-route.yaml
 
 patches:
   - target:
@@ -14,12 +16,17 @@ patches:
     patch: |-
       - op: replace
         path: /metadata/name
-        value: gitproviderreceiver
-      - op: add
-        path: /spec/envFrom
-        value: 
-          - secretRef:
-              name: github-pat
+        value: otel-webhook-collector
+      - op: replace
+        path: /spec/serviceAccount
+        value: otel-webhook-collector
+      - op: replace
+        path: /spec/ports
+        value:
+          - name: webhook-port
+            port: 8088
+            protocol: TCP
+            targetPort: 8088
 
 configMapGenerator:
   - name: collector-config

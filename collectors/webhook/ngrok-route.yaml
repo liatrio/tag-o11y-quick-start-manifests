@@ -1,0 +1,40 @@
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: HTTPRoute
+# metadata:
+#   name: otel-webhook-route
+#   namespace: collector
+# spec:
+#   parentRefs:
+#     - kind: Gateway
+#       name: otel-webhook-gateway
+#       namespace: collector
+#   hostnames:
+#     - "actual-wanted-satyr.ngrok-free.app"
+#   rules:
+#     - matches:
+#         - path:
+#             type: PathPrefix
+#             value: /events
+#       backendRefs:
+#         - name: otel-webhook-collector
+#           kind: Service
+#           port: 8080
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: otel-webhook-ingress
+  # annotations:
+  #   k8s.ngrok.com/modules: ngrok-module-set
+spec:
+  ingressClassName: ngrok
+  rules:
+    - host: actual-wanted-satyr.ngrok-free.app
+      http:
+        paths:
+          - path: /events
+            pathType: Prefix
+            backend:
+              service:
+                name: otel-webhook-collector-collector
+                port:
+                  number: 8088
