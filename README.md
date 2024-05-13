@@ -42,12 +42,15 @@ make
 ### Git Provider Receiver (GitHub)
 
 To deploy the GitProvider Receiver:
+
+> Make sure the [Quick Start](#quick-start) has been run first.
+
 1. Create a GitHub PAT
-2. Create a `.env` file at the root containing the PAT
+2. Create a `.env` file at the root containing the PAT **Nothing Else Aside from the PAT**
 3. Create a kubernetes secret with that PAT by running
 
 ```bash
-kubectl create secret generic github-path --from-file=GH_PAT=./.env \
+kubectl create secret generic github-pat --from-file=GH_PAT=./.env \
 --namespace collector
 ```
 4. Run `make gpr`
