@@ -1,0 +1,150 @@
+eck-elasticsearch:
+  enabled: true
+  # This is adjusting the full name of the elasticsearch resource so that both the eck-elasticsearch
+  # and the eck-kibana chart work together by default in the eck-stack chart.
+  fullnameOverride: elasticsearch
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+
+# If enabled, will use the eck-kibana chart and deploy a Kibana resource.
+#
+eck-kibana:
+  enabled: true
+  fullnameOverride: kibana
+  spec:
+    http:
+      tls:
+        selfSignedCertificate:
+          disabled: true
+    # This is also adjusting the kibana reference to the elasticsearch resource named previously so that
+    # both the eck-elasticsearch and the eck-kibana chart work together by default in the eck-stack chart.
+    elasticsearchRef:
+      name: elasticsearch
+    config:
+      xpack.fleet.agents.fleet_server.hosts: ["http://fleet-server-agent-http.elastic-system.svc:8220"]
+      xpack.fleet.outputs:
+        - id: fleet-default-output
+          name: default
+          type: elasticsearch
+          hosts: ["http://elasticsearch-es-http.elastic-system.svc:9200"]
+          is_default: true
+          is_default_monitoring: true
+      xpack.fleet.packages:
+        - name: fleet_server
+          version: latest
+        - name: system
+          version: latest
+        - name: elastic_agent
+          version: latest
+        - name: docker
+          version: latest
+        - name: apm
+          version: latest
+      xpack.fleet.agentPolicies:
+        - name: Fleet Server Policy
+          id: fleet-server-policy
+          description: Static agent policy for Fleet Server
+          monitoring_enabled:
+            - logs
+            - metrics
+          package_policies:
+            - name: fleet_server-1
+              package:
+                name: fleet_server
+            - name: system-1
+              package:
+                name: system
+            - name: elastic_agent-1
+              package:
+                name: elastic_agent
+            - name: docker-1
+              package:
+                name: docker
+        - name: Agent Policy APM Server
+          id: agent-policy-apm-server
+          description: Static agent policy for the APM Server integration
+          monitoring_enabled:
+            - logs
+            - metrics
+          package_policies:
+            - name: system-1
+              package:
+                name: system
+            - name: elastic_agent-1
+              package:
+                name: elastic_agent
+            - name: apm-1
+              package:
+                name: apm
+              inputs:
+                - type: apm
+                  vars:
+                    - name: host
+                      value: 0.0.0.0:8200
+                    - name: url
+                      value: http://eck-stack-apm-server-apm-http.elastic-system.svc:8200
+
+# If enabled, will use the eck-fleet-server chart and deploy a Fleet Server resource.
+#
+eck-fleet-server:
+  enabled: true
+  fullnameOverride: "fleet-server"
+  spec:
+    http:
+      tls:
+        selfSignedCertificate:
+          disabled: true
+    # Agent policy to be used.
+    policyID: fleet-server-policy
+    kibanaRef:
+      name: kibana
+    elasticsearchRefs:
+    - name: elasticsearch
+
+# If enabled, will use the eck-agent chart and deploy an Elastic Agent instance.
+#
+eck-agent:
+  enabled: false
+  spec:
+    # This must match the name of an Agent policy.
+    policyID: agent-policy-apm-server
+    # This must match the name of the fleet server installed from eck-fleet-server chart.
+    fleetServerRef:
+      name: fleet-server
+    kibanaRef:
+      name: kibana
+    mode: fleet
+    # elasticsearchRefs must be empty when fleet mode is enabled.
+    elasticsearchRefs: []
+    daemonSet:
+      podTemplate:
+        spec:
+          serviceAccountName: elastic-agent
+          hostNetwork: true
+          dnsPolicy: ClusterFirstWithHostNet
+          automountServiceAccountToken: true
+          securityContext:
+            runAsUser: 0
+
+
+# If enabled, will use the eck-apm-server chart and deploy a standalone APM Server resource.
+#
+eck-apm-server:
+  enabled: true
+  nameOverride: apm-server
+  elasticsearchRef:
+    name: elasticsearch
+  kibanaRef:
+    name: kibana
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+    service:
+      spec:
+        ports:
+        - name: http
+          port: 8200
+          targetPort: 8200

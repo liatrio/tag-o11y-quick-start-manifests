@@ -1,0 +1,13 @@
+kubeVersion: v1.28
+
+repositories:
+- name: elastic
+  url: https://helm.elastic.co
+
+releases:
+- name: eck-stack
+  namespace: elastic-system
+  version: 0.10.0
+  chart: elastic/eck-stack
+  values:
+    - values.yaml

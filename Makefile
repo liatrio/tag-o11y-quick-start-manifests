@@ -9,7 +9,6 @@ urls = @echo "\
 	Tempo: http://localhost:4317\n\
 	Prometheus: http://localhost:9090\
 "
-
 NGROK_NS=ngrok-ingress
 NGROK_AT = ${NGROK_AUTHTOKEN}
 NGROK_AK = ${NGROK_API_KEY}
@@ -17,7 +16,7 @@ NGROK_AK = ${NGROK_API_KEY}
 .PHONY: default
 default: cert-manager otel-operator
 	kubectl apply -k ./collectors/gateway/
-	kubectl apply -k ./apps/
+	kubectl apply -k ./apps/default
 	$(call urls)
 
 .PHONY: %-silent
@@ -34,11 +33,26 @@ cert-manager:
 .PHONY: otel-operator
 otel-operator:
 	kubectl apply -k ./cluster-infra/otel-operator/
+	kubectl apply -k ./cluster-infra/rbac/
 	kubectl wait --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
 
 .PHONY: gpr
 gpr: default
 	kubectl apply -k ./collectors/gitproviderreceiver/
+
+.PHONY: eck-operator
+eck-operator:
+	kubectl apply -k ./cluster-infra/eck-operator/
+	kubectl -n elastic-system rollout status --watch --timeout=30s statefulset/elastic-operator
+
+.PHONY: eck
+eck: cert-manager otel-operator eck-operator
+	kubectl apply -k ./apps/eck/
+	kubectl wait --for jsonpath='{.status.health}'=green -n elastic-system --timeout=30s apmserver/eck-stack-apm-server
+	kubectl -n collector create secret generic eck-stack-apm-server-apm-token \
+  	--from-literal secret-token="$$(kubectl -n elastic-system get secret eck-stack-apm-server-apm-token \
+  	-o jsonpath="{.data.secret-token}" | base64 --decode)"
+	kubectl apply -k ./collectors/gateway-eck/
 
 .PHONY: dora
 dora: default
@@ -100,7 +114,6 @@ delete-traces:
 	kustomize build ./otel-operator/ | kubectl delete --ignore-not-found -f -
 	kubectl delete -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml
 	kustomize build ./cert-manager/ | kubectl delete --ignore-not-found -f -
-
 
 delete-cert-manager:
 	kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml

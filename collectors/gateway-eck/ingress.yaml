@@ -1,0 +1,18 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: http-collector-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /v1/traces
+        pathType: Prefix
+        backend:
+          service:
+            name: gateway-eck-collector
+            port:
+              number: 4318
