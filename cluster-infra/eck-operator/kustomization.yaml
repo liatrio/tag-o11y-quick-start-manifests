@@ -2,11 +2,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: elastic-system
-
 resources:
-  - ../../cluster-infra/namespace
-  - helm-chart.yaml
+  - https://download.elastic.co/downloads/eck/2.12.1/crds.yaml
+  - https://download.elastic.co/downloads/eck/2.12.1/operator.yaml
 
 generatorOptions:
   labels:
