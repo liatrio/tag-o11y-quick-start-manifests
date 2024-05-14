@@ -50,7 +50,9 @@ eck: cert-manager otel-operator eck-operator
 	kubectl apply -k ./apps/eck/
 	sleep 10
 	kubectl wait --for condition=Available --timeout=600s -n elastic-system deployment/eck-stack-apm-server-apm-server
-	./scripts/copy-adm-secret.sh
+	kubectl -n collector create secret generic eck-stack-apm-server-apm-token \
+  	--from-literal secret-token="$$(kubectl -n elastic-system get secret eck-stack-apm-server-apm-token \
+  	-o jsonpath="{.data.secret-token}" | base64 --decode)"
 	kubectl apply -k ./collectors/gateway-eck/
 
 .PHONY: dora
