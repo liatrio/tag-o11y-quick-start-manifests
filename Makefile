@@ -48,8 +48,7 @@ eck-operator:
 .PHONY: eck
 eck: cert-manager otel-operator eck-operator
 	kubectl apply -k ./apps/eck/
-	sleep 10
-	kubectl wait --for condition=Available --timeout=600s -n elastic-system deployment/eck-stack-apm-server-apm-server
+	kubectl wait --for jsonpath='{.status.health}'=green -n elastic-system --timeout=30s apmserver/eck-stack-apm-server
 	kubectl -n collector create secret generic eck-stack-apm-server-apm-token \
   	--from-literal secret-token="$$(kubectl -n elastic-system get secret eck-stack-apm-server-apm-token \
   	-o jsonpath="{.data.secret-token}" | base64 --decode)"
