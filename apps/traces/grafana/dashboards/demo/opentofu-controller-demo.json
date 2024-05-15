@@ -91,7 +91,7 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.applied=\"true\"} >> {.module_ref!=\"nil\" && .module_source=\"$module_source\"}",
+          "query": "{.applied=\"true\" && .service.name=\"OpenTofu Controller\"} >> {.team=\"$team\"} >> {.module_ref!=\"nil\" && .module_source=\"$module_source\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
@@ -104,9 +104,9 @@
           "options": {
             "excludeByName": {
               "Duration": true,
-              "Name": true,
+              "Name": false,
               "Trace Name": true,
-              "traceIdHidden": true
+              "traceIdHidden": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -208,7 +208,7 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.applied=\"true\"} >> {.module_ref!=\"nil\" && .module_source=\"$module_source\"}",
+          "query": "{.applied=\"true\" && .service.name=\"OpenTofu Controller\"} >> {.team=\"$team\"} >> {.module_ref!=\"nil\" && .module_source=\"$module_source\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
@@ -315,7 +315,7 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.service.name=\"OpenTofu Controller\"}>>{.module_ref!=\"nil\" && .module_source=\"$module_source\"}",
+          "query": "{.service.name=\"OpenTofu Controller\"} >> {.team=\"$team\"} >> {.module_ref!=\"nil\" && .module_source=\"$module_source\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
@@ -328,9 +328,9 @@
           "options": {
             "excludeByName": {
               "Duration": true,
-              "Name": true,
+              "Name": false,
               "Trace Name": true,
-              "traceIdHidden": true
+              "traceIdHidden": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -432,7 +432,7 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.service.name=\"OpenTofu Controller\"}>>{.module_ref!=\"nil\" && .module_source=\"$module_source\"}",
+          "query": "{.service.name=\"OpenTofu Controller\"} >> {.team=\"$team\"} >> {.module_ref!=\"nil\" && .module_source=\"$module_source\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
@@ -539,7 +539,7 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.applied=\"true\"} >> {.module_with_error_source=\"$module_source\" && .module_with_error_ref!=\"nil\"}",
+          "query": "{.applied=\"true\" && .service.name=\"OpenTofu Controller\"} >> {.module_with_error_source=\"$module_source\" && .module_with_error_ref!=\"nil\" && .team=\"$team\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
@@ -552,9 +552,9 @@
           "options": {
             "excludeByName": {
               "Duration": true,
-              "Name": true,
+              "Name": false,
               "Trace Name": true,
-              "traceIdHidden": true
+              "traceIdHidden": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -656,7 +656,7 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.applied=\"true\"} >> {.module_with_error_source=\"$module_source\" && .module_with_error_ref!=\"nil\"}",
+          "query": "{.applied=\"true\" && .service.name=\"OpenTofu Controller\"} >> {.module_with_error_source=\"$module_source\" && .module_with_error_ref!=\"nil\" && .team=\"$team\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
@@ -790,7 +790,7 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.module_ref!=\"nil\" && .module_source!=\"nil\"}",
+          "query": "{.service.name=\"OpenTofu Controller\"} >> {.team=\"$team\"} >> {.module_ref!=\"nil\" && .module_source!=\"nil\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
@@ -838,38 +838,6 @@
         "current": {
           "selected": false,
           "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "tempo",
-          "uid": "tempo"
-        },
-        "definition": "",
-        "hide": 0,
-        "includeAll": true,
-        "label": "module_ref",
-        "multi": true,
-        "name": "module_ref",
-        "options": [],
-        "query": {
-          "label": "module_ref",
-          "refId": "TempoDatasourceVariableQueryEditor-VariableQuery",
-          "type": 1
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": [
             "rhoofard/sample-tf-module2"
           ],
           "value": [
@@ -897,17 +865,45 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "o11y",
+          "value": "o11y"
+        },
+        "datasource": {
+          "type": "tempo",
+          "uid": "tempo"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "team",
+        "multi": false,
+        "name": "team",
+        "options": [],
+        "query": {
+          "label": "team",
+          "refId": "TempoDatasourceVariableQueryEditor-VariableQuery",
+          "type": 1
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "OpenTofu controller dashboard",
   "uid": "231231232",
-  "version": 6,
+  "version": 13,
   "weekStart": ""
 }
