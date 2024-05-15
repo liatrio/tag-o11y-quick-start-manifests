@@ -36,6 +36,7 @@
             "cellOptions": {
               "type": "auto"
             },
+            "filterable": false,
             "inspect": false
           },
           "mappings": [],
@@ -99,31 +100,17 @@
       "title": "Adoption by Version",
       "transformations": [
         {
-          "disabled": true,
-          "id": "groupBy",
+          "id": "organize",
           "options": {
-            "fields": {
-              "Span ID": {
-                "aggregations": [],
-                "operation": "aggregate"
-              },
-              "Trace Name": {
-                "aggregations": [
-                  "count"
-                ],
-                "operation": "aggregate"
-              },
-              "module_ref": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "traceName": {
-                "aggregations": [
-                  "count"
-                ],
-                "operation": "aggregate"
-              }
-            }
+            "excludeByName": {
+              "Duration": true,
+              "Name": true,
+              "Trace Name": true,
+              "traceIdHidden": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
           }
         }
       ],
@@ -334,34 +321,20 @@
           "tableType": "spans"
         }
       ],
-      "title": "Adoption by Version",
+      "title": "Adoption by Version including ones not applied",
       "transformations": [
         {
-          "disabled": true,
-          "id": "groupBy",
+          "id": "organize",
           "options": {
-            "fields": {
-              "Span ID": {
-                "aggregations": [],
-                "operation": "aggregate"
-              },
-              "Trace Name": {
-                "aggregations": [
-                  "count"
-                ],
-                "operation": "aggregate"
-              },
-              "module_ref": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "traceName": {
-                "aggregations": [
-                  "count"
-                ],
-                "operation": "aggregate"
-              }
-            }
+            "excludeByName": {
+              "Duration": true,
+              "Name": true,
+              "Trace Name": true,
+              "traceIdHidden": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
           }
         }
       ],
@@ -505,28 +478,14 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -551,29 +510,20 @@
         "x": 0,
         "y": 16
       },
-      "id": 12,
+      "id": 15,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
         },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xField": "module_ref",
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
+        "showHeader": true
       },
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "datasource": {
@@ -589,43 +539,30 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.module_ref!=\"nil\" && .module_source!=\"nil\"}",
+          "query": "{.applied=\"true\"} >> {.module_with_error_source=\"$module_source\" && .module_with_error_ref!=\"nil\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
         }
       ],
-      "title": "Adoption by Version",
+      "title": "Errors by Version",
       "transformations": [
         {
-          "id": "groupBy",
+          "id": "organize",
           "options": {
-            "fields": {
-              "Span ID": {
-                "aggregations": [],
-                "operation": "aggregate"
-              },
-              "Trace Name": {
-                "aggregations": [
-                  "count"
-                ],
-                "operation": "aggregate"
-              },
-              "module_ref": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "traceName": {
-                "aggregations": [
-                  "count"
-                ],
-                "operation": "aggregate"
-              }
-            }
+            "excludeByName": {
+              "Duration": true,
+              "Name": true,
+              "Trace Name": true,
+              "traceIdHidden": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
           }
         }
       ],
-      "type": "barchart"
+      "type": "table"
     },
     {
       "datasource": {
@@ -760,9 +697,139 @@
         }
       ],
       "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 12,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "module_ref",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "filters": [
+            {
+              "id": "ed49c182",
+              "operator": "=",
+              "scope": "span"
+            }
+          ],
+          "hide": false,
+          "limit": 20,
+          "query": "{.module_ref!=\"nil\" && .module_source!=\"nil\"}",
+          "queryType": "traceql",
+          "refId": "A",
+          "tableType": "spans"
+        }
+      ],
+      "title": "Adoption by Version",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Span ID": {
+                "aggregations": [],
+                "operation": "aggregate"
+              },
+              "Trace Name": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "module_ref": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "traceName": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
+      "type": "barchart"
     }
   ],
-  "refresh": "auto",
+  "refresh": "5s",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -770,8 +837,12 @@
       {
         "current": {
           "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "tempo",
@@ -797,12 +868,12 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
-            "rhoofard/sample-tf-module"
+            "rhoofard/sample-tf-module2"
           ],
           "value": [
-            "rhoofard/sample-tf-module"
+            "rhoofard/sample-tf-module2"
           ]
         },
         "datasource": {
@@ -837,6 +908,6 @@
   "timezone": "browser",
   "title": "OpenTofu controller dashboard",
   "uid": "231231232",
-  "version": 1,
+  "version": 6,
   "weekStart": ""
 }
