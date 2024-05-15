@@ -1,0 +1,19 @@
+apiVersion: infra.contrib.fluxcd.io/v1alpha2
+kind: Terraform
+metadata:
+  name: demo2
+  labels:
+    tracing.attributes/team: o11y
+spec:
+  path: ./null2/
+  interval: 5m
+  approvePlan: auto
+  destroyResourcesOnDeletion: true
+  sourceRef:
+    kind: GitRepository
+    name: demo-source
+  runnerPodTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tf-runner
+        app.kubernetes.io/created-by: tf-controller

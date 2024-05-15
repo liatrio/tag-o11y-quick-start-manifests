@@ -68,6 +68,13 @@ ngrok:
 		--set credentials.apiKey="$(NGROK_AK)" \
 		--set credentials.authtoken="$(NGROK_AT)"
 
+.PHONY: traces
+traces: cert-manager otel-operator
+	kubectl apply -k ./apps/traces
+	@if ! kubectl create -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml; then echo "Tofu Controller CRDS already installed"; fi
+	kubectl apply -k ./cluster-infra/tofu-controller/
+
+
 
 apply-basic:
 	@kustomize build ./cert-manager/ | kubectl apply -f -

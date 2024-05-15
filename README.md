@@ -91,6 +91,12 @@ spec:
 
 <!-- TODO: Add instructions for GitLab -->
 
+## Tracing Demo
+<!-- TODO: Add explanation for what and why -->
+
+1. Run `make traces` to deploy the tracing demo
+
+
 --- 
 
 <!-- TODO: Edit this as it's now deprecated -->
