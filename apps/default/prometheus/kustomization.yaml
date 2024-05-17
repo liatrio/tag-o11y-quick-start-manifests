@@ -5,7 +5,7 @@ kind: Kustomization
 namespace: prometheus
 
 resources:
-  - ../../cluster-infra/namespace
+  - ../../../cluster-infra/namespace
   - deployment.yaml
   - rbac.yaml
   - service.yaml
