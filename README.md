@@ -16,6 +16,8 @@ It installs the following services into your local kubernetes cluster:
 
 ## Prerequisites
 
+> OSX users with [Homebrew](https://brew.sh/) installed can install the Prerequisites by running the command `brew bundle`
+
 1. Run kubernetes locally. Here are a few options:
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/): Local
   instance of Docker and k8s.

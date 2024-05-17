@@ -1,6 +1,9 @@
 # Node modules
 node_modules/
 
+#Brewfile
+Brewfile.lock.json
+
 # Logs
 logs
 *.log
