@@ -15,5 +15,6 @@ resources:
 - ./terraform1.yml
 - ./terraform2.yml
 - ./terraform3.yml
+- ./terraform4.yml
 
 

@@ -23,6 +23,7 @@ spec:
             - --log-encoding=json
             - --enable-leader-election
             - --concurrent=1
+            - --allow-cross-namespace-refs
           command:
             - /sbin/tini
             - --

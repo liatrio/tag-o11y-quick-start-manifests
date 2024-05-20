@@ -1,11 +1,9 @@
 apiVersion: infra.contrib.fluxcd.io/v1alpha2
 kind: Terraform
 metadata:
-  name: demo
-  labels:
-    tracing.attributes/team: o11y
+  name: demo4
 spec:
-  path: ./main_with_error/
+  path: ./main_no_error/
   interval: 5m
   approvePlan: auto
   destroyResourcesOnDeletion: true
@@ -18,9 +16,3 @@ spec:
       labels:
         app.kubernetes.io/name: tf-runner
         app.kubernetes.io/created-by: tf-controller
-    spec:
-      env:
-        - name: ENABLE_SENSITIVE_TF_LOGS
-          value: "1"
-        
-
