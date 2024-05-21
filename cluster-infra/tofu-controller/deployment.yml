@@ -34,7 +34,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: RUNNER_POD_IMAGE
-              value: ghcr.io/liatrio/tf-runner:v0.0.7
+              value: ghcr.io/liatrio/tf-runner:v0.0.8
             - name: "OTEL_TRACES_EXPORTER" 
               value: "otlp"
             - name: "OTEL_EXPORTER_OTLP_PROTOCOL"
