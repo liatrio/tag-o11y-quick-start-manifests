@@ -840,9 +840,29 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "displayName": "${__field.labels}",
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -866,26 +886,29 @@
         "x": 12,
         "y": 26
       },
-      "id": 21,
+      "id": 16,
       "options": {
-        "displayMode": "lcd",
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/^traceName \\(count\\)$/",
-          "values": true
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "module_source",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
-      "pluginVersion": "10.4.2",
       "targets": [
         {
           "datasource": {
@@ -901,13 +924,13 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.service.name=\"OpenTofu Controller\" && .applied=\"true\"} >> {.module_ref!=\"nil\" && .module_source!=\"nil\"}",
+          "query": "{.service.name=\"OpenTofu Controller\" && .applied=\"true\"} >> {.module_source!=\"nil\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
         }
       ],
-      "title": "Adoption",
+      "title": "Adoption by Module",
       "transformations": [
         {
           "id": "groupBy",
@@ -939,9 +962,35 @@
               }
             }
           }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "module_source": 0,
+              "traceName (count)": 1
+            },
+            "renameByName": {
+              "traceName (count)": "count"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "count"
+              }
+            ]
+          }
         }
       ],
-      "type": "bargauge"
+      "type": "barchart"
     },
     {
       "datasource": {
@@ -1070,7 +1119,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "semi-dark-red",
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -1116,7 +1166,7 @@
         "x": 12,
         "y": 34
       },
-      "id": 16,
+      "id": 17,
       "options": {
         "barRadius": 0,
         "barWidth": 0.97,
@@ -1135,7 +1185,7 @@
           "mode": "single",
           "sort": "none"
         },
-        "xField": "module_source",
+        "xField": "module",
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
@@ -1154,13 +1204,13 @@
           ],
           "hide": false,
           "limit": 20,
-          "query": "{.service.name=\"OpenTofu Controller\" && .applied=\"true\"} >> {.module_source!=\"nil\"}",
+          "query": "{.service.name=\"OpenTofu Controller\" && .applied=\"true\"} >> {.module_with_error_source!=\"nil\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
         }
       ],
-      "title": "Adoption by Module",
+      "title": "Errors by Module",
       "transformations": [
         {
           "id": "groupBy",
@@ -1184,6 +1234,10 @@
                 "aggregations": [],
                 "operation": "groupby"
               },
+              "module_with_error_source": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
               "traceName": {
                 "aggregations": [
                   "count"
@@ -1199,10 +1253,11 @@
             "excludeByName": {},
             "includeByName": {},
             "indexByName": {
-              "module_source": 0,
+              "module_with_error_source": 0,
               "traceName (count)": 1
             },
             "renameByName": {
+              "module_with_error_source": "module",
               "traceName (count)": "count"
             }
           }
@@ -1359,172 +1414,6 @@
         }
       ],
       "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "tempo",
-        "uid": "tempo"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "semi-dark-red",
-            "mode": "fixed"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 42
-      },
-      "id": 17,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xField": "module",
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "tempo",
-            "uid": "tempo"
-          },
-          "filters": [
-            {
-              "id": "ed49c182",
-              "operator": "=",
-              "scope": "span"
-            }
-          ],
-          "hide": false,
-          "limit": 20,
-          "query": "{.service.name=\"OpenTofu Controller\" && .applied=\"true\"} >> {.module_with_error_source!=\"nil\"}",
-          "queryType": "traceql",
-          "refId": "A",
-          "tableType": "spans"
-        }
-      ],
-      "title": "Errors by Module",
-      "transformations": [
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Span ID": {
-                "aggregations": [],
-                "operation": "aggregate"
-              },
-              "Trace Name": {
-                "aggregations": [
-                  "count"
-                ],
-                "operation": "aggregate"
-              },
-              "module_ref": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "module_source": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "module_with_error_source": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "traceName": {
-                "aggregations": [
-                  "count"
-                ],
-                "operation": "aggregate"
-              }
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "module_with_error_source": 0,
-              "traceName (count)": 1
-            },
-            "renameByName": {
-              "module_with_error_source": "module",
-              "traceName (count)": "count"
-            }
-          }
-        },
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {},
-            "sort": [
-              {
-                "desc": true,
-                "field": "count"
-              }
-            ]
-          }
-        }
-      ],
-      "type": "barchart"
     }
   ],
   "refresh": "5s",
@@ -1566,9 +1455,9 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "o11y",
-          "value": "o11y"
+          "selected": true,
+          "text": "flywheel",
+          "value": "flywheel"
         },
         "datasource": {
           "type": "tempo",
@@ -1595,13 +1484,13 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "OpenTofu controller dashboard",
   "uid": "231231232",
-  "version": 27,
+  "version": 34,
   "weekStart": ""
 }
