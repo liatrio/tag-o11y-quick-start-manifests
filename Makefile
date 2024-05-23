@@ -97,12 +97,16 @@ apply-default:
 	@echo "The command has been executed successfully. The Engineering Effectiveness Metrics Dashboard can be found at: http://localhost:3000"
 
 apply-traces:
-	@kustomize build ./cert-manager/ | kubectl apply -f -
-	@while ! kustomize build ./otel-operator/ | kubectl apply -f - ; do sleep 10; done 
+	kubectl apply -k ./cluster-infra/cert-manager/
+	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager
+	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-cainjector
+	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-webhook
+	@while ! kustomize build ./cluster-infra/otel-operator/ | kubectl apply -f - ; do sleep 15; done 
+	kubectl apply -k ./cluster-infra/rbac/
+	kubectl wait --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
+	@while ! kustomize build ./apps/traces | kubectl apply -f - ; do sleep 15; done 
 	@if ! kubectl create -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml; then echo "Tofu Controller CRDS already installed"; fi
-	@while ! kustomize build ./gateway-collector/overlays/local-traces/ | kubectl apply -f - ; do sleep 10; done 
-	@kustomize build ./gateway-collector/overlays/local-traces/ | kubectl apply -f - --prune -l app=grafana --prune-allowlist core/v1/ConfigMap
-	@kubectl wait --timeout=120s --for condition=Available -n collector deployment/grafana
+	@while ! kustomize build ./cluster-infra/tofu-controller/ | kubectl apply -f - ; do sleep 10; done 
 	@echo "The command has been executed successfully. The Tofu Controller Traces Dashboard can be found at: http://localhost:3000"
 
 delete-basic:
