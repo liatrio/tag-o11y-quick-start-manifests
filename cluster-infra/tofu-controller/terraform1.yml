@@ -1,7 +1,7 @@
 apiVersion: infra.contrib.fluxcd.io/v1alpha2
 kind: Terraform
 metadata:
-  name: demo
+  name: demo1
   labels:
     tracing.attributes/team: o11y
 spec:

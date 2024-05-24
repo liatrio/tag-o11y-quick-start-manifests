@@ -3,7 +3,7 @@ kind: Terraform
 metadata:
   name: demo3
   labels:
-    tracing.attributes/team: o11y
+    tracing.attributes/team: cloud
 spec:
   path: ./main_no_error/
   interval: 5m
