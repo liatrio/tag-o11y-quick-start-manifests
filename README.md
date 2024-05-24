@@ -1,5 +1,8 @@
 # tag-o11y-quick-start-manifests
 
+> [!NOTE]
+> [DevOps Days Montreal Demo](#visiting-here-from-devops-days-montreal-heres-your-demo)
+
 This set of manifests gets a local obersvability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
@@ -94,6 +97,7 @@ spec:
 <!-- TODO: Add instructions for GitLab -->
 
 # Visiting here from DevOps Days Montreal? Here's your Demo!
+![image](content/logo.png)
 ## Getting Started
 
 1. To run the demo, you will need to have a Kubernetes cluster running locally as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create a local cluster.  If you do not have these installed, you can install them by running one of the followings commands depending on your OS:
