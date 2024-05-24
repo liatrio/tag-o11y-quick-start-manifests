@@ -148,7 +148,13 @@ spec:
 ```bash
 make delete-traces
 ```
+## Components
 
+### Tofu Controller
+We have an instrumented version of the flux-iac Tofu Controller which is part of what makes this demo possible.  Our fork with the changes are [here](https://github.com/liatrio/tofu-controller/tree/tracing)
+
+### OpenTofu
+The other core piece of the demo is our instrumented version of the OpenTofu binary.  Similarly our fork with the changes are [here](https://github.com/liatrio/opentofu/tree/tracing)
 ## Configuration
 
 #### Tofu Controller
