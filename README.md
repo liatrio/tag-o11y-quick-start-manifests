@@ -96,7 +96,7 @@ spec:
 # Visiting here from DevOps Days Montreal? Here's your Demo!
 ## Getting Started
 
-1. To run the demo, you will need to have a Kubernetes cluster running locally as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create a local cluster.  If you do not have these installed, you can install them with Homebrew by running the followings commands depending on your OS:
+1. To run the demo, you will need to have a Kubernetes cluster running locally as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create a local cluster.  If you do not have these installed, you can install them by running one of the followings commands depending on your OS:
 
 Linux
 ```bash
