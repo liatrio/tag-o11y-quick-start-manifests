@@ -108,19 +108,24 @@ Mac
 brew install k3d
 brew install kubectl
 ```
+
 2. Once we have these prerequisites installed, we can actually deploy the local cluster by running the following command:
 ```bash
 k3d cluster create mycluster
 ```
+
 3. Once the cluster is created, we can actually deploy the demo resources themselves by running:
 ```bash
 make apply-traces
 ```
+
 4. Verify that the namespaces are present and the pods are running.  They should look like this:
 ![image](content/namespaces.png)
 ![image](content/all_pods.png)
+
 5. Once everything is up and looking healthy, we can portforward the Grafana service to view the dashboard by doing the following:
 ![image](content/portforwarding.png)
+
 6. Once the portforwarding is setup, you can visit the Grafana dashboard by visiting `http://localhost:3000` in your browser. The dashboard will be the only one in the demo folder and will look like this:
 ![image](content/dashboard.png)
 > [!IMPORTANT]
