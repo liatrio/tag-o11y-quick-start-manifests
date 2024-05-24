@@ -138,6 +138,7 @@ spec:
 
 6. Once the port-forward is setup, you can visit the Grafana dashboard by visiting `http://localhost:3000` in your browser. The dashboard will be the only one in the demo folder and will look like this:
   <img src="content/dashboard.png" width="1000">
+  
   > [!IMPORTANT]
   > Grafana will ask for a login which will just be the default credentials of `username:admin password:admin`. It will ask you to change it but you can skip this step if you would like.
 
