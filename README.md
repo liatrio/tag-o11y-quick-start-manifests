@@ -12,6 +12,11 @@ It installs the following services into your local kubernetes cluster:
 * Liatrio OpenTelemetry Collector
 * NGrok Ingress and API Gateway Controller
 
+
+> [!IMPORTANT]
+> Visiting here from DevOps Days Montreal? Your demo is [here](#tracing-demo)
+
+
 # Getting Started
 
 ## Prerequisites
@@ -90,40 +95,86 @@ spec:
     - host: example.ngrok-free.app
 ```
 7. Run `make dora`
-
+   
 <!-- TODO: Add instructions for GitLab -->
 
-## Tracing Demo
-#### Startup
-To deploy the tracing demo which uses an instrumented tofu-controller and opentofu binary, some sample terraform resources to generate the traces, and Grafana with a custom dashboard to view the data among other supporting services, run the following command:
+# Tracing Demo
 
-```bash
-make apply-traces
-```
-> Port forward the Grafana pod to be able to view the tracing dashboard on your local machine. Default Grafana credentials are admin/admin.
-#### Cleanup
+
+<img src="content/logo3.png" alt="logo" width="700">
+
+## Getting Started
+
+1. To run the demo, you will need to have a Kubernetes cluster running locally as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create a local cluster.  If you do not have these installed, you can install them by running one of the followings commands depending on your OS:
+   
+   **Linux**
+   ```bash
+   curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+   ```
+   **Mac**
+   ```bash
+   brew install k3d
+   brew install kubectl
+   ```
+
+2. Once we have these prerequisites installed, we can actually deploy the local cluster by running the following command:
+   ```bash
+   k3d cluster create mycluster
+   ```
+
+3. Once the cluster is created, we can actually deploy the demo resources themselves by running:
+   ```bash
+   make apply-traces
+   ```
+
+4. Verify that the namespaces are present and the pods are running.  They should look like this:
+   
+    <img src="content/namespaces.png" width="400">
+    <img src="content/all_pods.png" width="900">
+
+5. Once everything is up and looking healthy, we can portforward the Grafana service to view the dashboard by doing the following:
+  <img src="content/portforwarding.png" width="500">
+
+6. Once the port-forward is setup, you can visit the Grafana dashboard by visiting `http://localhost:3000` in your browser. The dashboard will be the only one in the demo folder and will look like this:
+  <img src="content/dashboard.png" width="1000">
+  > [!IMPORTANT]
+  > Grafana will ask for a login which will just be the default credentials of `username:admin password:admin`. It will ask you to change it but you can skip this step if you would like.
+
+### Cleanup
 
 ```bash
 make delete-traces
 ```
+# Components
 
---- 
+### Tofu Controller
+We have an instrumented version of the flux-iac Tofu Controller which is part of what makes this demo possible.  Our fork with the changes are [here](https://github.com/liatrio/tofu-controller/tree/tracing)
 
-<!-- TODO: Edit this as it's now deprecated -->
+### OpenTofu
+The other core piece of the demo is our instrumented version of the OpenTofu binary.  Similarly our fork with the changes are [here](https://github.com/liatrio/opentofu/tree/tracing)
 
-## Configuration
+# Configuration
 
-#### Tofu Controller
+### Tofu Controller
 
-To be able to use the Tofu Controller after deploying the tracing demo with your own terraform, you will need to do the following.
+To be able to use the Tofu Controller after deploying the `traces`
+configuration with your own terraform, you will need to do the following.
 
-1. Update the `source_control.yml` file in the `local-traces` overlay so that
+1. Update the `source_control.yml` file in the `cluster-infra/tofu-controller/` folder so that
    it points towards a repository with terraform resources inside of it.
-2. Update one of the `terraform.yml` files or create your own so it references the name of the object you
+<img src="content/source.png" width="550">
+
+2. Update one of the `terraform.yml` files in the same folder so it references the name of the object you
    created with the `source_control.yml` file in the `sourceRef` field.  Then
    update the `path` field with the specific path to the terraform resources
    you want to use inside the repository.
-3. Run `make deploy-traces` to update the resources in the cluster with the new
+<img src="content/terraform.png" width="550">
+
+
+4. If you add your own files to the folder, you will need to update the `kustomization.yml` file in the folder to include the new files if you want them to be deployed with the rest of the resources
+
+5. Run `make apply-traces` to update the resources in the cluster with the new
 configuration.
 
 >  - For the purposes of the tracing demo these will by default be configured
@@ -132,4 +183,3 @@ configuration.
 >  - Deploying kubernetes resources is also possible but requires you to update
 >  the `tf-runner` service account with a cluster role that has permissions to
 >  act on those resources.
->  - To deploy a terraform resource to a namespace outside of `flux-system` you will also need to setup a service account identical to the `tf-runner` service account in that namespace.
