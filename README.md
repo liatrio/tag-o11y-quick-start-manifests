@@ -106,27 +106,30 @@ spec:
 ## Getting Started
 
 1. To run the demo, you will need to have a Kubernetes cluster running locally as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create a local cluster.  If you do not have these installed, you can install them by running one of the followings commands depending on your OS:
+   
+   <br>
 
-Linux
-```bash
-curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-```
-Mac
-```bash
-brew install k3d
-brew install kubectl
-```
+   **Linux**
+   ```bash
+   curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+   ```
+   **Mac**
+   ```bash
+   brew install k3d
+   brew install kubectl
+   ```
+<br>
 
 2. Once we have these prerequisites installed, we can actually deploy the local cluster by running the following command:
-```bash
-k3d cluster create mycluster
-```
+   ```bash
+   k3d cluster create mycluster
+   ```
 
 3. Once the cluster is created, we can actually deploy the demo resources themselves by running:
-```bash
-make apply-traces
-```
+   ```bash
+   make apply-traces
+   ```
 
 4. Verify that the namespaces are present and the pods are running.  They should look like this:
 ![image](content/namespaces.png)
@@ -154,17 +157,19 @@ make delete-traces
 To be able to use the Tofu Controller after deploying the `traces`
 configuration with your own terraform, you will need to do the following.
 
-1. Update the `source_control.yml` file in the `local-traces` overlay so that
+1. Update the `source_control.yml` file in the `cluster-infra/tofu-controller/` folder so that
    it points towards a repository with terraform resources inside of it.
 ![image](content/source.png)
 
-2. Update the `terraform.yml` file so it references the name of the object you
+2. Update one of the `terraform.yml` files in the same folder so it references the name of the object you
    created with the `source_control.yml` file in the `sourceRef` field.  Then
    update the `path` field with the specific path to the terraform resources
    you want to use inside the repository.
 ![image](content/terraform.png)
 
-3. Run `make apply-traces` to update the resources in the cluster with the new
+3. If you add your own files to the folder, you will need to update the `kustomization.yml` file in the folder to include the new files if you want them to be deployed with the rest of the resources
+
+4. Run `make apply-traces` to update the resources in the cluster with the new
 configuration.
 
 >  - For the purposes of the tracing demo these will by default be configured
