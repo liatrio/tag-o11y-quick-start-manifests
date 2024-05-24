@@ -93,87 +93,33 @@ spec:
 
 <!-- TODO: Add instructions for GitLab -->
 
---- 
-
-<!-- TODO: Edit this as it's now deprecated -->
-
-## Destroy
-
-> You need access to a kubernetes (k8s) cluster. Here are a few options for
-> running k8s locally:
-
-
-To deploy the Grafana LGTM stack with no dashboards or other configurations,
-run:
-
-```bash
-make apply-basic
-```
-
-
-To deploy the services with just the Engineering Effectiveness Dashboards
-configuration and dashboards, run:
-
-```bash
-make apply-default
-```
-
-To create the services with the addition of an instrumented Tofu Controller,
-run:
+## Tracing Demo
+#### Startup
+To deploy the tracing demo which uses an instrumented tofu-controller and opentofu binary, some sample terraform resources to generate the traces, and Grafana with a custom dashboard to view the data among other supporting services, run the following command:
 
 ```bash
 make apply-traces
 ```
-
-> :bulb: **Tip:** After running either of those commands, you can access the
-> Grafana dashboard at `http://localhost:3000`.
-
-## Shutdown
-
-To shutdown the services, run one of the following commands based on what you
-deployed originally:
-
-```bash
-make delete-basic
-```
-
-```bash
-make delete-default
-```
+> Port forward the Grafana pod to be able to view the tracing dashboard on your local machine. Default Grafana credentials are admin/admin.
+#### Cleanup
 
 ```bash
 make delete-traces
 ```
 
-> :bulb: **Tip:** If the commands fail try re-running with `sudo`.
-
+--- 
 
 <!-- TODO: Edit this as it's now deprecated -->
 
 ## Configuration
 
-#### Dashboards
-If you wish to add additional dashboards to the Grafana instance, you can do so
-by:
-
-1.  Adding them to the
-    `gateway-collector/overlays/<your_configuration>/grafana/provisioning/dashboards/demo`
-    directory
-2.  Update the kustomization.yml in your configuration with the new file that
-    will be added to the generated configmap
-3.  Mount it inside the grafana-lgtm.yaml file like the others so it will be
-    made available to the Grafana instance.
-4.  Run `make apply-<your_configuration>` to apply the changes to the config
-    maps which will also automatically update the grafana-lgtm deployment.
-
 #### Tofu Controller
 
-To be able to use the Tofu Controller after deploying the `traces`
-configuration with your own terraform, you will need to do the following.
+To be able to use the Tofu Controller after deploying the tracing demo with your own terraform, you will need to do the following.
 
 1. Update the `source_control.yml` file in the `local-traces` overlay so that
    it points towards a repository with terraform resources inside of it.
-2. Update the `terraform.yml` file so it references the name of the object you
+2. Update one of the `terraform.yml` files or create your own so it references the name of the object you
    created with the `source_control.yml` file in the `sourceRef` field.  Then
    update the `path` field with the specific path to the terraform resources
    you want to use inside the repository.
@@ -186,3 +132,4 @@ configuration.
 >  - Deploying kubernetes resources is also possible but requires you to update
 >  the `tf-runner` service account with a cluster role that has permissions to
 >  act on those resources.
+>  - To deploy a terraform resource to a namespace outside of `flux-system` you will also need to setup a service account identical to the `tf-runner` service account in that namespace.

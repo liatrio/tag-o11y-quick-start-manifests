@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    control-plane: tofu-controller
+  name: tofu-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: tofu-controller
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        control-plane: tofu-controller
+    spec:
+      containers:
+        - args:
+            - --watch-all-namespaces
+            - --log-level=info
+            - --log-encoding=json
+            - --enable-leader-election
+            - --concurrent=1
+            - --allow-cross-namespace-refs
+          command:
+            - /sbin/tini
+            - --
+            - tofu-controller
+          env:
+            - name: RUNTIME_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: RUNNER_POD_IMAGE
+              value: ghcr.io/liatrio/tf-runner:v0.0.8
+            - name: "OTEL_TRACES_EXPORTER" 
+              value: "otlp"
+            - name: "OTEL_EXPORTER_OTLP_PROTOCOL"
+              value: "grpc"
+            - name: "OTEL_EXPORTER_OTLP_ENDPOINT"
+              value: "http://tempo.tempo.svc.cluster.local:4317"
+
+          image:  ghcr.io/liatrio/tofu-controller:v0.0.8
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthz
+          name: manager
+          ports:
+            - containerPort: 8080
+              name: http-prom
+            - containerPort: 9440
+              name: healthz
+              protocol: TCP
+            - containerPort: 4317
+              name: traces
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: healthz
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /tmp
+              name: temp
+      securityContext:
+        fsGroup: 1337
+      serviceAccountName: tf-controller
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - emptyDir: {}
+          name: temp
