@@ -107,8 +107,6 @@ spec:
 
 1. To run the demo, you will need to have a Kubernetes cluster running locally as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create a local cluster.  If you do not have these installed, you can install them by running one of the followings commands depending on your OS:
    
-   <br>
-
    **Linux**
    ```bash
    curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
@@ -119,7 +117,6 @@ spec:
    brew install k3d
    brew install kubectl
    ```
-<br>
 
 2. Once we have these prerequisites installed, we can actually deploy the local cluster by running the following command:
    ```bash
@@ -132,17 +129,19 @@ spec:
    ```
 
 4. Verify that the namespaces are present and the pods are running.  They should look like this:
-![image](content/namespaces.png)
-![image](content/all_pods.png)
+   
+  ![image](content/namespaces.png)
+  ![image](content/all_pods.png)
 
 5. Once everything is up and looking healthy, we can portforward the Grafana service to view the dashboard by doing the following:
-![image](content/portforwarding.png)
+   
+  ![image](content/portforwarding.png)
 
 6. Once the port-forward is setup, you can visit the Grafana dashboard by visiting `http://localhost:3000` in your browser. The dashboard will be the only one in the demo folder and will look like this:
-![image](content/dashboard.png)
-> [!IMPORTANT]
-> Grafana will ask for a login which will just be the default credentials of `username:admin password:admin`. It will ask you to change it but you can skip this step if you would like.
-
+ 
+  ![image](content/dashboard.png)
+  > [!IMPORTANT]
+  > Grafana will ask for a login which will just be the default credentials of `username:admin password:admin`. It will ask you to change it but you can skip this step if you would like.
 
 ### Cleanup
 
