@@ -1,8 +1,5 @@
 # tag-o11y-quick-start-manifests
 
-> [!NOTE]
-> Visiting here from DevOps Days Montreal? Your demo is [here](#tracing-demo)
-
 This set of manifests gets a local obersvability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
@@ -14,6 +11,11 @@ It installs the following services into your local kubernetes cluster:
 * OpenTelemetry Controller
 * Liatrio OpenTelemetry Collector
 * NGrok Ingress and API Gateway Controller
+
+
+> [!IMPORTANT]
+> Visiting here from DevOps Days Montreal? Your demo is [here](#tracing-demo)
+
 
 # Getting Started
 
@@ -94,13 +96,13 @@ spec:
 ```
 7. Run `make dora`
    
----
-
 <!-- TODO: Add instructions for GitLab -->
+
+# Tracing Demo
+
 
 <img src="content/logo3.png" alt="logo" width="9000">
 
-# Tracing Demo
 ## Getting Started
 
 1. To run the demo, you will need to have a Kubernetes cluster running locally as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create a local cluster.  If you do not have these installed, you can install them by running one of the followings commands depending on your OS:
@@ -154,11 +156,15 @@ configuration with your own terraform, you will need to do the following.
 
 1. Update the `source_control.yml` file in the `local-traces` overlay so that
    it points towards a repository with terraform resources inside of it.
+![image](content/source.png)
+
 2. Update the `terraform.yml` file so it references the name of the object you
    created with the `source_control.yml` file in the `sourceRef` field.  Then
    update the `path` field with the specific path to the terraform resources
    you want to use inside the repository.
-3. Run `make deploy-traces` to update the resources in the cluster with the new
+![image](content/terraform.png)
+
+3. Run `make apply-traces` to update the resources in the cluster with the new
 configuration.
 
 >  - For the purposes of the tracing demo these will by default be configured
