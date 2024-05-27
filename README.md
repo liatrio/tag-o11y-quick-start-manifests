@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> Visiting here from DevOps Days Montreal? Your demo is [here](#tracing-demo)
+
 # tag-o11y-quick-start-manifests
 
 This set of manifests gets a local obersvability stack up and running quickly.
@@ -11,11 +14,6 @@ It installs the following services into your local kubernetes cluster:
 * OpenTelemetry Controller
 * Liatrio OpenTelemetry Collector
 * NGrok Ingress and API Gateway Controller
-
-
-> [!IMPORTANT]
-> Visiting here from DevOps Days Montreal? Your demo is [here](#tracing-demo)
-
 
 # Getting Started
 
