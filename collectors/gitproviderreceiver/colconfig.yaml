@@ -16,6 +16,7 @@ receivers:
     initial_delay: 10s
     collection_interval: 300s
     scrapers:
+      # Default GitHub Scraper Example
       github:
         github_org: liatrio
         search_query: org:liatrio topic:o11y archived:false
@@ -26,6 +27,16 @@ receivers:
             enabled: true
           git.repository.cve.count:
             enabled: true
+      # GitLab scraper example 
+      # gitlab:
+      #   gitlab_org: liatrioinc/subproject
+      #   # search_topic: a topic I'm searching for that's been added to repos
+      #   # search_query: something I'm searching for in code
+      #   auth:
+      #     authenticator: bearertokenauth
+      #   metrics:
+      #     git.repository.contributor.count:
+      #       enabled: true
 
 processors:
   memory_limiter:
@@ -40,6 +51,8 @@ processors:
   resource/o11y:
     attributes:
       - key: team.name
+        # Change this value if you want to associate your scraped repositories
+        # with a different team name
         value: tag-o11y
         action: upsert
 
