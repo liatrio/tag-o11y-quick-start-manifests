@@ -19,7 +19,7 @@ patches:
         path: /spec/envFrom
         value: 
           - secretRef:
-              name: github-pat
+              name: git-pat
 
 configMapGenerator:
   - name: collector-config
