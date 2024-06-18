@@ -7,7 +7,7 @@ namespace: collector
 resources:
   - ../base/
   - sa.yaml
-  - ngrok-route.yaml
+  # - ngrok-route.yaml
 
 patches:
   - target:
