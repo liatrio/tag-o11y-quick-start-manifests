@@ -8,8 +8,11 @@ extensions:
   zpages:
     endpoint: 0.0.0.0:55679
 
-  bearertokenauth:
+  bearertokenauth/github:
     token: ${env:GH_PAT}
+
+  # bearertokenauth/gitlab:
+  #   token: ${env:GL_PAT}
 
 receivers:
   gitprovider:
@@ -21,7 +24,7 @@ receivers:
         github_org: liatrio
         search_query: org:liatrio topic:o11y archived:false
         auth:
-          authenticator: bearertokenauth
+          authenticator: bearertokenauth/github
         metrics:
           git.repository.contributor.count:
             enabled: true
@@ -33,7 +36,7 @@ receivers:
       #   # search_topic: a topic I'm searching for that's been added to repos
       #   # search_query: something I'm searching for in code
       #   auth:
-      #     authenticator: bearertokenauth
+      #     authenticator: bearertokenauth/gitlab
       #   metrics:
       #     git.repository.contributor.count:
       #       enabled: true
@@ -72,7 +75,7 @@ service:
     - health_check
     - pprof
     - zpages
-    - bearertokenauth
+    - bearertokenauth/github
   pipelines:
     metrics:
       receivers:

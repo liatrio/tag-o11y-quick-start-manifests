@@ -21,6 +21,9 @@ spec:
         - name: grafana
           image: grafana/grafana:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: GF_PATHS_CONFIG
+              value: /etc/grafana/provisioning/grafana.ini
           ports:
             - containerPort: 3000
               name: http-grafana
