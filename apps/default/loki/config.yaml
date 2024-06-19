@@ -24,17 +24,28 @@ schema_config:
         prefix: index_
         period: 24h
 
+ingester:
+  # Loki now accepts out of order writes but it is based on the following calculation
+  # highest_timestamp_written - ingester.max-chunk-age / 2
+  # This is known as the validity window. To support concurrent writes going back
+  # 6 months we need to set the max-chunk-age to 1 year.
+  max_chunk_age: 8760h # 1 year
+
 query_scheduler:
   max_outstanding_requests_per_tenant: 4096
 frontend:
   max_outstanding_per_tenant: 4096
 query_range:
   parallelise_shardable_queries: true
+
+#https://grafana.com/docs/loki/latest/configure/#limits_config
 limits_config:
   reject_old_samples: false
   # allow old samples from a year ago
   reject_old_samples_max_age: 365d
   split_queries_by_interval: 15m
+  max_query_length: 0 # this disables the limit which defaults to 30d1h
+  unordered_writes: true # This is the default as of loki v2.4.0
   max_query_parallelism: 32
 
 #ruler:
