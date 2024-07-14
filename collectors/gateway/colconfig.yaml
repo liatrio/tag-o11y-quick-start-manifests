@@ -35,11 +35,6 @@ processors:
         value: local
         action: upsert
 
-  filter/backstage:
-    error_mode: ignore
-    traces:
-      - IsMatch(resource.attributes["service.name"], "backstage")
-
 connectors:
   spanmetrics:
 
@@ -77,5 +72,5 @@ service:
 
     traces:
       receivers: [otlp]
-      processors: [filter/backstage, memory_limiter, batch, resource/env]
+      processors: [memory_limiter, batch, resource/env]
       exporters: [debug, otlphttp/tempo, spanmetrics]
