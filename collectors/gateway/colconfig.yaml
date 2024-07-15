@@ -55,7 +55,7 @@ exporters:
       insecure: true
 
   otlphttp/jaeger:
-    endpoint: http://jaeger.jaeger-all-in-one-collector.svc.cluster.local:4318
+    endpoint: http://jaeger-all-in-one-collector.jaeger.svc.cluster.local:4318
     tls:
       insecure: true
 
