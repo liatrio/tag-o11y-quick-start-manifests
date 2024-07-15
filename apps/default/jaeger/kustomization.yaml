@@ -6,7 +6,7 @@ namespace: jaeger
 
 resources:
   - ../../../cluster-infra/namespace/
-  - deployment.yaml
+  - jaeger.yaml
 
 generatorOptions:
   labels:
