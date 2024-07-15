@@ -7,14 +7,15 @@ urls = @echo "\
 	Grafana: http://localhost:3000\n\
 	Loki: http://localhost:3100\n\
 	Tempo: http://localhost:4317\n\
-	Prometheus: http://localhost:9090\
+	Prometheus: http://localhost:9090\n\
+	Jaeger: http://localhost:16686\
 "
 NGROK_NS=ngrok-ingress
 NGROK_AT = ${NGROK_AUTHTOKEN}
 NGROK_AK = ${NGROK_API_KEY}
 
 .PHONY: default
-default: cert-manager otel-operator
+default: cert-manager otel-operator jaeger-operator
 	kubectl apply -k ./collectors/gateway/
 	kubectl apply -k ./apps/default
 	$(call urls)
@@ -35,6 +36,11 @@ otel-operator:
 	kubectl apply -k ./cluster-infra/otel-operator/
 	kubectl apply -k ./cluster-infra/rbac/
 	kubectl wait --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager
+
+.PHONY: jaeger-operator
+jaeger-operator:
+	kubectl apply -k ./cluster-infra/jaeger-operator/
+	kubectl wait --for condition=Available -n observability deployment/jaeger-operator
 
 .PHONY: gpr
 gpr: default
@@ -80,12 +86,12 @@ apply-traces:
 	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager
 	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-cainjector
 	kubectl wait --for condition=Available -n cert-manager deployment/cert-manager-webhook
-	@while ! kustomize build ./cluster-infra/otel-operator/ | kubectl apply -f - ; do sleep 15; done 
+	@while ! kustomize build ./cluster-infra/otel-operator/ | kubectl apply -f - ; do sleep 15; done
 	kubectl apply -k ./cluster-infra/rbac/
 	kubectl wait --for condition=Available -n opentelemetry-operator-system deployment/opentelemetry-operator-controller-manager --timeout=120s
-	@while ! kustomize build ./apps/traces | kubectl apply -f - ; do sleep 15; done 
+	@while ! kustomize build ./apps/traces | kubectl apply -f - ; do sleep 15; done
 	@if ! kubectl create -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml; then echo "Tofu Controller CRDS already installed"; fi
-	@while ! kustomize build ./cluster-infra/tofu-controller/ | kubectl apply -f - ; do sleep 10; done 
+	@while ! kustomize build ./cluster-infra/tofu-controller/ | kubectl apply -f - ; do sleep 10; done
 	@echo "The command has been executed successfully. The Tofu Controller Traces Dashboard can be found at: http://localhost:3000"
 
 delete-traces:
@@ -99,5 +105,3 @@ delete-traces:
 	kubectl delete -k ./cluster-infra/otel-operator/ --ignore-not-found
 	kubectl delete -k ./cluster-infra/cert-manager/ --ignore-not-found
 	kubectl delete -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml
-
-

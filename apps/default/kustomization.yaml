@@ -7,4 +7,5 @@ resources:
   - ./loki/
   - ./prometheus/
   - ./tempo/
+  - ./jaeger/
   - ../../collectors/gateway/
