@@ -1,0 +1,40 @@
+---
+extensions:
+  health_check:
+
+receivers:
+  # This is a test component, originally opened in contrib: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/27460
+  # For docs see this readme https://github.com/krzko/opentelemetry-collector-contrib/tree/feat-add-githubactionseventreceiver/receiver/githubactionsreceiver
+  githubactions:
+    endpoint: 0.0.0.0:8088
+    path: /events
+    # secret: ""
+
+processors:
+  batch:
+    send_batch_size: 100
+    timeout: 10s
+
+exporters:
+  debug:
+    verbosity: detailed
+    sampling_initial: 2
+    sampling_thereafter: 500
+
+  otlp:
+    endpoint: http://gateway-collector.collector.svc.cluster.local:4317
+    tls:
+      insecure: true
+
+service:
+  extensions:
+    - health_check
+
+  pipelines:
+    traces:
+      receivers:
+        - githubactions
+      processors: [batch]
+      exporters:
+        - debug
+        - otlp

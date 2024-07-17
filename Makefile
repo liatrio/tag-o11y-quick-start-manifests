@@ -64,9 +64,14 @@ eck: cert-manager otel-operator eck-operator
 dora: default
 	kubectl apply -k ./collectors/webhook/
 
+.PHONY: gha-traces
+gha-traces: default
+	kubectl apply -k ./collectors/githubactionevents/
+
 .PHONY: ngrok
 ngrok:
 	helm repo add ngrok https://ngrok.github.io/kubernetes-ingress-controller
+	helm repo update
 	kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
 	helm upgrade -i ngrok-ingress-controller ngrok/kubernetes-ingress-controller \
 		--namespace ngrok-ingress \
