@@ -93,7 +93,7 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
 
 ## GitHub Actions Event Tracing
 
-There is currently a [New Component][componentc] that has been submitted for
+There is currently a [New Component][component] that has been submitted for
 discussion within the OpenTelemetry community. This component builds traces out
 of GitHub Action workflow events. This can be a useful piece of the puzzle for
 understanding how your CI/CD pipeline is functioning, by leveraging context
