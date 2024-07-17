@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: otel-gha-ingress
+  # annotations:
+  #   k8s.ngrok.com/modules: ngrok-module-set
+spec:
+  ingressClassName: ngrok
+  rules:
+    - host: actual-wanted-satyr.ngrok-free.app
+      http:
+        paths:
+          - path: /events
+            pathType: Prefix
+            backend:
+              service:
+                name: otel-gha-collector-collector
+                port:
+                  number: 8088
