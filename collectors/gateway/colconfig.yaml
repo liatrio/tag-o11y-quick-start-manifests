@@ -58,9 +58,10 @@ exporters:
     endpoint: http://jaeger-all-in-one-collector.jaeger.svc.cluster.local:4318
     tls:
       insecure: true
-
-  loki:
-    endpoint: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
+  otlphttp/loki:
+    endpoint: http://loki.loki.svc.cluster.local:3100/otlp
+    tls:
+      insecure: true
 
 service:
   extensions: [health_check, pprof, zpages]
@@ -73,7 +74,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [memory_limiter, batch, resource/env]
-      exporters: [debug, loki]
+      exporters: [debug, otlphttp/loki]
 
     traces:
       receivers: [otlp]
