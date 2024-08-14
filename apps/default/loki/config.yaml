@@ -23,6 +23,13 @@ schema_config:
       index:
         prefix: index_
         period: 24h
+    - from: 2024-04-01
+      object_store: filesystem
+      store: tsdb
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
 
 query_scheduler:
   max_outstanding_requests_per_tenant: 4096
@@ -33,6 +40,7 @@ query_range:
 limits_config:
   split_queries_by_interval: 15m
   max_query_parallelism: 32
+  allow_structured_metadata: true
 
 #ruler:
 #  alertmanager_url: http://localhost:9093
