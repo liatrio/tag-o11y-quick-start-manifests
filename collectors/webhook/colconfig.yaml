@@ -77,18 +77,6 @@ processors:
           - set(attributes["closed_at"], body["issue"]["closed_at"]) where body["issue"]["closed_at"] != nil
           - set(attributes["topics"], body["repository"]["topics"]) where body["repository"]["topics"] != nil
 
-  attributes/issues:
-    actions:
-      - action: upsert
-        key: loki.attribute.labels
-        value: action, created_at, closed_at, issue_labels, topics
-
-  resource/issues:
-    attributes:
-      - action: upsert
-        key: loki.resource.labels
-        value: environment.name, repository.name, repository.owner
-
   filter/issues:
     error_mode: ignore
     logs:
@@ -113,18 +101,6 @@ processors:
           - set(attributes["topics"], body["repository"]["topics"]) where body["repository"]["topics"] != nil
           - set(attributes["deployment.state"], body["deployment_status"]["state"]) where body["deployment_status"]["state"] != nil
           - set(attributes["deployment.environment"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
-
-  attributes/gha-deployments:
-    actions:
-      - action: upsert
-        key: loki.attribute.labels
-        value: deployment.state, deployment.environment, topics
-
-  resource/gha-deployments:
-    attributes:
-      - action: upsert
-        key: loki.resource.labels
-        value: environment.name, repository.name, repository.owner
 
   filter/gha-deployments:
     error_mode: ignore
@@ -156,8 +132,6 @@ service:
       processors:
         - transform/issues
         - filter/issues
-        - attributes/issues
-        - resource/issues
       exporters:
         - debug
         - otlp
@@ -168,8 +142,6 @@ service:
       processors:
         - transform/gha-deployments
         - filter/gha-deployments
-        - attributes/gha-deployments
-        - resource/gha-deployments
       exporters:
         - debug
         - otlp
