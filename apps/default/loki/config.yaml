@@ -35,7 +35,7 @@ limits_config:
   tsdb_max_query_parallelism: 32
   otlp_config:
     resource_attributes:
-      ignore_defaults: false
+      ignore_defaults: true # ignores any default resource attributes listed in default_resource_attributes_as_index_labels
       attributes_config:
         - action: index_label
           attributes:
