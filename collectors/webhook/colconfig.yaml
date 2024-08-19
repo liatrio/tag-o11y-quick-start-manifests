@@ -1,7 +1,6 @@
 ---
 extensions:
   health_check:
-    endpoint: 0.0.0.0:13133
 
   pprof:
     endpoint: 0.0.0.0:1777
@@ -13,17 +12,17 @@ receivers:
   ## Webhookevent receiver is used to connect to a GitHub App and receive json event logs
   ## The processors are used to extract/filter all the meaningful data from those logs
   webhookevent:
-    endpoint: "0.0.0.0:8088"
+    endpoint: 0.0.0.0:8088
     path: /events
     health_path: /healthcheck
 
-  # prometheus:
-  #   config:
-  #     scrape_configs:
-  #       - job_name: otel-webhook-collector
-  #         scrape_interval: 10s
-  #         static_configs:
-  #           - targets: [0.0.0.0:8888]
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: otel-webhook-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets: [0.0.0.0:8888]
 
 processors:
   memory_limiter:
@@ -33,105 +32,81 @@ processors:
 
   batch:
     send_batch_size: 100
-    timeout: 11s
+    timeout: 10s
 
-  transform/timestamp:
-    error_mode: propagate
-    log_statements:
-      - context: log
-        statements:
-          - set(time_unix_nano, UnixNano(Time(attributes["created_at"], "%FT%TZ"))) where attributes["created_at"] != nil
+  # filter/ottl:
+  #   error_mode: ignore
+  #   metrics:
+  #     metric:
+  #       - name == "rpc.server.duration"
 
-  ############################################
-  # GitHub Issue Events
-  ############################################
-  transform/body:
+  # transform:
+  #   metric_statements:
+  #     - context: metric
+  #       statements:
+  #         - set(description, "") where name == "queueSize"
+  #         - set(description, "") where name == "http.client.duration"
+
+  #
+  # transform/pull_requests:
+  #   log_statements:
+  #     - context: log
+  #       statements:
+  #         - merge_maps(attributes, ParseJSON(body), "upsert")
+  #         - set(attributes["title"], attributes["pull_request"]["title"]) where attributes["pull_request"]["title"] != nil
+  #         - set(attributes["merged_at"], attributes["pull_request"]["merged_at"]) where attributes["pull_request"]["merged_at"] != nil
+  #         - set(attributes["sha"], attributes["pull_request"]["merge_commit_sha"]) where attributes["pull_request"]["merge_commit_sha"] != nil
+  #         - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
+  #         - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
+  #         - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
+
+  # Issue transformation to get LogRecord Events from GitHub
+  transform/issues:
     log_statements:
       - context: log
         statements:
           - set(body, ParseJSON(body)) where body != nil
-
-  transform/issue:
-    log_statements:
-      - context: log
-        statements:
           - keep_keys(body, ["issue", "action", "resources", "instrumentation_scope", "repository"])
           - keep_keys(body["repository"], ["name", "full_name", "owner", "topics"]) where body["repository"] != nil
           - keep_keys(body["repository"]["owner"], ["login"]) where body["repository"]["owner"] != nil
           - keep_keys(body["issue"], ["created_at", "closed_at", "labels", "number", "repository_url", "state"]) where body["issue"] != nil
-          - set(attributes["repository_name"], body["repository"]["name"]) where body["repository"]["name"] != nil
-          - set(attributes["repository_owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
+          - set(attributes["repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
+          - set(attributes["repository.owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
           - set(attributes["action"], body["action"]) where body["action"] != nil
           - set(attributes["created_at"], body["issue"]["created_at"]) where body["issue"]["created_at"] != nil
           - set(attributes["closed_at"], body["issue"]["closed_at"]) where body["issue"]["closed_at"] != nil
           - set(attributes["topics"], body["repository"]["topics"]) where body["repository"]["topics"] != nil
-          - set(attributes["team_name"], body["repository"]["name"]) where body["repository"]["name"] != nil
-          - set(attributes["environment_name"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
 
   filter/issues:
     error_mode: ignore
     logs:
       log_record:
-        - 'not IsMatch(body["issue"], ".*")'
+        - not IsMatch(body, "issue")
+        # - not IsMatch(body, "issue") or not IsMatch(body, "deployment")
 
-  ############################################
-  # GitHub Action Deployment Events
-  ############################################
-  transform/deployments:
+  transform/gha-deployments:
     log_statements:
       - context: log
         statements:
-          - keep_keys(body, ["deployment", "deployment_status", "workflow", "worflow_run", "repository"])
-          - keep_keys(body["deployment"], ["url", "id", "task", "environment", "created_at", "updated_at", "sha", "ref"]) where body["deployment"] != nil
-          - keep_keys(body["deployment_status"], ["state", "url", "environment", "created_at"]) where body["deployment_status"] != nil
+          - set(body, ParseJSON(body)) where body != nil
+          - keep_keys(body, ["deployment", "sha", "ref", "deployment_status", "workflow", "worflow_run", "topics", "repository"])
+          - keep_keys(body["deployment"], ["url", "id", "task", "environment", "created_at", "updated_at"]) where body["deployment"] != nil
+          - keep_keys(body["deployment_status"], ["state", "url", "environment"]) where body["deployment_status"] != nil
           - keep_keys(body["workflow"], ["name", "path", "url"]) where body["workflow"] != nil
           - keep_keys(body["workflow_run"], ["head_branch", "head_sha", "display_title", "run_number", "status", "workflow_id"]) where body["workflow_run"] != nil
-          - keep_keys(body["repository"], ["name", "full_name", "owner", "topics"]) where body["repository"] != nil
+          - keep_keys(body["repository"], ["name", "full_name", "owner"]) where body["repository"] != nil
           - keep_keys(body["repository"]["owner"], ["login"]) where body["repository"]["owner"] != nil
-          - set(attributes["repository_name"], body["repository"]["name"]) where body["repository"]["name"] != nil
-          - set(attributes["repository_owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
+          - set(attributes["repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
+          - set(attributes["repository.owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
           - set(attributes["topics"], body["repository"]["topics"]) where body["repository"]["topics"] != nil
-          - set(attributes["created_at"], body["deployment_status"]["created_at"]) where body["deployment_status"]["created_at"] != nil
-          - set(attributes["deployment_state"], body["deployment_status"]["state"]) where body["deployment_status"]["state"] != nil
-          - set(attributes["deployment_environment"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
-          - set(attributes["historical"], "true")
-          - set(attributes["team_name"], body["repository"]["name"]) where body["repository"]["name"] != nil
-          - set(attributes["environment_name"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
-          - set(body["deployment"]["created_at"], body["deployment_status"]["created_at"]) where body["deployment_status"]["created_at"] != nil
+          - set(attributes["deployment.state"], body["deployment_status"]["state"]) where body["deployment_status"]["state"] != nil
+          - set(attributes["deployment.environment"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
 
-  filter/deployments:
+  filter/gha-deployments:
     error_mode: ignore
     logs:
       log_record:
-        - 'not IsMatch(body["deployment"], ".*")'
-
-  ############################################
-  # GitHub Pull Request Events
-  ############################################
-
-  transform/pull_requests:
-    log_statements:
-      - context: log
-        statements:
-          - keep_keys(body, ["action", "pull_request", "number", "resources", "instrumentation_scope", "repository"])
-          - keep_keys(body["pull_request"], ["title", "user", "created_at", "merged_at", "merged", "merge_commit_sha"]) where body["pull_request"] != nil
-          - keep_keys(body["pull_request"]["user"], ["login"]) where body["pull_request"]["user"] != nil
-          - keep_keys(body["repository"], ["name", "full_name", "topics"]) where body["repository"] != nil
-          - set(attributes["repository_name"], body["repository"]["name"]) where body["repository"]["name"] != nil
-          - set(attributes["action"], body["action"]) where body["action"] != nil
-          - set(attributes["created_at"], body["pull_request"]["merged_at"]) where body["pull_request"]["merged_at"] != nil
-          - set(attributes["merged_at"], body["pull_request"]["merged_at"]) where body["pull_request"]["merged_at"] != nil
-          - set(attributes["merge_sha"], body["pull_request"]["merge_commit_sha"]) where body["pull_request"]["merge_commit_sha"] != nil
-          - set(attributes["topics"], body["repository"]["topics"]) where body["repository"]["topics"] != nil
-          - set(attributes["team_name"], body["repository"]["name"]) where body["repository"]["name"] != nil
-          - set(attributes["environment_name"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
-          - set(body["pull_request"]["created_at"], body["deployment_status"]["merged_at"]) where body["deployment_status"]["merged_at"] != nil
-
-  filter/pull_requests:
-    error_mode: ignore
-    logs:
-      log_record:
-        - 'not IsMatch(body["pull_request"], ".*")'
+        - not IsMatch(body, "deployment")
 
 exporters:
   debug:
@@ -143,10 +118,8 @@ exporters:
     endpoint: http://gateway-collector.collector.svc.cluster.local:4317
     tls:
       insecure: true
+
 service:
-  telemetry:
-    logs:
-      level: debug
   extensions:
     - health_check
     - pprof
@@ -157,34 +130,23 @@ service:
       receivers:
         - webhookevent
       processors:
-        - transform/body
+        - transform/issues
         - filter/issues
-        - transform/issue
-        # - transform/timestamp
       exporters:
-        # - debug
+        - debug
         - otlp
 
-    logs/deployments:
+    logs/gha-deployments:
       receivers:
         - webhookevent
       processors:
-        - transform/body
-        - filter/deployments
-        - transform/deployments
-        - transform/timestamp
+        - transform/gha-deployments
+        - filter/gha-deployments
       exporters:
-        # - debug
+        - debug
         - otlp
-
-    logs/pull-requests:
-      receivers:
-        - webhookevent
-      processors:
-        - transform/body
-        - filter/pull_requests
-        - transform/pull_requests
-        # - transform/timestamp
-      exporters:
-        # - debug
-        - otlp
+#
+#    logs/pull_requests:
+#      receivers: [webhookevent]
+#      processors: [transform/pull_requests, attributes/pull_requests, filter/pull_requests]
+#      exporters: [debug, otlp]
