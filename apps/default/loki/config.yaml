@@ -28,8 +28,6 @@ query_range:
   parallelise_shardable_queries: true
 limits_config:
   allow_structured_metadata: true # This is required to allow Loki to handle OpenTelemetry data https://grafana.com/docs/loki/latest/send-data/otel/#loki-configuration
-  reject_old_samples: false
-  reject_old_samples_max_age: 365d
   split_queries_by_interval: 15m # This setting dictates how many parallel queries will be ran. If you are often searching over large time spans having this too low will result in excessive parallel overhead which can work against you depending on resources of the container
   max_query_length: 0 # This allows you to query data over any time range. Default is 30d1h
   tsdb_max_query_parallelism: 32
@@ -41,9 +39,6 @@ limits_config:
           attributes:
             - environment.name
 
-ingester:
-  chunk_idle_period: 3m # This will ensure that chunks are flushed after 3 minutes of inactivity. This is needed when max chunk age is set really high
-  max_chunk_age: 8760h # This is required if you want to push old logs. Chunk age dictates how far apart timestamps for logs of the same stream can be. Only needed when pushing old logs (seed-dora)
 #ruler:
 #  alertmanager_url: http://localhost:9093
 # By default, Loki will send anonymous, but uniquely-identifiable usage and configuration
