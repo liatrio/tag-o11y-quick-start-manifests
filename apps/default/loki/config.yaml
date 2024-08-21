@@ -1,8 +1,6 @@
 auth_enabled: false
-
 server:
   http_listen_port: 3100
-
 common:
   path_prefix: /loki
   storage:
@@ -13,17 +11,15 @@ common:
   ring:
     kvstore:
       store: inmemory
-
 schema_config:
   configs:
     - from: 2020-10-24
-      store: boltdb-shipper
+      store: tsdb
       object_store: filesystem
-      schema: v11
+      schema: v13
       index:
         prefix: index_
         period: 24h
-
 query_scheduler:
   max_outstanding_requests_per_tenant: 4096
 frontend:
@@ -31,12 +27,20 @@ frontend:
 query_range:
   parallelise_shardable_queries: true
 limits_config:
-  split_queries_by_interval: 15m
-  max_query_parallelism: 32
+  allow_structured_metadata: true # This is required to allow Loki to handle OpenTelemetry data https://grafana.com/docs/loki/latest/send-data/otel/#loki-configuration
+  split_queries_by_interval: 15m # This setting dictates how many parallel queries will be ran. If you are often searching over large time spans having this too low will result in excessive parallel overhead which can work against you depending on resources of the container
+  max_query_length: 0 # This allows you to query data over any time range. Default is 30d1h
+  tsdb_max_query_parallelism: 32
+  otlp_config:
+    resource_attributes:
+      ignore_defaults: true # ignores any default resource attributes listed in default_resource_attributes_as_index_labels
+      attributes_config:
+        - action: index_label
+          attributes:
+            - environment.name
 
 #ruler:
 #  alertmanager_url: http://localhost:9093
-
 # By default, Loki will send anonymous, but uniquely-identifiable usage and configuration
 # analytics to Grafana Labs. These statistics are sent to https://stats.grafana.org/
 #
