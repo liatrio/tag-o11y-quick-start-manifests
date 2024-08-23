@@ -36,8 +36,7 @@ limits_config:
       ignore_defaults: true # ignores any default resource attributes listed in default_resource_attributes_as_index_labels
       attributes_config:
         - action: index_label
-          attributes:
-            - environment.name
+          regex: .*
 
 #ruler:
 #  alertmanager_url: http://localhost:9093
