@@ -1,89 +1,92 @@
----
-extensions:
-  health_check:
 
-  pprof:
-    endpoint: 0.0.0.0:1777
+- op: add
+  path: /spec/config
+  value: 
+    extensions:
+      health_check:
 
-  zpages:
-    endpoint: 0.0.0.0:55679
+      pprof:
+        endpoint: 0.0.0.0:1777
 
-  bearertokenauth/github:
-    token: ${env:GH_PAT}
+      zpages:
+        endpoint: 0.0.0.0:55679
 
-  # bearertokenauth/gitlab:
-  #   token: ${env:GL_PAT}
+      bearertokenauth/github:
+        token: ${env:GH_PAT}
 
-receivers:
-  gitprovider:
-    initial_delay: 10s
-    collection_interval: 300s
-    scrapers:
-      # Default GitHub Scraper Example
-      github:
-        github_org: liatrio
-        search_query: org:liatrio topic:o11y archived:false
-        auth:
-          authenticator: bearertokenauth/github
+      # bearertokenauth/gitlab:
+      #   token: ${env:GL_PAT}
+
+    receivers:
+      gitprovider:
+        initial_delay: 10s
+        collection_interval: 300s
+        scrapers:
+          # Default GitHub Scraper Example
+          github:
+            github_org: liatrio
+            search_query: org:liatrio topic:o11y archived:false
+            auth:
+              authenticator: bearertokenauth/github
+            metrics:
+              git.repository.contributor.count:
+                enabled: true
+              git.repository.cve.count:
+                enabled: true
+          # GitLab scraper example 
+          # gitlab:
+          #   gitlab_org: liatrioinc/subproject
+          #   # search_topic: a topic I'm searching for that's been added to repos
+          #   # search_query: something I'm searching for in code
+          #   auth:
+          #     authenticator: bearertokenauth/gitlab
+          #   metrics:
+          #     git.repository.contributor.count:
+          #       enabled: true
+
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+
+      batch:
+        send_batch_size: 100
+        timeout: 10s
+
+      resource/o11y:
+        attributes:
+          - key: team.name
+            # Change this value if you want to associate your scraped repositories
+            # with a different team name
+            value: tag-o11y
+            action: upsert
+
+    exporters:
+      debug:
+        verbosity: basic
+        sampling_initial: 2
+        sampling_thereafter: 500
+
+      otlp:
+        endpoint: http://gateway-collector.collector.svc.cluster.local:4317
+        tls:
+          insecure: true
+
+    service:
+      extensions:
+        - health_check
+        - pprof
+        - zpages
+        - bearertokenauth/github
+      pipelines:
         metrics:
-          git.repository.contributor.count:
-            enabled: true
-          git.repository.cve.count:
-            enabled: true
-      # GitLab scraper example 
-      # gitlab:
-      #   gitlab_org: liatrioinc/subproject
-      #   # search_topic: a topic I'm searching for that's been added to repos
-      #   # search_query: something I'm searching for in code
-      #   auth:
-      #     authenticator: bearertokenauth/gitlab
-      #   metrics:
-      #     git.repository.contributor.count:
-      #       enabled: true
-
-processors:
-  memory_limiter:
-    check_interval: 1s
-    limit_percentage: 75
-    spike_limit_percentage: 15
-
-  batch:
-    send_batch_size: 100
-    timeout: 10s
-
-  resource/o11y:
-    attributes:
-      - key: team.name
-        # Change this value if you want to associate your scraped repositories
-        # with a different team name
-        value: tag-o11y
-        action: upsert
-
-exporters:
-  debug:
-    verbosity: basic
-    sampling_initial: 2
-    sampling_thereafter: 500
-
-  otlp:
-    endpoint: http://gateway-collector.collector.svc.cluster.local:4317
-    tls:
-      insecure: true
-
-service:
-  extensions:
-    - health_check
-    - pprof
-    - zpages
-    - bearertokenauth/github
-  pipelines:
-    metrics:
-      receivers:
-        - gitprovider
-      processors:
-        - memory_limiter
-        - batch
-        - resource/o11y
-      exporters:
-        - debug
-        - otlp
+          receivers:
+            - gitprovider
+          processors:
+            - memory_limiter
+            - batch
+            - resource/o11y
+          exporters:
+            - debug
+            - otlp

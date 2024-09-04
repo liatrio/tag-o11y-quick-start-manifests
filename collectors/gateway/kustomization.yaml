@@ -11,6 +11,10 @@ resources:
   - sa.yaml
 
 patches:
+  - path: colconfig.yaml
+    target:
+      kind: OpenTelemetryCollector
+      name: collector
   - target:
       kind: OpenTelemetryCollector
       name: collector
@@ -22,24 +26,25 @@ patches:
         path: /spec/serviceAccount
         value: otel-collector
 
-configMapGenerator:
-  - name: collector-config
-    files:
-      - colconfig.yaml
-    options:
-      annotations:
-        config.kubernetes.io/local-config: "true"
+# Config map generator set the collector config as a multi-line string. OTEL operator v1beta1 expects an object rather than a string.
+# configMapGenerator:
+#   - name: collector-config
+#     files:
+#       - colconfig.yaml
+#     options:
+#       annotations:
+#         config.kubernetes.io/local-config: "true"
 
-replacements:
-  - source:
-      kind: ConfigMap
-      name: collector-config
-      fieldPath: data.[colconfig.yaml]
+# replacements:
+#   - source:
+#       kind: ConfigMap
+#       name: collector-config
+#       fieldPath: data.[colconfig.yaml]
 
-    targets:
-      - select:
-          kind: OpenTelemetryCollector
-        fieldPaths:
-          - spec.config
-        options:
-          create: true
+#     targets:
+#       - select:
+#           kind: OpenTelemetryCollector
+#         fieldPaths:
+#           - spec.config
+#         options:
+#           create: true
