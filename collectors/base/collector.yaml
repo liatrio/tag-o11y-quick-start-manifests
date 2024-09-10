@@ -6,3 +6,10 @@ metadata:
 spec:
   image: ghcr.io/liatrio/liatrio-otel-collector:0.66.2-amd64
   mode: deployment
+
+  env:
+    - name: GH_PAT
+      valueFrom:
+        secretKeyRef:
+          name: git-pat
+          key: GH_PAT

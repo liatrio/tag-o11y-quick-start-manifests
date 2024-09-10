@@ -39,17 +39,9 @@ OpenTelemetry Collector, run `make`.
 
 To deploy the GitProvider Receiver:
 
-> Make sure the [Quick Start](#quick-start) has been run first.
-
 1. Create a GitHub PAT
-2. Create a `.env` file at the root containing the PAT **Nothing Else Aside from the PAT**
-3. Create a kubernetes secret with that PAT by running
-
-   ```bash
-   kubectl create secret generic git-pat --from-file=GH_PAT=./.env --namespace collector
-   ```
-
-4. Run `make gpr`
+2. Create a `./collectors/gitproviderreceiver/.env` file containing `PAT=<your GitHub PAT>`
+3. Run `make gpr`
 
 ### Git Provider Receiver (GitLab)
 
@@ -141,7 +133,7 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
    visiting `http://localhost:3000` in your browser. The dashboard will be the
    only one in the demo folder and will look like this:
    ![Grafana Dashboard](content/dashboard.png)
-  
+
    > [!IMPORTANT] Grafana will ask for a login which will just be the default
    > credentials of `username:admin password:admin`. It will ask you to change
    > it but you can skip this step if you would like.
