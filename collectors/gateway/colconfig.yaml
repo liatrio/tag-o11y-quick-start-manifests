@@ -1,81 +1,84 @@
-extensions:
-  health_check:
+- op: add
+  path: /spec/config
+  value:
+    extensions:
+      health_check: {}
 
-  pprof:
-    endpoint: 0.0.0.0:1777
+      pprof:
+        endpoint: 0.0.0.0:1777
 
-  zpages:
-    endpoint: 0.0.0.0:55679
+      zpages:
+        endpoint: 0.0.0.0:55679
 
-receivers:
-  otlp:
-    protocols:
-      grpc:
-      http:
-  prometheus:
-    config:
-      scrape_configs:
-        - job_name: dev-otel-gateway-collector
-          scrape_interval: 10s
-          static_configs:
-            - targets: [0.0.0.0:8888]
-processors:
-  memory_limiter:
-    check_interval: 1s
-    limit_percentage: 75
-    spike_limit_percentage: 15
+    receivers:
+      otlp:
+        protocols:
+          grpc: {}
+          http: {}
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: dev-otel-gateway-collector
+              scrape_interval: 10s
+              static_configs:
+                - targets: [0.0.0.0:8888]
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
 
-  batch:
-    send_batch_size: 100
-    timeout: 10s
+      batch:
+        send_batch_size: 100
+        timeout: 10s
 
-  resource/env:
-    attributes:
-      - key: environment.name
-        value: local
-        action: upsert
+      resource/env:
+        attributes:
+          - key: environment.name
+            value: local
+            action: upsert
 
-connectors:
-  spanmetrics:
+    connectors:
+      spanmetrics: {}
 
-exporters:
-  debug:
-    verbosity: basic
-    sampling_initial: 2
-    sampling_thereafter: 500
+    exporters:
+      debug:
+        verbosity: basic
+        sampling_initial: 2
+        sampling_thereafter: 500
 
-  prometheusremotewrite:
-    endpoint: http://prometheus.prometheus.svc.cluster.local:9090/api/v1/write
-    resource_to_telemetry_conversion:
-      enabled: true
+      prometheusremotewrite:
+        endpoint: http://prometheus.prometheus.svc.cluster.local:9090/api/v1/write
+        resource_to_telemetry_conversion:
+          enabled: true
 
-  otlphttp/tempo:
-    endpoint: http://tempo.tempo.svc.cluster.local:4318
-    tls:
-      insecure: true
+      otlphttp/tempo:
+        endpoint: http://tempo.tempo.svc.cluster.local:4318
+        tls:
+          insecure: true
 
-  otlphttp/jaeger:
-    endpoint: http://jaeger-all-in-one-collector.jaeger.svc.cluster.local:4318
-    tls:
-      insecure: true
+      otlphttp/jaeger:
+        endpoint: http://jaeger-all-in-one-collector.jaeger.svc.cluster.local:4318
+        tls:
+          insecure: true
 
-  otlphttp/loki:
-    endpoint: http://loki.loki.svc.cluster.local:3100/otlp
+      otlphttp/loki:
+        endpoint: http://loki.loki.svc.cluster.local:3100/otlp
 
-service:
-  extensions: [health_check, pprof, zpages]
-  pipelines:
-    metrics:
-      receivers: [otlp, spanmetrics]
-      processors: [memory_limiter, batch, resource/env]
-      exporters: [debug, prometheusremotewrite]
+    service:
+      extensions: [health_check, pprof, zpages]
+      pipelines:
+        metrics:
+          receivers: [otlp, spanmetrics]
+          processors: [memory_limiter, batch, resource/env]
+          exporters: [debug, prometheusremotewrite]
 
-    logs:
-      receivers: [otlp]
-      processors: [memory_limiter, batch, resource/env]
-      exporters: [debug, otlphttp/loki]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, batch, resource/env]
+          exporters: [debug, otlphttp/loki]
 
-    traces:
-      receivers: [otlp]
-      processors: [memory_limiter, batch, resource/env]
-      exporters: [debug, otlphttp/tempo, spanmetrics, otlphttp/jaeger]
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, batch, resource/env]
+          exporters: [debug, otlphttp/tempo, spanmetrics, otlphttp/jaeger]

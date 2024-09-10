@@ -13,6 +13,10 @@ patches:
   - target:
       kind: OpenTelemetryCollector
       name: collector
+    path: colconfig.yaml
+  - target:
+      kind: OpenTelemetryCollector
+      name: collector
     patch: |-
       - op: replace
         path: /metadata/name
@@ -26,24 +30,25 @@ patches:
           - secretRef:
               name: eck-stack-apm-server-apm-token
 
-configMapGenerator:
-  - name: collector-config
-    files:
-      - colconfig.yaml
-    options:
-      annotations:
-        config.kubernetes.io/local-config: "true"
+# Config map generator set the collector config as a multi-line string. OTEL operator v1beta1 expects an object rather than a string.
+# configMapGenerator:
+#   - name: collector-config
+#     files:
+#       - colconfig.yaml
+#     options:
+#       annotations:
+#         config.kubernetes.io/local-config: "true"
 
-replacements:
-  - source:
-      kind: ConfigMap
-      name: collector-config
-      fieldPath: data.[colconfig.yaml]
+# replacements:
+#   - source:
+#       kind: ConfigMap
+#       name: collector-config
+#       fieldPath: data.[colconfig.yaml]
 
-    targets:
-      - select:
-          kind: OpenTelemetryCollector
-        fieldPaths:
-          - spec.config
-        options:
-          create: true
+#     targets:
+#       - select:
+#           kind: OpenTelemetryCollector
+#         fieldPaths:
+#           - spec.config
+#         options:
+#           create: true
