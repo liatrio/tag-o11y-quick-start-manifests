@@ -1,6 +1,6 @@
 - op: add
   path: /spec/config
-  value: 
+  value:
     extensions:
       health_check: {}
 
@@ -32,7 +32,7 @@
                 enabled: true
               git.repository.cve.count:
                 enabled: true
-          # GitLab scraper example 
+          # GitLab scraper example
           # gitlab:
           #   gitlab_org: liatrioinc/subproject
           #   # search_topic: a topic I'm searching for that's been added to repos
