@@ -39,10 +39,8 @@ OpenTelemetry Collector, run `make`.
 
 To deploy the GitProvider Receiver:
 
-> Make sure the [Quick Start](#quick-start) has been run first.
-
 1. Create a GitHub PAT
-2. Create a `./collectors/gitproviderreceiver/.env` file containing `PAT=<your GitHub PAT>
+2. Create a `./collectors/gitproviderreceiver/.env` file containing `PAT=<your GitHub PAT>`
 3. Run `make gpr`
 
 ### Git Provider Receiver (GitLab)
