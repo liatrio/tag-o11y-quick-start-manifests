@@ -6,14 +6,14 @@
 This set of manifests gets a local obersvability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
-* Grafana
-* Prometheus
-* Tempo
-* Loki
-* Certificate Manager
-* OpenTelemetry Controller
-* Liatrio OpenTelemetry Collector
-* NGrok Ingress and API Gateway Controller
+- Grafana
+- Prometheus
+- Tempo
+- Loki
+- Certificate Manager
+- OpenTelemetry Controller
+- Liatrio OpenTelemetry Collector
+- NGrok Ingress and API Gateway Controller
 
 ## Prerequisites
 
@@ -67,6 +67,7 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
    ```
 
 5. Run `make ngrok` to setup the controller.
+   > You may need to delete the ngrok controller pod if it's not creating the route. TODO: move to tailscale
 6. Update the [webhook route config](./collectors/webhook/ngrok-route.yaml)
    with your permanent domain in the host rules (see example below):
 
@@ -74,21 +75,62 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
    spec:
    ingressClassName: ngrok
    rules:
-      # Change this to match your NGrok permanent domain
-      - host: example.ngrok-free.app
+     # Change this to match your NGrok permanent domain
+     - host: example.ngrok-free.app
    ```
 
 7. Run `make dora`
 
 <!-- TODO: Add instructions for GitLab -->
 
+## GitHub Actions Event Tracing
+
+There is currently a [New Component][component] that has been submitted for
+discussion within the OpenTelemetry community. This component builds traces out
+of GitHub Action workflow events. This can be a useful piece of the puzzle for
+understanding how your CI/CD pipeline is functioning, by leveraging context
+rich traces. This section allows you to run this component locally for testing
+purposes. It is HIGHLY EXPERIMENTAL and should not be used in production.
+Originating documentation [can be found here][gha-docs].
+
+[component]: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/27460
+[gha-docs]: https://github.com/krzko/opentelemetry-collector-contrib/tree/feat-add-githubactionseventreceiver/receiver/githubactionsreceiver
+
+> Much is the same as the DORA configuration because the component was originally based off the webhook event receiver. You will need to ensure that your repository emits workflow events.
+
+1. From the [NGrok dashboard][ngrok-dash] get your [API Key][ngrok-api] from NGrok.
+2. Get your [Auth Token][ngrok-api] from NGrok.
+3. Get your [free permanent domain][ngrok-domain] from NGrok.
+4. Export your env vars:
+
+   ```bash
+   export NGROK_AUTHTOKEN=authtoken
+   export NGROK_API_KEY=apikey
+   ```
+
+5. Run `make ngrok` to setup the controller.
+   > You may need to delete the ngrok controller pod if it's not creating the route. TODO: move to tailscale
+6. Update the [github action event route config](./collectors/githubactionevents/ngrok-route.yaml)
+   with your permanent domain in the host rules (see example below):
+
+   ```yaml
+   spec:
+   ingressClassName: ngrok
+   rules:
+     # Change this to match your NGrok permanent domain
+     - host: example.ngrok-free.app
+   ```
+
+7. Run `make gha-traces`
+8. Port forward Jaeger & view the traces.
+
 ## Tracing Demo
 
 ![Logo](content/logo3.png)
 
 1. To run the demo, you will need to have a Kubernetes cluster running locally
-   as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create
-   a local cluster.  If you do not have these installed, you can install them by
+   as well as `kubectl` installed. We will use [k3d](https://k3d.io/) to create
+   a local cluster. If you do not have these installed, you can install them by
    running one of the followings commands depending on your OS:
 
    **Linux**
@@ -119,7 +161,7 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
    make apply-traces
    ```
 
-4. Verify that the namespaces are present and the pods are running.  They should
+4. Verify that the namespaces are present and the pods are running. They should
    look like this:
 
    ![kubectl get namespaces](content/namespaces.png)
@@ -147,11 +189,11 @@ make delete-traces
 ## Tracing
 
 We have an instrumented version of the flux-iac Tofu Controller which is part of
-what makes this demo possible.  Our fork with the changes are
+what makes this demo possible. Our fork with the changes are
 [here][tofu-controller]
 
 The other core piece of the demo is our instrumented version of the OpenTofu
-binary.  Similarly our fork with the changes are
+binary. Similarly our fork with the changes are
 [here][open-tofu]
 
 ## Configuration
@@ -164,7 +206,7 @@ configuration with your own terraform, you will need to do the following.
    ![Source](content/source.png)
 
 2. Update one of the `terraform.yml` files in the same folder so it references the name of the object you
-   created with the `source_control.yml` file in the `sourceRef` field.  Then
+   created with the `source_control.yml` file in the `sourceRef` field. Then
    update the `path` field with the specific path to the terraform resources
    you want to use inside the repository.
    ![Source](content/terraform.png)
@@ -174,14 +216,14 @@ configuration with your own terraform, you will need to do the following.
    them to be deployed with the rest of the resources
 
 4. Run `make apply-traces` to update the resources in the cluster with the new
-configuration.
+   configuration.
 
-> * For the purposes of the tracing demo these will by default be configured
->    to apply null resources to the cluster since deploying resources to a
->    cloud provider requires an additional auth setup that is not done here.
-> * Deploying kubernetes resources is also possible but requires you to update
-> the `tf-runner` service account with a cluster role that has permissions to
-> act on those resources.
+> - For the purposes of the tracing demo these will by default be configured
+>   to apply null resources to the cluster since deploying resources to a
+>   cloud provider requires an additional auth setup that is not done here.
+> - Deploying kubernetes resources is also possible but requires you to update
+>   the `tf-runner` service account with a cluster role that has permissions to
+>   act on those resources.
 
 [brew]: https://brew.sh/
 [dd]: https://www.docker.com/products/docker-desktop/
