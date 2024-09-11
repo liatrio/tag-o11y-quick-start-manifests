@@ -4,13 +4,13 @@
     receivers:
       otlp:
         protocols:
-          http:
+          http: {}
 
     processors:
       memory_limiter:
         check_interval: 1s
         limit_mib: 2000
-      batch:
+      batch: {}
 
     exporters:
       debug:
