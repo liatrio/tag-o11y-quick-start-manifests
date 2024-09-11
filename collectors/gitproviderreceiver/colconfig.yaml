@@ -89,3 +89,12 @@
           exporters:
             - debug
             - otlp
+
+- op: add
+  path: /spec/env
+  value: 
+    - name: GH_PAT
+      valueFrom:
+        secretKeyRef:
+          name: git-pat
+          key: GH_PAT
