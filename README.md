@@ -6,14 +6,14 @@
 This set of manifests gets a local obersvability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
-* Grafana
-* Prometheus
-* Tempo
-* Loki
-* Certificate Manager
-* OpenTelemetry Controller
-* Liatrio OpenTelemetry Collector
-* NGrok Ingress and API Gateway Controller
+- Grafana
+- Prometheus
+- Tempo
+- Loki
+- Certificate Manager
+- OpenTelemetry Controller
+- Liatrio OpenTelemetry Collector
+- NGrok Ingress and API Gateway Controller
 
 ## Prerequisites
 
@@ -21,17 +21,29 @@ It installs the following services into your local kubernetes cluster:
 
 1. Run kubernetes locally. Here are a few options:
    1. [Docker Desktop][dd]: Local instance of Docker and k8s.
-   2. [k3d][k3d]: a lightweight wrapper to run k3s (Rancher Lab’s minimal k8s distribution) in docker.
+   2. [k3d][k3d]: a lightweight wrapper to run k3s (Rancher Lab’s minimal k8s distribution) in docker. (Required if using tilt)
 2. Have kubectl installed
 3. Have kustomize installed
-4. If using DORA, have NGROK configured with a domain and update the configuration accordingly.
-5. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
-6. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
+4. Have [tilt][tilt] installed (Optional)
+5. Have helm and helmfile installed (Required when using tilt, otherwise optional)
+6. If using DORA, have NGROK configured with a domain and update the configuration accordingly.
+7. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
+8. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
 
 ## Quick Start
 
 To deploy the basic set of configuration with the LGTM stack and a Gateway
 OpenTelemetry Collector, run `make`.
+
+**Using Tilt**
+
+Tilt takes care of creating resouces and giving you access to the logs, as well as creating any port-forwarding you need. You'll have easy access from tilt's builtin dashboard.
+To spin up a k3d cluster and deploy the default LGTM stack with tilt, run `make tilt`
+Below are a couple of examples of what the tilt dashboard provides you.
+
+![tilt table view](content/tilt_table.png)
+
+![tilt detailed view](content/tilt_detail.png)
 
 ## Delivery Metrics
 
@@ -74,8 +86,8 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
    spec:
    ingressClassName: ngrok
    rules:
-      # Change this to match your NGrok permanent domain
-      - host: example.ngrok-free.app
+     # Change this to match your NGrok permanent domain
+     - host: example.ngrok-free.app
    ```
 
 7. Run `make dora`
@@ -87,8 +99,8 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
 ![Logo](content/logo3.png)
 
 1. To run the demo, you will need to have a Kubernetes cluster running locally
-   as well as `kubectl` installed.  We will use [k3d](https://k3d.io/) to create
-   a local cluster.  If you do not have these installed, you can install them by
+   as well as `kubectl` installed. We will use [k3d](https://k3d.io/) to create
+   a local cluster. If you do not have these installed, you can install them by
    running one of the followings commands depending on your OS:
 
    **Linux**
@@ -119,7 +131,7 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
    make apply-traces
    ```
 
-4. Verify that the namespaces are present and the pods are running.  They should
+4. Verify that the namespaces are present and the pods are running. They should
    look like this:
 
    ![kubectl get namespaces](content/namespaces.png)
@@ -147,11 +159,11 @@ make delete-traces
 ## Tracing
 
 We have an instrumented version of the flux-iac Tofu Controller which is part of
-what makes this demo possible.  Our fork with the changes are
+what makes this demo possible. Our fork with the changes are
 [here][tofu-controller]
 
 The other core piece of the demo is our instrumented version of the OpenTofu
-binary.  Similarly our fork with the changes are
+binary. Similarly our fork with the changes are
 [here][open-tofu]
 
 ## Configuration
@@ -164,7 +176,7 @@ configuration with your own terraform, you will need to do the following.
    ![Source](content/source.png)
 
 2. Update one of the `terraform.yml` files in the same folder so it references the name of the object you
-   created with the `source_control.yml` file in the `sourceRef` field.  Then
+   created with the `source_control.yml` file in the `sourceRef` field. Then
    update the `path` field with the specific path to the terraform resources
    you want to use inside the repository.
    ![Source](content/terraform.png)
@@ -174,14 +186,14 @@ configuration with your own terraform, you will need to do the following.
    them to be deployed with the rest of the resources
 
 4. Run `make apply-traces` to update the resources in the cluster with the new
-configuration.
+   configuration.
 
-> * For the purposes of the tracing demo these will by default be configured
->    to apply null resources to the cluster since deploying resources to a
->    cloud provider requires an additional auth setup that is not done here.
-> * Deploying kubernetes resources is also possible but requires you to update
-> the `tf-runner` service account with a cluster role that has permissions to
-> act on those resources.
+> - For the purposes of the tracing demo these will by default be configured
+>   to apply null resources to the cluster since deploying resources to a
+>   cloud provider requires an additional auth setup that is not done here.
+> - Deploying kubernetes resources is also possible but requires you to update
+>   the `tf-runner` service account with a cluster role that has permissions to
+>   act on those resources.
 
 [brew]: https://brew.sh/
 [dd]: https://www.docker.com/products/docker-desktop/
@@ -191,3 +203,4 @@ configuration.
 [ngrok-domain]: https://dashboard.ngrok.com/cloud-edge/domains
 [tofu-controller]: https://github.com/liatrio/tofu-controller/tree/tracing
 [open-tofu]: https://github.com/liatrio/opentofu/tree/tracing
+[tilt]: https://tilt.dev
