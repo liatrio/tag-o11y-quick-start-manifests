@@ -1,0 +1,105 @@
+if k8s_context() != "k3d-observability":
+  fail("Expected context to be k3d-observability")
+
+load('ext://namespace', 'namespace_create')
+namespace_create("cert-manager")
+
+def helmfile(file, output):
+  watch_file(file)
+  return local("helmfile template -f %s > %s" % (file,output)) 
+
+helmfile(
+  "./cluster-infra/cert-manager/helm",
+  "./cluster-infra/cert-manager/helm-chart.yaml"
+)
+
+k8s_yaml(
+  [
+    kustomize("./cluster-infra/cert-manager"),
+    kustomize("./cluster-infra/otel-operator"),
+    kustomize("./cluster-infra/jaeger-operator"),
+    kustomize("./collectors/gateway"),
+    kustomize("./apps/default")
+  ],
+  allow_duplicates = True
+)
+
+k8s_kind("Jaeger")
+k8s_kind("mutatingwebhookconfiguration")
+k8s_kind("validatingwebhookconfiguration")
+
+k8s_resource(
+  workload="cert-manager-webhook:mutatingwebhookconfiguration",
+  pod_readiness="ignore"
+)
+k8s_resource(
+  workload="cert-manager-webhook:validatingwebhookconfiguration",
+  pod_readiness="ignore"
+)
+k8s_resource(
+  workload="cert-manager-startupapicheck",
+  resource_deps=[
+    "cert-manager-webhook:deployment",
+  ]
+)
+k8s_resource(
+  workload="jaeger-operator",
+  resource_deps=[
+    "cert-manager-startupapicheck"
+  ]
+)
+k8s_resource(
+  workload="jaeger-operator-mutating-webhook-configuration",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-startupapicheck"
+  ]
+)
+k8s_resource(
+  workload="jaeger-operator-validating-webhook-configuration",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-startupapicheck"
+  ]
+)
+k8s_resource(
+  workload="jaeger-all-in-one",
+  port_forwards=16686, 
+  resource_deps=["jaeger-operator"]
+)
+k8s_resource(
+  workload="opentelemetry-operator-controller-manager",
+  resource_deps=[
+    "cert-manager-startupapicheck"
+  ]
+)
+k8s_resource(
+  workload="opentelemetry-operator-mutating-webhook-configuration",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-startupapicheck"
+  ]
+)
+k8s_resource(
+  workload="opentelemetry-operator-validating-webhook-configuration",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-startupapicheck"
+  ]
+)
+k8s_resource(
+  workload="grafana",
+  port_forwards=3000,
+)
+k8s_resource(
+  workload="loki",
+  port_forwards=3100
+)
+k8s_resource(
+  workload="prometheus",
+  port_forwards=9090
+)
+k8s_resource(
+  workload="tempo", 
+  port_forwards=4317
+)

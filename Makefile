@@ -80,6 +80,13 @@ traces: cert-manager otel-operator
 	@if ! kubectl create -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml; then echo "Tofu Controller CRDS already installed"; fi
 	kubectl apply -k ./cluster-infra/tofu-controller/
 
+.PHONY: k3d-observability
+k3d-observability:
+	./k3d.sh
+
+.PHONY: tilt
+tilt: k3d-observability
+	tilt up
 
 apply-traces:
 	kubectl apply -k ./cluster-infra/cert-manager/
