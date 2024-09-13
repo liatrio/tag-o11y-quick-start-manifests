@@ -105,3 +105,14 @@ delete-traces:
 	kubectl delete -k ./cluster-infra/otel-operator/ --ignore-not-found
 	kubectl delete -k ./cluster-infra/cert-manager/ --ignore-not-found
 	kubectl delete -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml
+
+.PHONY: tag-o11y-restart
+tag-o11y-restart:
+	@./scripts/tag-o11y-rollback.sh
+	echo "Waiting 10 seconds for everything to spin down"
+	sleep 10
+	make
+
+.PHONY: tag-o11y-rollback
+tag-o11y-rollback:
+	@./scripts/tag-o11y-rollback.sh

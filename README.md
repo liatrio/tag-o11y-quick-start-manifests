@@ -30,6 +30,21 @@ It installs the following services into your local kubernetes cluster:
 
 ## Quick Start
 
+Ensure you actually have a cluster running and are on the correct context, in the previous step, you should have installed k3d or setup Docker Desktop for kubernetes.
+
+Using K3D:
+
+```bash
+k3d cluster create mycluster
+kubectl config use-context k3d-mycluster
+```
+
+Using Docker Kubernetes (Assuming Kubenetes in Docker is enabled):
+
+```bash
+kubectl config use-context docker-desktop
+```
+
 To deploy the basic set of configuration with the LGTM stack and a Gateway
 OpenTelemetry Collector, run `make`.
 
@@ -139,6 +154,20 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
    > it but you can skip this step if you would like.
 
 ### Cleanup
+
+To restart the Cluster and spin up all resources again use make target `tag-o11y-restart`
+
+```bash
+make tag-o11y-restart
+```
+
+To remove all resources, including the cluster use make target `tag-o11y-rollback`
+
+```bash
+make tag-o11y-rollback
+```
+
+To remove all traces, tofu contoller, and cert-manager use make taget `delete-traces`
 
 ```bash
 make delete-traces
