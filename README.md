@@ -25,10 +25,9 @@ It installs the following services into your local kubernetes cluster:
 2. Have kubectl installed
 3. Have kustomize installed
 4. Have [tilt][tilt] installed (Optional)
-5. Have helm and helmfile installed (Required when using tilt, otherwise optional)
-6. If using DORA, have NGROK configured with a domain and update the configuration accordingly.
-7. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
-8. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
+5. If using DORA, have NGROK configured with a domain and update the configuration accordingly.
+6. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
+7. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
 
 ## Quick Start
 
