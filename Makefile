@@ -74,13 +74,19 @@ ngrok:
 		--set credentials.apiKey="$(NGROK_AK)" \
 		--set credentials.authtoken="$(NGROK_AT)"
 
-.PHONY: k3d-observability
-k3d-observability:
-	./k3d.sh
-
-.PHONY: tilt
-tilt: k3d-observability
-	tilt up
+.PHONY: tilt up destroy
+tilt-%:
+	@if [ "$*" = "up" ]; then \
+		echo "Looking for observability cluster..."; \
+		./k3d.sh; \
+		tilt up; \
+	elif [ "$*" = "destroy" ]; then \
+		echo "Destroying observability cluster"; \
+		k3d cluster delete observability; \
+	else \
+		echo "Invalid argument. Use 'up' or 'destroy'."; \
+		exit 1; \
+	fi
 
 .PHONY: traces
 traces: cert-manager otel-operator
