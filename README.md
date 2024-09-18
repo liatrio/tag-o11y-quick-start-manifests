@@ -59,7 +59,7 @@ Below are a couple of examples of what the tilt dashboard provides you.
 To deploy the GitProvider Receiver:
 
 1. Create a GitHub PAT
-2. Create a `./collectors/gitproviderreceiver/.env` file containing `PAT=<your GitHub PAT>`
+2. Create a `./collectors/gitproviderreceiver/.env` file containing `GH_PAT=<your GitHub PAT>`
 3. Run `make gpr`
 
 ### Git Provider Receiver (GitLab)
