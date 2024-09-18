@@ -74,7 +74,7 @@ ngrok:
 		--set credentials.apiKey="$(NGROK_AK)" \
 		--set credentials.authtoken="$(NGROK_AT)"
 
-.PHONY: tilt up destroy
+.PHONY: tilt up
 tilt-%:
 	@if [ "$*" = "up" ]; then \
 		echo "Looking for observability cluster..."; \
@@ -86,11 +86,8 @@ tilt-%:
 	  	k3d cluster create observability 1> /dev/null; \
 		fi; \
 		tilt up; \
-	elif [ "$*" = "destroy" ]; then \
-		echo "Destroying observability cluster"; \
-		k3d cluster delete observability; \
 	else \
-		echo "Invalid argument. Use 'up' or 'destroy'."; \
+		echo "Invalid argument. Use 'up'."; \
 		exit 1; \
 	fi
 
