@@ -42,9 +42,9 @@ NOTE: Requires k3d<br><br>
 
 Tilt takes care of creating resouces and giving you access to the logs, as well as creating any port-forwarding you need. You'll have easy access from tilt's builtin dashboard.<br>
 
-To spin up a k3d observability cluster and deploy the default LGTM stack with tilt, run `make tilt-up` <br>
+To spin up a k3d observability cluster, and deploy the default LGTM stack with tilt; run `make tilt-up`. <br>
 
-When you're done, type `ctrl-c` and `make tilt-destroy`<br>
+When you're done, type `ctrl-c`, and `make tilt-destroy`. <br>
 
 Below are a couple of examples of what the tilt dashboard provides you.
 
