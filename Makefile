@@ -74,12 +74,28 @@ ngrok:
 		--set credentials.apiKey="$(NGROK_AK)" \
 		--set credentials.authtoken="$(NGROK_AT)"
 
+.PHONY: tilt up
+tilt-%:
+	@if [ "$*" = "up" ]; then \
+		echo "Looking for observability cluster..."; \
+		cluster=$$(k3d cluster ls --no-headers observability 2> /dev/null | awk '{print $$1}'); \
+		if [[ "$$cluster" && $$cluster = "observability" ]]; then \
+	  	echo "observability cluster present"; \
+		else \
+	  	echo "not present... creating observability cluster"; \
+	  	k3d cluster create observability 1> /dev/null; \
+		fi; \
+		tilt up; \
+	else \
+		echo "Invalid argument. Use 'up'."; \
+		exit 1; \
+	fi
+
 .PHONY: traces
 traces: cert-manager otel-operator
 	kubectl apply -k ./apps/traces
 	@if ! kubectl create -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml; then echo "Tofu Controller CRDS already installed"; fi
 	kubectl apply -k ./cluster-infra/tofu-controller/
-
 
 apply-traces:
 	kubectl apply -k ./cluster-infra/cert-manager/
