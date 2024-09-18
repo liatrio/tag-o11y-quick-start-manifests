@@ -35,8 +35,10 @@ To deploy the basic set of configuration with the LGTM stack and a Gateway
 OpenTelemetry Collector, run `make`.
 
 <hr>
-**Using Tilt (Optional)**<br>
-NOTE: Requires k3d
+
+**Using Tilt (Optional)**
+<br>
+NOTE: Requires k3d<br><br>
 
 Tilt takes care of creating resouces and giving you access to the logs, as well as creating any port-forwarding you need. You'll have easy access from tilt's builtin dashboard.<br>
 
