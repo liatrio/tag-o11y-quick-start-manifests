@@ -78,7 +78,13 @@ ngrok:
 tilt-%:
 	@if [ "$*" = "up" ]; then \
 		echo "Looking for observability cluster..."; \
-		./k3d.sh; \
+		cluster=$$(k3d cluster ls --no-headers observability 2> /dev/null | awk '{print $$1}'); \
+		if [[ "$$cluster" && $$cluster = "observability" ]]; then \
+	  	echo "observability cluster present"; \
+		else \
+	  	echo "not present... creating observability cluster"; \
+	  	k3d cluster create observability 1> /dev/null; \
+		fi; \
 		tilt up; \
 	elif [ "$*" = "destroy" ]; then \
 		echo "Destroying observability cluster"; \
