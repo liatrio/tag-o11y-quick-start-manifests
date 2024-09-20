@@ -46,6 +46,10 @@ jaeger-operator:
 gpr: default
 	kubectl apply -k ./collectors/gitproviderreceiver/
 
+.PHONY: ghr
+ghr: default
+	kubectl apply -k ./collectors/githubreceiver/
+
 .PHONY: eck-operator
 eck-operator:
 	kubectl apply -k ./cluster-infra/eck-operator/
