@@ -11,7 +11,7 @@ generatorOptions:
   disableNameSuffixHash: true
 
 secretGenerator:
-  - name: git-pat
+  - name: github-pat
     envs:
       - .env
 
