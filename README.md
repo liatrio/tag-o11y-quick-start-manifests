@@ -54,13 +54,21 @@ Below are a couple of examples of what the tilt dashboard provides you.
 
 ## Delivery Metrics
 
-### Git Provider Receiver (GitHub)
+### Git Provider Receiver (GitHub) (Deprecated: Use GitHub Receiver)
 
 To deploy the GitProvider Receiver:
 
 1. Create a GitHub PAT
 2. Create a `./collectors/gitproviderreceiver/.env` file containing `GH_PAT=<your GitHub PAT>`
 3. Run `make gpr`
+
+### GitHub Receiver
+
+To deploy the GitHub Receiver
+
+1. Create a GitHub PAT
+2. Create a `./collectors/githubreceiver/.env` file containing `GH_PAT=<your GitHub PAT>`
+3. Run `make ghr`
 
 ### Git Provider Receiver (GitLab)
 
