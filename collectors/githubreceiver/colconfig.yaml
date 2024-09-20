@@ -13,9 +13,6 @@
       bearertokenauth/github:
         token: ${env:GH_PAT}
 
-      # bearertokenauth/gitlab:
-      #   token: ${env:GL_PAT}
-
     receivers:
       github:
         initial_delay: 10s
@@ -85,10 +82,5 @@
     - name: GH_PAT
       valueFrom:
         secretKeyRef:
-          name: git-pat
+          name: github-pat
           key: GH_PAT
-    # - name: GH_PAT
-    #   valueFrom:
-    #     secretKeyRef:
-    #       name: git-org
-    #       key: GH_ORG
