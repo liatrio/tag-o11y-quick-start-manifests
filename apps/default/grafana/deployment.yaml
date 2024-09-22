@@ -80,11 +80,6 @@ spec:
             - name: dashboard-gpr-dora-metrics
               mountPath: /etc/grafana/provisioning/dashboards/gpr/dora-metrics.json
             - name: dashboard-gpr-engineering-effectiveness-metrics
-              mountPath: /etc/grafana/provisioning/dashboards/gpr/engineering-effectiveness-metrics.json
-            - name: dashboard-gpr-github-receiver
-              mountPath: /etc/grafana/provisioning/dashboards/gpr/github-receiver.json
-            - name: dashboard-gpr-four-keys
-              mountPath: /etc/grafana/provisioning/dashboards/gpr/four-keys.json
             - name: dashboard-gpr-vcs-trunk-based-development
               mountPath: /etc/grafana/provisioning/dashboards/gpr/vcs-trunk-based-development.json
 
@@ -131,12 +126,6 @@ spec:
         - name: dashboard-gpr-engineering-effectiveness-metrics
           configMap:
             name: dashboard-gpr-engineering-effectiveness-metrics
-        - name: dashboard-gpr-github-receiver
-          configMap:
-            name: dashboard-gpr-github-receiver
-        - name: dashboard-gpr-four-keys
-          configMap:
-            name: dashboard-gpr-four-keys
         - name: dashboard-gpr-vcs-trunk-based-development
           configMap:
             name: dashboard-gpr-vcs-trunk-based-development
