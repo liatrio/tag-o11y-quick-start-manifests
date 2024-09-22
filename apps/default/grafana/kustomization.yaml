@@ -25,6 +25,7 @@ configMapGenerator:
     files:
       - dashboards/providers.yaml
 
+
   # Demo Dashboards
   - name: dashboard-demo
     files:
@@ -49,3 +50,12 @@ configMapGenerator:
   - name: dashboard-gpr-engineering-effectiveness-metrics
     files:
       - dashboards/gpr/engineering-effectiveness-metrics.json
+  - name: dashboard-gpr-github-receiver
+    files:
+      - dashboards/gpr/github-receiver.json
+  - name: dashboard-gpr-four-keys
+    files:
+      - dashboards/gpr/four-keys.json 
+  - name: dashboard-gpr-vcs-trunk-based-development
+    files:
+      - dashboards/gpr/vcs-trunk-based-development.json

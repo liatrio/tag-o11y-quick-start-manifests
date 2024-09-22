@@ -24,7 +24,7 @@
               vcs.repository.contributor.count:
                 enabled: true
             github_org: liatrio
-            #search_query: org:liatrio topic:o11y archived:false  #Recommended optional query override, defaults to "{org,user}:<github_org>"
+            search_query: org:liatrio topic:o11y archived:false  #Recommended optional query override, defaults to "{org,user}:<github_org>"
             #endpoint: https://selfmanagedenterpriseserver.com
             auth:
               authenticator: bearertokenauth/github
