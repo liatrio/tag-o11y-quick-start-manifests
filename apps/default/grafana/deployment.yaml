@@ -60,6 +60,10 @@ spec:
             - name: providers
               mountPath: /etc/grafana/provisioning/dashboards
 
+            # Root Dashboards
+            - name: vcs-trunk-root
+              mountPath: /etc/grafana/provisioning/dashboards/vcs-trunk-root.json
+
             # Demo Dashboards
             - name: dashboard-demo
               mountPath: /etc/grafana/provisioning/dashboards/demo/demo.json
@@ -76,7 +80,8 @@ spec:
             - name: dashboard-gpr-dora-metrics
               mountPath: /etc/grafana/provisioning/dashboards/gpr/dora-metrics.json
             - name: dashboard-gpr-engineering-effectiveness-metrics
-              mountPath: /etc/grafana/provisioning/dashboards/gpr/engineering-effectiveness-metrics.json
+            - name: dashboard-gpr-vcs-trunk-based-development
+              mountPath: /etc/grafana/provisioning/dashboards/gpr/vcs-trunk-based-development.json
 
       volumes:
         - name: pv
@@ -91,6 +96,11 @@ spec:
         - name: providers
           configMap:
             name: providers
+
+        # Root Dashboards
+        - name: vcs-trunk-root
+          configMap:
+            name: vcs-trunk-root
 
         # Demo Dashboards
         - name: dashboard-demo
@@ -116,3 +126,6 @@ spec:
         - name: dashboard-gpr-engineering-effectiveness-metrics
           configMap:
             name: dashboard-gpr-engineering-effectiveness-metrics
+        - name: dashboard-gpr-vcs-trunk-based-development
+          configMap:
+            name: dashboard-gpr-vcs-trunk-based-development
