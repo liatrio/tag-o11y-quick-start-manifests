@@ -1,0 +1,42 @@
+name: Integration testing
+
+on:
+  push:
+    branches:
+      - main
+  # pull_request:
+  #   branches:
+  #     - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    # Install Tools
+    - name: Install Miscellaneous Tools
+      uses: alexellis/arkade-get@493cf9387f80dcbf8a85786c55e04de45c927a5c
+      with:
+        kubectl: v1.30.2
+        kustomize: v5.3.0
+        helm: v3.16.1
+        helmfile: v0.161.0
+        k3d: v5.7.3
+
+    - name: Create k3d Cluster
+      run: k3d cluster create temp
+
+    - name: Apply Manifests Into the Cluster
+      run: make
+
+    - name: Wait For Jobs to Complete
+      run: |
+        kubectl wait \
+          --for=condition=complete job --all -A \
+          --timeout 4m
+
+    - name: Wait For Pods to be Ready
+      run: |
+        kubectl get pods -A
+        kubectl wait \
+          --for=condition=ready pod --all -A \
+          --field-selector=status.phase!=Succeeded \
+          --timeout 4m
