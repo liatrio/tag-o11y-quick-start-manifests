@@ -60,10 +60,6 @@ spec:
             - name: providers
               mountPath: /etc/grafana/provisioning/dashboards
 
-            # Root Dashboards
-            - name: vcs-trunk-root
-              mountPath: /etc/grafana/provisioning/dashboards/vcs-trunk-root.json
-
             # Demo Dashboards
             - name: dashboard-demo
               mountPath: /etc/grafana/provisioning/dashboards/demo/demo.json
@@ -96,11 +92,6 @@ spec:
         - name: providers
           configMap:
             name: providers
-
-        # Root Dashboards
-        - name: vcs-trunk-root
-          configMap:
-            name: vcs-trunk-root
 
         # Demo Dashboards
         - name: dashboard-demo
