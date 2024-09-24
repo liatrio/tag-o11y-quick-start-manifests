@@ -30,6 +30,9 @@ jobs:
     - name: Apply dora manifests
       run: make dora
 
+    - name: Apply trace
+      run: make traces
+
     # - name: Wait For Jobs to Complete
     #   run: |
     #     kubectl wait \
