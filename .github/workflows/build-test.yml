@@ -1,12 +1,10 @@
 name: Build Test
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  # pull_request:
-  #   branches:
-  #     - main
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -26,16 +24,18 @@ jobs:
     - name: Create k3d Cluster
       run: k3d cluster create temp
 
-    - name: Apply Manifests Into the Cluster
-      run: make dora
+    - name: Apply Base Manifests Into the Cluster
+      run: make
 
-    - name: Wait For Jobs to Complete
-      run: |
-        kubectl wait \
-          --for=condition=complete job --all -A \
-          --timeout 4m
+    # - name: Wait For Jobs to Complete
+    #   run: |
+    #     kubectl wait \
+    #       --for=condition=complete job --all -A \
+    #       --timeout 4m
 
-    - run: sleep 10
+    # wait for jobs to be done before checking pod status.
+    - name: Wait for Jobs to be Complete
+      run: sleep 10
 
     - name: Wait For Pods to be Ready
       run: |
