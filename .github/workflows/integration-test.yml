@@ -11,6 +11,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    
     # Install Tools
     - name: Install Miscellaneous Tools
       uses: alexellis/arkade-get@493cf9387f80dcbf8a85786c55e04de45c927a5c
