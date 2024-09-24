@@ -1,4 +1,4 @@
-name: Integration testing
+name: Build Test
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
       run: k3d cluster create temp
 
     - name: Apply Manifests Into the Cluster
-      run: make ghr
+      run: make dora
 
     - name: Wait For Jobs to Complete
       run: |
