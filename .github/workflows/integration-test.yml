@@ -41,4 +41,4 @@ jobs:
         kubectl wait \
           --for=condition=ready pod --all -A \
           --field-selector=status.phase!=Succeeded \
-          --timeout 10m
+          --timeout 4m
