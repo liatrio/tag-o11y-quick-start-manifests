@@ -79,7 +79,7 @@ spec:
               mountPath: /etc/grafana/provisioning/dashboards/gpr/delivery-metrics.json
             - name: dashboard-gpr-dora-metrics
               mountPath: /etc/grafana/provisioning/dashboards/gpr/dora-metrics.json
-            - name: dashboard-gpr-engineering-effectiveness-metrics
+            # - name: dashboard-gpr-engineering-effectiveness-metrics
             - name: dashboard-gpr-vcs-trunk-based-development
               mountPath: /etc/grafana/provisioning/dashboards/gpr/vcs-trunk-based-development.json
 
