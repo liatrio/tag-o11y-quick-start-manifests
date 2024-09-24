@@ -27,6 +27,9 @@ jobs:
     - name: Apply Base Manifests Into the Cluster
       run: make
 
+    - name: Apply dora manifests
+      run: make dora
+
     # - name: Wait For Jobs to Complete
     #   run: |
     #     kubectl wait \
