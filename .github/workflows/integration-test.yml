@@ -33,9 +33,11 @@ jobs:
       run: |
         kubectl wait \
           --for=condition=complete job --all -A \
+          --field-selector=status.phase!=Succeeded
           --timeout 4m
     
-    - run: sleep 20
+    # This is to ensure jobs are all complete so they don't get verified wit
+    - run: sleep 10
 
     - name: Wait For Pods to be Ready
       run: |
