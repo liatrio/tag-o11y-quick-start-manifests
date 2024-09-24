@@ -27,17 +27,15 @@ jobs:
       run: k3d cluster create temp
 
     - name: Apply Manifests Into the Cluster
-      run: make
+      run: make ghr
 
     - name: Wait For Jobs to Complete
       run: |
         kubectl wait \
           --for=condition=complete job --all -A \
-          --field-selector=status.phase!=Succeeded
           --timeout 4m
-    
-    # # This is to ensure jobs are all complete so they don't get verified wit
-    # - run: sleep 10
+
+    - run: sleep 10
 
     - name: Wait For Pods to be Ready
       run: |
