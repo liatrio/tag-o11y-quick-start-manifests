@@ -80,7 +80,7 @@ ngrok:
 
 .PHONY: tilt
 tilt-%:
-	@if [ "$*" = "basic" ]; then \
+	@if [ "$*" = "up" ]; then \
 		echo "Looking for observability cluster..."; \
 		cluster=$$(k3d cluster ls --no-headers observability 2> /dev/null | awk '{print $$1}'); \
 		if [[ "$$cluster" && $$cluster = "observability" ]]; then \
@@ -91,7 +91,7 @@ tilt-%:
 		fi; \
 		tilt up --file apps/default/Tiltfile; \
 	else \
-		echo "Invalid argument. Use 'basic'."; \
+		echo "Invalid argument. Use 'up'."; \
 		exit 1; \
 	fi
 
