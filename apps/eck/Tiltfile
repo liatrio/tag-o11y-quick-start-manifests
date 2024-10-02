@@ -1,0 +1,93 @@
+if k8s_context() != "k3d-otel-eck":
+  fail("Expected context to be k3d-otel-eck")
+
+load('ext://uibutton', 'cmd_button')
+cmd_button(
+  name='delete-amp-token',
+  argv=[
+    'sh',
+    '-c',
+    'kubectl delete secret -n collector eck-stack-apm-server-apm-token'
+  ],
+  text='Delete Secret',
+  resource="eck-stack-apm-server-apm-token",
+  icon_name='delete'
+)
+
+include("../../cluster-infra/cert-manager/Tiltfile")
+include("../../cluster-infra/otel-operator/Tiltfile")
+include("../../cluster-infra/eck-operator/Tiltfile")
+include("../../collectors/gateway-eck/Tiltfile")
+
+k8s_yaml(kustomize("."))
+
+k8s_kind("Agent")
+k8s_kind("AmpServer")
+k8s_kind("Elasticsearch")
+k8s_kind("Kibana")
+k8s_kind("mutatingwebhookconfiguration")
+k8s_kind("validatingwebhookconfiguration")
+
+k8s_resource(
+  workload="elastic-operator",
+  resource_deps=[
+    "cert-manager",
+    "cert-manager-cainjector",
+    "cert-manager-webhook:deployment",
+  ],
+  labels=[
+    "eck"
+  ]
+)
+k8s_resource(
+  workload="elastic-webhook.k8s.elastic.co",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-webhook:deployment"
+  ],
+  labels=[
+    "eck"
+  ]
+)
+k8s_resource(
+  workload="fleet-server",
+  resource_deps=[],
+  labels=[
+    "eck"
+  ],
+  port_forwards=[
+    "8220"
+  ]
+)
+k8s_resource(
+  workload="kibana",
+  resource_deps=[],
+  labels=[
+    "eck"
+  ],
+  port_forwards=[
+    "5601"
+  ]
+)
+k8s_resource(
+  workload="elasticsearch",
+  resource_deps=[],
+  labels=[
+    "eck"
+  ],
+  port_forwards=[
+    "9200"
+  ]
+)
+k8s_resource(
+  objects=[
+    "eck-stack-apm-server:apmserver"
+  ],
+  new_name="eck-stack-apm-server",
+  labels=[
+    "eck"
+  ],
+  port_forwards=[
+    "8200"
+  ]
+)

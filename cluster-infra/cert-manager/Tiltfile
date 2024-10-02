@@ -1,0 +1,43 @@
+k8s_yaml(kustomize("."))
+
+k8s_kind("mutatingwebhookconfiguration")
+k8s_kind("validatingwebhookconfiguration")
+
+k8s_resource(
+  workload="cert-manager",
+  labels=[
+    "cert-manager"
+  ]
+)
+k8s_resource(
+  workload="cert-manager-cainjector",
+  labels=[
+    "cert-manager"
+  ]
+)
+k8s_resource(
+  workload="cert-manager-webhook:deployment",
+  labels=[
+    "cert-manager"
+  ]
+)
+k8s_resource(
+  workload="cert-manager-webhook:mutatingwebhookconfiguration",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-webhook:deployment"
+  ],
+  labels=[
+    "cert-manager"
+  ]
+)
+k8s_resource(
+  workload="cert-manager-webhook:validatingwebhookconfiguration",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-webhook:deployment"
+  ],
+  labels=[
+    "cert-manager"
+  ]
+)

@@ -16,7 +16,6 @@ NGROK_AK = ${NGROK_API_KEY}
 
 .PHONY: default
 default: cert-manager otel-operator jaeger-operator
-	kubectl apply -k ./collectors/gateway/
 	kubectl apply -k ./apps/default
 	$(call urls)
 
@@ -78,22 +77,33 @@ ngrok:
 		--set credentials.apiKey="$(NGROK_AK)" \
 		--set credentials.authtoken="$(NGROK_AT)"
 
-.PHONY: tilt up
-tilt-%:
-	@if [ "$*" = "up" ]; then \
-		echo "Looking for observability cluster..."; \
-		cluster=$$(k3d cluster ls --no-headers observability 2> /dev/null | awk '{print $$1}'); \
-		if [[ "$$cluster" && $$cluster = "observability" ]]; then \
-	  	echo "observability cluster present"; \
-		else \
-	  	echo "not present... creating observability cluster"; \
-	  	k3d cluster create observability 1> /dev/null; \
-		fi; \
-		tilt up; \
+.PHONY: tilt
+tilt:
+	@if [ "$(MAKECMDGOALS)" = "tilt-basic" ]; then \
+			echo "Looking for otel-basic cluster..."; \
+			cluster=$$(k3d cluster ls --no-headers otel-basic 2> /dev/null | awk '{print $$1}'); \
+			if [[ "$$cluster" && $$cluster = "otel-basic" ]]; then \
+ 	  		echo "otel-basic cluster present"; \
+ 			else \
+ 	  		echo "not present... creating otel-basic cluster"; \
+ 	  		k3d cluster create otel-basic 1> /dev/null; \
+ 			fi; \
+		  tilt up --file apps/default/Tiltfile; \
+	elif [ "$(MAKECMDGOALS)" = "tilt-eck" ]; then \
+			echo "Looking for otel-eck cluster..."; \
+			cluster=$$(k3d cluster ls --no-headers otel-eck 2> /dev/null | awk '{print $$1}'); \
+			if [[ "$$cluster" && $$cluster = "otel-eck" ]]; then \
+ 	  		echo "otel-eck cluster present"; \
+ 			else \
+ 	  		echo "not present... creating otel-eck cluster"; \
+ 	  		k3d cluster create otel-eck 1> /dev/null; \
+ 			fi; \
+		 	tilt up --file apps/eck/Tiltfile; \
 	else \
-		echo "Invalid argument. Use 'up'."; \
-		exit 1; \
+		echo "Unknown tilt option!"; \
 	fi
+tilt-basic: tilt
+tilt-eck: tilt
 
 .PHONY: traces
 traces: cert-manager otel-operator

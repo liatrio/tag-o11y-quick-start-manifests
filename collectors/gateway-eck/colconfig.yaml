@@ -18,7 +18,7 @@
       otlphttp:
         endpoint: "http://eck-stack-apm-server-apm-http.elastic-system.svc:8200"
         headers:
-          Authorization: "Bearer ${env:secret-token}"
+          Authorization: "Bearer ${env:AMP_TOKEN}"
 
     service:
       pipelines:
