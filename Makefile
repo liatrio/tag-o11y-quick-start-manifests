@@ -104,21 +104,6 @@ tilt:
 	fi
 tilt-basic: tilt
 tilt-eck: tilt
-# tilt-% %:
-# 	@if [ "$*" = "up" ]; then \
-# 		echo "Looking for observability cluster..."; \
-# 		cluster=$$(k3d cluster ls --no-headers observability 2> /dev/null | awk '{print $$1}'); \
-# 		if [[ "$$cluster" && $$cluster = "observability" ]]; then \
-# 	  	echo "observability cluster present"; \
-# 		else \
-# 	  	echo "not present... creating observability cluster"; \
-# 	  	k3d cluster create observability 1> /dev/null; \
-# 		fi; \
-# 		tilt up --file apps/default/Tiltfile; \
-# 	else \
-# 		echo "Invalid argument. Use 'up'."; \
-# 		exit 1; \
-# 	fi
 
 .PHONY: traces
 traces: cert-manager otel-operator
