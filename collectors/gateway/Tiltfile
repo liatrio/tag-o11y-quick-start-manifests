@@ -1,0 +1,16 @@
+include("../../cluster-infra/otel-operator/Tiltfile")
+
+k8s_yaml(kustomize("."))
+
+k8s_resource(
+  objects=[
+    "gateway:opentelemetrycollector"
+  ],
+  new_name="gateway-collector",
+  labels=[
+    "gateway-collector"
+  ],
+  resource_deps=[
+    "opentelemetry-operator-controller-manager"
+  ]
+)

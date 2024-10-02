@@ -6,7 +6,8 @@ namespace: observability
 
 resources:
   - ../namespace
-  - https://github.com/jaegertracing/jaeger-operator/releases/download/v1.57.0/jaeger-operator.yaml
+  - localized.yaml
+  #- https://github.com/jaegertracing/jaeger-operator/releases/download/v1.57.0/jaeger-operator.yaml
 
 generatorOptions:
   labels:

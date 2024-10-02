@@ -78,9 +78,9 @@ ngrok:
 		--set credentials.apiKey="$(NGROK_AK)" \
 		--set credentials.authtoken="$(NGROK_AT)"
 
-.PHONY: tilt up
+.PHONY: tilt
 tilt-%:
-	@if [ "$*" = "up" ]; then \
+	@if [ "$*" = "basic" ]; then \
 		echo "Looking for observability cluster..."; \
 		cluster=$$(k3d cluster ls --no-headers observability 2> /dev/null | awk '{print $$1}'); \
 		if [[ "$$cluster" && $$cluster = "observability" ]]; then \
@@ -89,9 +89,9 @@ tilt-%:
 	  	echo "not present... creating observability cluster"; \
 	  	k3d cluster create observability 1> /dev/null; \
 		fi; \
-		tilt up; \
+		tilt up --file apps/default/Tiltfile; \
 	else \
-		echo "Invalid argument. Use 'up'."; \
+		echo "Invalid argument. Use 'basic'."; \
 		exit 1; \
 	fi
 

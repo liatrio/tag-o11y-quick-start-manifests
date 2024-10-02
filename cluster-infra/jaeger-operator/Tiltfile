@@ -1,0 +1,35 @@
+include("../cert-manager/Tiltfile")
+
+k8s_yaml(kustomize("."))
+
+k8s_resource(
+  workload="jaeger-operator",
+  resource_deps=[
+    "cert-manager",
+    "cert-manager-cainjector",
+    "cert-manager-webhook:deployment"
+  ],
+  labels=[
+    "jaeger-operator"
+  ]
+)
+k8s_resource(
+  workload="jaeger-operator-mutating-webhook-configuration",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-webhook:deployment"
+  ],
+  labels=[
+    "jaeger-operator"
+  ]
+)
+k8s_resource(
+  workload="jaeger-operator-validating-webhook-configuration",
+  pod_readiness="ignore",
+  resource_deps=[
+    "cert-manager-webhook:deployment"
+  ],
+  labels=[
+    "jaeger-operator"
+  ]
+)
