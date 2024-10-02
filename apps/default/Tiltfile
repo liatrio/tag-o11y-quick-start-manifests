@@ -1,3 +1,6 @@
+if k8s_context() != "k3d-otel-basic":
+  fail("Expected context to be k3d-otel-basic")
+
 include("../../cluster-infra/cert-manager/Tiltfile")
 include("../../cluster-infra/otel-operator/Tiltfile")
 include("../../cluster-infra/jaeger-operator/Tiltfile")
