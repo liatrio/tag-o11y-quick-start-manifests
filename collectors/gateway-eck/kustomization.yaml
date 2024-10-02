@@ -8,7 +8,6 @@ resources:
   - ../base/
   - ingress.yaml
 
-
 patches:
   - target:
       kind: OpenTelemetryCollector
@@ -25,10 +24,13 @@ patches:
         path: /spec/serviceAccount
         value: otel-collector
       - op: add
-        path: /spec/envFrom
+        path: /spec/env
         value: 
-          - secretRef:
-              name: eck-stack-apm-server-apm-token
+          - name: AMP_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: eck-stack-apm-server-apm-token
+                key: secret-token
 
 # Config map generator set the collector config as a multi-line string. OTEL operator v1beta1 expects an object rather than a string.
 # configMapGenerator:

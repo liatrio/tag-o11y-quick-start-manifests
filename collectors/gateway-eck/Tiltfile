@@ -1,0 +1,35 @@
+k8s_yaml(kustomize("."))
+
+local_resource(
+  "eck-stack-apm-server-apm-token",
+  cmd="kubectl -n collector create secret generic eck-stack-apm-server-apm-token --from-literal secret-token=$(kubectl -n elastic-system get secret eck-stack-apm-server-apm-token -o go-template='{{index .data \"secret-token\" | base64decode }}')",
+  resource_deps=[
+    "elastic-operator",
+    "eck-stack-apm-server",
+    "fleet-server",
+    "kibana",
+    "elasticsearch"
+  ],
+  labels=[
+    "eck"
+  ]
+)
+
+k8s_resource(
+  objects=[
+    "gateway-eck:opentelemetrycollector",
+  ],
+  new_name="gateway-collector",
+  labels=[
+    "eck"
+  ],
+  resource_deps=[
+    "opentelemetry-operator-controller-manager",
+    "elastic-operator",
+    "eck-stack-apm-server-apm-token"
+  ],
+  port_forwards=[
+    "4318",
+    "8888"
+  ]
+)
