@@ -2,7 +2,13 @@ k8s_yaml(kustomize("."))
 
 local_resource(
   "eck-stack-apm-server-apm-token",
-  cmd="kubectl -n collector create secret generic eck-stack-apm-server-apm-token --from-literal secret-token=$(kubectl -n elastic-system get secret eck-stack-apm-server-apm-token -o go-template='{{index .data \"secret-token\" | base64decode }}')",
+  cmd=[
+    "sh",
+    "-c",
+    "kubectl -n collector create secret generic eck-stack-apm-server-apm-token \
+    --from-literal secret-token=$(kubectl -n elastic-system get secret \
+    eck-stack-apm-server-apm-token -o go-template='{{index .data \"secret-token\" | base64decode }}')"
+  ],
   resource_deps=[
     "elastic-operator",
     "eck-stack-apm-server",

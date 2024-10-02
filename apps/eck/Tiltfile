@@ -4,8 +4,12 @@ if k8s_context() != "k3d-otel-eck":
 load('ext://uibutton', 'cmd_button')
 cmd_button(
   name='delete-amp-token',
-  argv=['sh','-c','kubectl delete secret -n collector eck-stack-apm-server-apm-token'],
-  text='Delete eck-stack-apm-server-apm-token',
+  argv=[
+    'sh',
+    '-c',
+    'kubectl delete secret -n collector eck-stack-apm-server-apm-token'
+  ],
+  text='Delete Secret',
   resource="eck-stack-apm-server-apm-token",
   icon_name='delete'
 )
