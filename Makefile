@@ -16,7 +16,6 @@ NGROK_AK = ${NGROK_API_KEY}
 
 .PHONY: default
 default: cert-manager otel-operator jaeger-operator
-	kubectl apply -k ./collectors/gateway/
 	kubectl apply -k ./apps/default
 	$(call urls)
 
