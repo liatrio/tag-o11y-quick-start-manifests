@@ -14,10 +14,21 @@ NGROK_NS=ngrok-ingress
 NGROK_AT = ${NGROK_AUTHTOKEN}
 NGROK_AK = ${NGROK_API_KEY}
 
+#.PHONY: default
+#default: cert-manager otel-operator jaeger-operator
+#	kubectl apply -k ./apps/default
+#	$(call urls)
 .PHONY: default
-default: cert-manager otel-operator jaeger-operator
-	kubectl apply -k ./apps/default
-	$(call urls)
+default:
+		echo "Looking for otel-basic cluster..."; \
+		cluster=$$(k3d cluster ls --no-headers otel-basic 2> /dev/null | awk '{print $$1}'); \
+		if [[ "$$cluster" && $$cluster = "otel-basic" ]]; then \
+		echo "otel-basic cluster present"; \
+		else \
+		echo "not present... creating otel-basic cluster"; \
+		k3d cluster create otel-basic 1> /dev/null; \
+		fi; \
+		tilt up --file apps/default/Tiltfile; \
 
 .PHONY: %-silent
 %-silent:
