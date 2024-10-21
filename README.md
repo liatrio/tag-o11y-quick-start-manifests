@@ -31,8 +31,7 @@ It installs the following services into your local kubernetes cluster:
 
 ## Quick Start
 
-To deploy the basic set of configuration with the LGTM stack and a Gateway
-OpenTelemetry Collector, run `make`.
+To deploy the basic set of configuration with the LGTM stack and a Gateway Open Telemetry collector using **Tilt** - a Microservice Deployment Engine - run `make`.
 
 <hr>
 
