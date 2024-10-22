@@ -39,9 +39,7 @@ The gateway collector is created using an  OpenTelemetry Collector distribution 
 In the default quick start stack, the gateway collector:
 
 * receives metrics and processes/exports them to Prometheus.
-
 * receives logs and processes/exports them to Loki. 
-
 * receives traces and processes/exports them to Tempo, Jaeger.
 
 Why do you want to use the [Gateway][gw] collector? This collector is the entry point to forwarding telemetry to the analysis backends.
