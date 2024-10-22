@@ -33,6 +33,19 @@ It installs the following services into your local kubernetes cluster:
 
 To deploy the basic set of configuration with the LGTM stack and a Gateway Open Telemetry collector using **Tilt** - a Microservice Deployment Engine - run `make`.
 
+## Gateway Collector
+The gateway collector is created using an  OpenTelemetry Collector distribution that Liatrio maintains called the Liatrio OTel Collector. The gateway collector is configured to receive, process, and export the three observability signals;  metrics, logs and traces.
+
+In the default quick start stack, the gateway collector:
+
+* receives metrics and processes/exports them to Prometheus.
+* receives logs and processes/exports them to Loki. 
+* receives traces and processes/exports them to Tempo, Jaeger.
+
+Why do you want to use the [Gateway][gw] collector? This collector is the entry point to forwarding telemetry to the analysis backends.
+
+[gh]: https://opentelemetry.io/docs/collector/deployment/gateway/
+
 <hr>
 
 **Using Tilt (Optional)**
