@@ -36,7 +36,7 @@ To deploy the basic set of configuration with the LGTM stack and a Gateway Open 
 ## Gateway Collector
 The gateway collector is created using an  OpenTelemetry Collector distribution that Liatrio maintains called the Liatrio OTel Collector. The gateway collector is configured to receive, process, and export the three observability signals;  metrics, logs and traces.
 
-It is able to...
+In the default quick start stack, the gateway collector:
 
 Receive metrics and process/export them to Prometheus.
 
