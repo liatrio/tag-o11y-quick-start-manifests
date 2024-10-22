@@ -38,7 +38,7 @@ The gateway collector is created using an  OpenTelemetry Collector distribution 
 
 In the default quick start stack, the gateway collector:
 
-Receive metrics and process/export them to Prometheus.
+* receives metrics and process/export them to Prometheus.
 
 Receive logs and process/export them to Loki. 
 
