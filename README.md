@@ -34,7 +34,7 @@ It installs the following services into your local kubernetes cluster:
 To deploy the basic set of configuration with the LGTM stack and a Gateway Open Telemetry collector using **Tilt** - a Microservice Deployment Engine - run `make`.
 
 ## Gateway Collector
-The gateway collector is created using an  Open Telemetry Collector fork that Liatrio maintains called the Liatrio Otel Collector. The gateway collector is configured to receive, process, and export the 3 keys of Observability, metrics, logs and traces.
+The gateway collector is created using an  OpenTelemetry Collector distribution that Liatrio maintains called the Liatrio OTel Collector. The gateway collector is configured to receive, process, and export the three observability signals;  metrics, logs and traces.
 
 It is able to...
 
