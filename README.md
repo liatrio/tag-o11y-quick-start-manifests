@@ -44,7 +44,9 @@ Receive logs and process/export them to Loki.
 
 Receive traces and process/export them to Tempo, Jaeger.
 
-Why do you want to use the Gateway collector? This collector is the entry point to making use of this observability stack. Sending your telemetry data here will route it to where it needs to go in order for you to see and use it. For example, sending metrics to the gateway collector will store them in the Prometheus Database, allowing you to build Grafana dashboards that can query those metrics and visualize them. 
+Why do you want to use the [Gateway][gw] collector? This collector is the entry point to forwarding telemetry to the analysis backends.
+
+[gh]: https://opentelemetry.io/docs/collector/deployment/gateway/
 
 <hr>
 
