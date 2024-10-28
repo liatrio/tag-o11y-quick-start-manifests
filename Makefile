@@ -53,7 +53,7 @@ gpr: default
 	kubectl apply -k ./collectors/gitproviderreceiver/
 
 .PHONY: ghr
-ghr: default
+ghr:
 	kubectl apply -k ./collectors/githubreceiver/
 
 .PHONY: eck-operator
