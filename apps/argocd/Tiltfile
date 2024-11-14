@@ -1,0 +1,37 @@
+if k8s_context() != "k3d-otel-basic":
+  fail("Expected context to be k3d-otel-basic")
+
+
+k8s_yaml(kustomize("."))
+
+k8s_resource(
+  workload="argo-server",
+  port_forwards=2746,
+  links=[
+    "https://localhost:2746"
+  ],
+  labels=[
+    "argo"
+  ]
+)
+
+k8s_resource(
+  workload="httpbin",
+  labels=[
+    "argo"
+  ]
+)
+
+k8s_resource(
+  workload="minio",
+  labels=[
+    "argo"
+  ]
+)
+
+k8s_resource(
+  workload="workflow-controller",
+  labels=[
+    "argo"
+  ]
+)

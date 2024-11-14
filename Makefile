@@ -49,7 +49,7 @@ jaeger-operator:
 	kubectl wait --for condition=Available -n observability deployment/jaeger-operator
 
 .PHONY: gpr
-gpr: default
+gpr:
 	kubectl apply -k ./collectors/gitproviderreceiver/
 
 .PHONY: ghr

@@ -1,9 +1,14 @@
 if k8s_context() != "k3d-otel-basic":
   fail("Expected context to be k3d-otel-basic")
 
+USE_ARGO = os.getenv("DEPLOY_ARGO", False)
+
 include("../../cluster-infra/cert-manager/Tiltfile")
 include("../../cluster-infra/otel-operator/Tiltfile")
 include("../../cluster-infra/jaeger-operator/Tiltfile")
+if USE_ARGO:
+    include("../argocd/Tiltfile")
+
 
 k8s_yaml(kustomize("."))
 
@@ -14,6 +19,10 @@ k8s_resource(
     "gateway:opentelemetrycollector"
   ],
   new_name="gateway-collector",
+  port_forwards=[
+    port_forward(4319, 4317, name='otlp-grpc'),
+    port_forward(4318, 4318, name='otlp-http')
+  ],
   labels=[
     "gateway-collector"
   ],

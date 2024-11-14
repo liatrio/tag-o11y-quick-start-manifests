@@ -7,6 +7,10 @@ k8s_resource(
     "gateway:opentelemetrycollector"
   ],
   new_name="gateway-collector",
+  port_forwards=[
+    port_forward(4317, 4317, name='otlp-grpc'),
+    port_forward(4318, 4318, name'otlp-http')
+  ],
   labels=[
     "gateway-collector"
   ],
