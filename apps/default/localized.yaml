@@ -14386,7 +14386,8 @@ spec:
         resource_to_telemetry_conversion:
           enabled: true
     extensions:
-      health_check: {}
+      health_check:
+        endpoint: 0.0.0.0:13133
       pprof:
         endpoint: 0.0.0.0:1777
       zpages:
@@ -14456,6 +14457,6 @@ spec:
           - resource/env
           receivers:
           - otlp
-  image: ghcr.io/liatrio/liatrio-otel-collector:0.69.0-amd64
+  image: ghcr.io/liatrio/liatrio-otel-collector:0.75.1-amd64
   mode: deployment
   serviceAccount: otel-collector
