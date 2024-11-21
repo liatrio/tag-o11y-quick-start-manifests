@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: opentelemetry-collector
+    app.kubernetes.io/instance: otel-gha.otel-gha-collector
+    app.kubernetes.io/managed-by: opentelemetry-operator
+    app.kubernetes.io/name: otel-gha-collector
+    app.kubernetes.io/part-of: opentelemetry
+  name: otel-gha-collector
+  namespace: collector

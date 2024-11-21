@@ -108,6 +108,7 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
    ```
 
 5. Run `make ngrok` to setup the controller.
+   > You may need to delete the ngrok controller pod if it's not creating the route. TODO: move to tailscale
 6. Update the [webhook route config](./collectors/webhook/ngrok-route.yaml)
    with your permanent domain in the host rules (see example below):
 
@@ -122,6 +123,47 @@ presumes that you have a free NGrok account, an API Key, and an AuthToken.
 7. Run `make dora`
 
 <!-- TODO: Add instructions for GitLab -->
+
+## GitHub Actions Event Tracing
+
+There is currently a [New Component][component] that has been submitted for
+discussion within the OpenTelemetry community. This component builds traces out
+of GitHub Action workflow events. This can be a useful piece of the puzzle for
+understanding how your CI/CD pipeline is functioning, by leveraging context
+rich traces. This section allows you to run this component locally for testing
+purposes. It is HIGHLY EXPERIMENTAL and should not be used in production.
+Originating documentation [can be found here][gha-docs].
+
+[component]: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/27460
+[gha-docs]: https://github.com/krzko/opentelemetry-collector-contrib/tree/feat-add-githubactionseventreceiver/receiver/githubactionsreceiver
+
+> Much is the same as the DORA configuration because the component was originally based off the webhook event receiver. You will need to ensure that your repository emits workflow events.
+
+1. From the [NGrok dashboard][ngrok-dash] get your [API Key][ngrok-api] from NGrok.
+2. Get your [Auth Token][ngrok-api] from NGrok.
+3. Get your [free permanent domain][ngrok-domain] from NGrok.
+4. Export your env vars:
+
+   ```bash
+   export NGROK_AUTHTOKEN=authtoken
+   export NGROK_API_KEY=apikey
+   ```
+
+5. Run `make ngrok` to setup the controller.
+   > You may need to delete the ngrok controller pod if it's not creating the route. TODO: move to tailscale
+6. Update the [github action event route config](./collectors/githubactionevents/ngrok-route.yaml)
+   with your permanent domain in the host rules (see example below):
+
+   ```yaml
+   spec:
+   ingressClassName: ngrok
+   rules:
+     # Change this to match your NGrok permanent domain
+     - host: example.ngrok-free.app
+   ```
+
+7. Run `make gha-traces`
+8. Port forward Jaeger & view the traces.
 
 ## Tracing Demo
 
