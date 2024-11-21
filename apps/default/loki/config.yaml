@@ -31,13 +31,15 @@ limits_config:
   split_queries_by_interval: 15m # This setting dictates how many parallel queries will be ran. If you are often searching over large time spans having this too low will result in excessive parallel overhead which can work against you depending on resources of the container
   max_query_length: 0 # This allows you to query data over any time range. Default is 30d1h
   tsdb_max_query_parallelism: 32
-  otlp_config:
-    resource_attributes:
-      ignore_defaults: true # ignores any default resource attributes listed in default_resource_attributes_as_index_labels
-      attributes_config:
-        - action: index_label
-          attributes:
-            - environment.name
+  # This configuration is to be set if you want specific resource attributes to be indexed as labels in Loki.
+  # By default Loki takes default resource attributes as index labels listed here: https://grafana.com/docs/loki/latest/send-data/otel/#format-considerations
+  # otlp_config:
+  #   resource_attributes:
+  #     ignore_defaults: true # ignores any default resource attributes listed in default_resource_attributes_as_index_labels
+  #     attributes_config:
+  #       - action: index_label
+  #         attributes:
+  #           - environment.name
 
 #ruler:
 #  alertmanager_url: http://localhost:9093
