@@ -7,7 +7,7 @@ repositories:
 releases:
 - name: eck-stack
   namespace: elastic-system
-  version: 0.10.0
+  version: 0.13.0
   chart: elastic/eck-stack
   values:
     - values.yaml
