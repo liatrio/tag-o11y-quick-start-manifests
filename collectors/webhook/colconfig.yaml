@@ -3,20 +3,20 @@
   path: /spec/config
   value:
     extensions:
-      health_check: {}
-
-      pprof:
-        endpoint: 0.0.0.0:1777
-
-      zpages:
-        endpoint: 0.0.0.0:55679
+      # health_check: {}
+      #
+      # pprof:
+      #   endpoint: 0.0.0.0:1777
+      #
+      # zpages:
+      #   endpoint: 0.0.0.0:55679
 
     receivers:
       ## Webhookevent receiver is used to connect to a GitHub App and receive json event logs
       ## The processors are used to extract/filter all the meaningful data from those logs
       webhookevent:
-        endpoint: 0.0.0.0:8088
-        path: /events
+        endpoint: 0.0.0.0:9999
+        path: /
         health_path: /healthcheck
 
       prometheus:
@@ -42,6 +42,12 @@
           - context: log
             statements:
               - set(body, ParseJSON(body)) where body != nil
+      resource:
+        attributes:
+          - key: service.name
+            value: gitlab
+            action: upsert
+
       ############################################
       # GitHub Push Events
       ############################################
@@ -199,60 +205,72 @@
           insecure: true
 
     service:
-      extensions:
-        - health_check
-        - pprof
-        - zpages
+      extensions: []
+        # - health_check
+        # - pprof
+        # - zpages
 
       pipelines:
-        logs/push:
+        logs:
           receivers:
             - webhookevent
           processors:
-            - transform/body
-            - filter/push
-            - transform/push
+            - resource
+            # - transform/body
+            # - filter/push
+            # - transform/push
           exporters:
             - debug
             - otlp
 
-        logs/issues:
-          receivers:
-            - webhookevent
-          processors:
-            - transform/body
-            - filter/issues
-            - transform/issue
-          exporters:
-            - debug
-            - otlp
-
-        logs/deployments:
-          receivers:
-            - webhookevent
-          processors:
-            - transform/body
-            - filter/deployments
-            # - filter/tag-o11y
-            - transform/deployments
-            # - transform/tag-o11y-attributes
-          exporters:
-            - debug
-            - otlp
-
-        ############################################
-        # GitHub Pull Request Events
-        ############################################
-
-        logs/pull-requests:
-          receivers:
-            - webhookevent
-          processors:
-            - transform/body
-            - filter/pull_requests
-            # - filter/tag-o11y
-            - transform/pull_requests
-            # - transform/tag-o11y-attributes
-          exporters:
-            - debug
-            - otlp
+        # logs/push:
+        #   receivers:
+        #     - webhookevent
+        #   processors:
+        #     - transform/body
+        #     - filter/push
+        #     - transform/push
+        #   exporters:
+        #     - debug
+        #     - otlp
+        #
+        # logs/issues:
+        #   receivers:
+        #     - webhookevent
+        #   processors:
+        #     - transform/body
+        #     - filter/issues
+        #     - transform/issue
+        #   exporters:
+        #     - debug
+        #     - otlp
+        #
+        # logs/deployments:
+        #   receivers:
+        #     - webhookevent
+        #   processors:
+        #     - transform/body
+        #     - filter/deployments
+        #     # - filter/tag-o11y
+        #     - transform/deployments
+        #     # - transform/tag-o11y-attributes
+        #   exporters:
+        #     - debug
+        #     - otlp
+        #
+        # ############################################
+        # # GitHub Pull Request Events
+        # ############################################
+        #
+        # logs/pull-requests:
+        #   receivers:
+        #     - webhookevent
+        #   processors:
+        #     - transform/body
+        #     - filter/pull_requests
+        #     # - filter/tag-o11y
+        #     - transform/pull_requests
+        #     # - transform/tag-o11y-attributes
+        #   exporters:
+        #     - debug
+        #     - otlp

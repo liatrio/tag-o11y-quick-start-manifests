@@ -2,6 +2,7 @@ if k8s_context() != "k3d-otel-basic":
   fail("Expected context to be k3d-otel-basic")
 
 USE_ARGO = os.getenv("DEPLOY_ARGO", False)
+USE_WEBHOOK = os.getenv("DEPLOY_WEBHOOK", False)
 
 include("../../cluster-infra/cert-manager/Tiltfile")
 include("../../cluster-infra/otel-operator/Tiltfile")
@@ -9,8 +10,10 @@ include("../../cluster-infra/jaeger-operator/Tiltfile")
 if USE_ARGO:
     include("../argocd/Tiltfile")
 
+if USE_WEBHOOK:
+    include("../../collectors/webhook/Tiltfile")
 
-k8s_yaml(kustomize("."))
+k8s_yaml(kustomize("."), allow_duplicates=True)
 
 k8s_kind("Jaeger")
 

@@ -17,7 +17,7 @@ datasources:
   - name: loki-webhookreceiver
     uid: loki
     type: loki
-    url: http://loki.loki.svc.cluster.local:3100/
+    url: http://loki.loki.svc:3100
     editable: true
     isDefault: false
   - name: Tempo

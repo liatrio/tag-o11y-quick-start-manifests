@@ -7,7 +7,7 @@ namespace: collector
 resources:
   - ../base/
   - sa.yaml
-  - ngrok-route.yaml
+  # - ngrok-route.yaml
 
 patches:
   - target:
@@ -28,9 +28,9 @@ patches:
         path: /spec/ports
         value:
           - name: webhook-port
-            port: 8088
+            port: 9999
             protocol: TCP
-            targetPort: 8088
+            targetPort: 9999
 
 # Config map generator set the collector config as a multi-line string. OTEL operator v1beta1 expects an object rather than a string.
 # configMapGenerator:
