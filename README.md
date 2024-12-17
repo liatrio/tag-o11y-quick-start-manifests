@@ -65,7 +65,7 @@ Why do you want to use the [Gateway][gw] collector? This collector is the entry 
 <br>
 NOTE: Requires k3d<br><br>
 
-Tilt takes care of creating resouces and giving you access to the logs, as well
+Tilt takes care of creating resources and giving you access to the logs, as well
 as creating any port-forwarding you need. You'll have easy access from tilt's
 builtin dashboard.<br>
 
