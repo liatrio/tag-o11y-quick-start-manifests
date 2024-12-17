@@ -40,7 +40,22 @@ It can optionally install the following services: (requires reading through the 
 
 To deploy the basic set of configuration with OpenObserve and a Gateway
 Collector, run `make`. Then login to Tilt using by navigating to
-`http://localhost:10350` in your browser.
+[http://localhost:10350](http://localhost:10350) in your browser.
+
+Port forwarding is automatically enabled when running Tilt. To view Telemetry
+in OpenObserve, navigate to [http://localhost:5080/](http://localhost:5080/).
+
+Login with:
+
+- Username: `root@example.com`
+- Password: `Complexpass#123`
+
+
+This corresponds with the `ZO_ROOT_USER_EMAIL` and `ZO_ROOT_USER_PASSWORD`
+values that are default in the OpenObserve Statefulset.
+
+> Note: These are default credentials, not to be used for any production
+> deployment.
 
 ## Gateway Collector
 
