@@ -6,13 +6,20 @@
 This set of manifests gets a local obersvability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
+- [OpenObserve](https://openobserve.ai/)
+- [OpenTelemetry Operator](https://opentelemetry.io/docs/kubernetes/operator/)
+- [Cert Manager](https://cert-manager.io/)
+- [Liatrio OpenTelemetry Collector](https://github.com/liatrio/otel-collector)
+
+Simply run `brew bundle` and `make` to get started.
+
+It can optionally install the following services: (requires reading through the command options)
+
 - Grafana
 - Prometheus
 - Tempo
 - Loki
-- Certificate Manager
 - OpenTelemetry Controller
-- Liatrio OpenTelemetry Collector
 - NGrok Ingress and API Gateway Controller
 
 ## Prerequisites
@@ -24,17 +31,38 @@ It installs the following services into your local kubernetes cluster:
    2. [k3d][k3d]: a lightweight wrapper to run k3s (Rancher Lab’s minimal k8s distribution) in docker. (Required if using tilt)
 2. Have kubectl installed
 3. Have kustomize installed
-4. Have [tilt][tilt] installed (Optional)
+4. Have [tilt][tilt] installed
 5. If using DORA, have NGROK configured with a domain and update the configuration accordingly.
 6. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
 7. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
 
 ## Quick Start
 
-To deploy the basic set of configuration with the LGTM stack and a Gateway Open Telemetry collector using **Tilt** - a Microservice Deployment Engine - run `make`.
+To deploy the basic set of configuration with OpenObserve and a Gateway
+Collector, run `make`. Then login to Tilt using by navigating to
+[http://localhost:10350](http://localhost:10350) in your browser.
+
+Port forwarding is automatically enabled when running Tilt. To view Telemetry
+in OpenObserve, navigate to [http://localhost:5080/](http://localhost:5080/).
+
+Login with:
+
+- Username: `root@example.com`
+- Password: `Complexpass#123`
+
+
+This corresponds with the `ZO_ROOT_USER_EMAIL` and `ZO_ROOT_USER_PASSWORD`
+values that are default in the OpenObserve Statefulset.
+
+> Note: These are default credentials, not to be used for any production
+> deployment.
 
 ## Gateway Collector
-The gateway collector is created using an  OpenTelemetry Collector distribution that Liatrio maintains called the Liatrio OTel Collector. The gateway collector is configured to receive, process, and export the three observability signals;  metrics, logs and traces.
+
+The gateway collector is created using an  OpenTelemetry Collector distribution
+that Liatrio maintains called the Liatrio OTel Collector. The gateway collector
+is configured to receive, process, and export the three observability signals;
+metrics, logs and traces.
 
 In the default quick start stack, the gateway collector:
 
@@ -52,11 +80,15 @@ Why do you want to use the [Gateway][gw] collector? This collector is the entry 
 <br>
 NOTE: Requires k3d<br><br>
 
-Tilt takes care of creating resouces and giving you access to the logs, as well as creating any port-forwarding you need. You'll have easy access from tilt's builtin dashboard.<br>
+Tilt takes care of creating resources and giving you access to the logs, as well
+as creating any port-forwarding you need. You'll have easy access from tilt's
+builtin dashboard.<br>
 
-To spin up a k3d otel-basic cluster, and deploy the default LGTM stack with tilt; run `make tilt-basic`. <br>
+To spin up a k3d otel-basic cluster, and deploy the default LGTM stack with
+tilt; run `make tilt-basic`. <br>
 
-To spin up a k3d otel-eck cluster, and deploy the default ECK stack with tilt; run `make tilt-eck`. <br>
+To spin up a k3d otel-eck cluster, and deploy the default ECK stack with tilt;
+run `make tilt-eck`. <br>
 
 When you're done, type `ctrl-c`. <br>
 
