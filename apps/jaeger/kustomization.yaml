@@ -5,7 +5,7 @@ kind: Kustomization
 namespace: jaeger
 
 resources:
-  - ../../../cluster-infra/namespace/
+  - ../../cluster-infra/namespace/
   - jaeger.yaml
 
 generatorOptions:

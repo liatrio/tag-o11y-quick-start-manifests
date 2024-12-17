@@ -1,0 +1,43 @@
+if k8s_context() != "k3d-otel-basic":
+  fail("Expected context to be k3d-otel-basic")
+
+k8s_yaml(kustomize("."), allow_duplicates=True)
+
+k8s_resource(
+  workload="grafana",
+  port_forwards=3000,
+  labels=[
+    "default-apps"
+  ]
+)
+k8s_resource(
+  workload="jaeger-all-in-one",
+  port_forwards=16686, 
+  resource_deps=[
+    "jaeger-operator"
+  ],
+  labels=[
+    "default-apps"
+  ]
+)
+k8s_resource(
+  workload="loki",
+  port_forwards=3100,
+  labels=[
+    "default-apps"
+  ]
+)
+k8s_resource(
+  workload="prometheus",
+  port_forwards=9090,
+  labels=[
+    "default-apps"
+  ]
+)
+k8s_resource(
+  workload="tempo", 
+  port_forwards=4317,
+  labels=[
+    "default-apps"
+  ]
+)

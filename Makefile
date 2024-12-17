@@ -24,7 +24,7 @@ default:
 		echo "not present... creating otel-basic cluster"; \
 		k3d cluster create otel-basic 1> /dev/null; \
 		fi; \
-		tilt up --file apps/default/Tiltfile; \
+		tilt up --file apps/Tiltfile; \
 
 .PHONY: %-silent
 %-silent:
@@ -95,7 +95,7 @@ tilt:
  	  		echo "not present... creating otel-basic cluster"; \
  	  		k3d cluster create otel-basic 1> /dev/null; \
  			fi; \
-		  tilt up --file apps/default/Tiltfile; \
+		  tilt up --file apps/Tiltfile; \
 	elif [ "$(MAKECMDGOALS)" = "tilt-eck" ]; then \
 			echo "Looking for otel-eck cluster..."; \
 			cluster=$$(k3d cluster ls --no-headers otel-eck 2> /dev/null | awk '{print $$1}'); \
@@ -114,7 +114,7 @@ tilt-eck: tilt
 
 .PHONY: traces
 traces: cert-manager otel-operator
-	kubectl apply -k ./apps/traces
+	kubectl apply -k ./apps/tofu-tracing-demo
 	@if ! kubectl create -f https://github.com/flux-iac/tofu-controller/releases/download/v0.15.1/tf-controller.crds.yaml; then echo "Tofu Controller CRDS already installed"; fi
 	kubectl apply -k ./cluster-infra/tofu-controller/
 

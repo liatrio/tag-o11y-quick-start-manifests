@@ -14,10 +14,10 @@ cmd_button(
   icon_name='delete'
 )
 
-include("../../cluster-infra/cert-manager/Tiltfile")
-include("../../cluster-infra/otel-operator/Tiltfile")
-include("../../cluster-infra/eck-operator/Tiltfile")
-include("../../collectors/gateway-eck/Tiltfile")
+include("../cluster-infra/cert-manager/Tiltfile")
+include("../cluster-infra/otel-operator/Tiltfile")
+include("../cluster-infra/eck-operator/Tiltfile")
+include("../collectors/gateway-eck/Tiltfile")
 
 k8s_yaml(kustomize("."))
 
