@@ -1,5 +1,6 @@
-if k8s_context() != "${K8S_PLATFORM}-otel-basic":
-  fail("Expected context to be ${K8S_PLATFORM}-otel-basic")
+K8S_PLATFORM=os.getenv("K8S_PLATFORM", "k3d")
+if k8s_context() != K8S_PLATFORM + "-otel-basic":
+  fail("Expected context to be " + K8S_PLATFORM + "-otel-basic")
 
 
 k8s_yaml(kustomize("."))
