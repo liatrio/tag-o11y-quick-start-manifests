@@ -14,6 +14,10 @@ NGROK_NS=ngrok-ingress
 NGROK_AT = ${NGROK_AUTHTOKEN}
 NGROK_AK = ${NGROK_API_KEY}
 
+
+# default k8s platform is k3d, but can be overridden for others - e.g. kind
+K8S_PLATFORM ?= k3d
+
 .PHONY: default
 default:
 		echo "Looking for otel-basic cluster..."; \

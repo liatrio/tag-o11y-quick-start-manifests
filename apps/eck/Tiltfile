@@ -1,5 +1,5 @@
-if k8s_context() != "k3d-otel-eck":
-  fail("Expected context to be k3d-otel-eck")
+if k8s_context() != "${K8S_PLATFORM}-otel-eck":
+  fail("Expected context to be ${K8S_PLATFORM}-otel-eck")
 
 load('ext://uibutton', 'cmd_button')
 cmd_button(
