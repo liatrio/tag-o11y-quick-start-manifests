@@ -3,13 +3,6 @@
   path: /spec/config
   value:
     extensions:
-      # health_check: {}
-      #
-      # pprof:
-      #   endpoint: 0.0.0.0:1777
-      #
-      # zpages:
-      #   endpoint: 0.0.0.0:55679
 
     receivers:
       ## Webhookevent receiver is used to connect to a GitHub App and receive json event logs
@@ -18,14 +11,6 @@
         endpoint: 0.0.0.0:9999
         path: /
         health_path: /healthcheck
-
-      prometheus:
-        config:
-          scrape_configs:
-            - job_name: otel-webhook-collector
-              scrape_interval: 10s
-              static_configs:
-                - targets: [0.0.0.0:8888]
 
     processors:
       memory_limiter:
@@ -59,18 +44,18 @@
               - keep_keys(body["repository"], ["name", "full_name", "owner", "custom_properties", "html_url", "pushed_at"]) where body["repository"] !=
                 nil
               - keep_keys(body["repository"]["owner"], ["login"]) where body["repository"]["owner"] != nil
-            # The below attributes are from Semantic Conventions v1.27.0
+              # The below attributes are from Semantic Conventions v1.27.0
               - set(attributes["event.name"], "ref_pushed")
-              - set(attributes["vcs.repository.ref.name"], body["ref"]) where body["ref"] != nil
-              - set(attributes["vcs.repository.ref.type"], "branch")
-              - set(attributes["vcs.repository.ref.revision"], body["after"]) where body["after"] != nil
+              - set(attributes["vcs.ref.head.name"], body["ref"]) where body["ref"] != nil
+              - set(attributes["vcs.ref.head.type"], "branch")
+              - set(attributes["vcs.ref.head.revision"], body["after"]) where body["after"] != nil
               - set(attributes["vcs.repository.url.full"], body["repository"]["html_url"]) where body["repository"]["html_url"] != nil
               - set(resource.attributes["service.namespace"], "github")
               - set(resource.attributes["service.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
-            # End of Semantic Conventions v1.27.0
-              - set(attributes["vcs.repository.ref.message"], body["head_commit"]["message"]) where IsMap(body["head_commit"]) and body["head_commit"]["message"]
+              # End of Semantic Conventions v1.27.0
+              - set(attributes["vcs.ref.head.message"], body["head_commit"]["message"]) where IsMap(body["head_commit"]) and body["head_commit"]["message"]
                 != nil
-              - set(attributes["vcs.repository.ref.author"], body["head_commit"]["committer"]["name"]) where IsMap(body["head_commit"]) and body["head_commit"]["committer"]["name"]
+              - set(attributes["vcs.ref.head.revision.author"], body["head_commit"]["committer"]["name"]) where IsMap(body["head_commit"]) and body["head_commit"]["committer"]["name"]
                 != nil
               - set(attributes["vcs.repository.owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
               - set(attributes["vcs.repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
@@ -100,7 +85,7 @@
               - set(attributes["vcs.repository.url.full"], body["repository"]["html_url"]) where body["repository"]["html_url"] != nil
               - set(attributes["vcs.repository.owner"], body["repository"]["owner"]["login"]) where body["repository"]["owner"]["login"] != nil
               - set(attributes["vcs.repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
-              - set(attributes["vcs.repository.issue.id"], body["issue"]["number"]) where body["issue"]["number"] != nil
+              - set(attributes["vcs.issue.id"], body["issue"]["number"]) where body["issue"]["number"] != nil
               - set(attributes["team.name"], body["repository"]["custom_properties"]["team_name"]) where body["repository"]["custom_properties"]["team_name"]
                 != nil
               - set(resource.attributes["service.namespace"], "github")
@@ -135,7 +120,7 @@
               - set(attributes["deployment.status"], body["deployment_status"]["state"]) where body["deployment_status"]["state"] != nil
               - set(attributes["deployment.environment.name"], body["deployment"]["environment"]) where body["deployment"]["environment"] != nil
               - set(attributes["deployment.id"], body["deployment"]["id"]) where body["deployment"]["id"] != nil
-              - set(attributes["vcs.repository.ref.revision"], body["deployment"]["sha"]) where body["deployment"]["sha"] != nil
+              - set(attributes["vcs.ref.head.revision"], body["deployment"]["sha"]) where body["deployment"]["sha"] != nil
               - set(attributes["vcs.repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
               - set(resource.attributes["team.name"], body["repository"]["custom_properties"]["team_name"]) where body["repository"]["custom_properties"]["team_name"]
                 != nil
@@ -169,13 +154,13 @@
               - set(attributes["event.name"], Concat(["change", body["action"]], "_")) where body["action"] != nil
               - set(attributes["vcs.repository.name"], body["repository"]["name"]) where body["repository"]["name"] != nil
               - set(attributes["vcs.repository.url.full"], body["repository"]["html_url"]) where body["repository"]["html_url"] != nil
-              - set(attributes["vcs.repository.change.title"], body["pull_request"]["title"]) where body["pull_request"]["title"] != nil
-              - set(attributes["vcs.repository.change.id"], body["pull_request"]["id"]) where body["pull_request"]["id"] != nil
-              - set(attributes["vcs.repository.ref.revision"], body["pull_request"]["merge_commit_sha"]) where body["pull_request"]["merge_commit_sha"]
+              - set(attributes["vcs.change.title"], body["pull_request"]["title"]) where body["pull_request"]["title"] != nil
+              - set(attributes["vcs.change.id"], body["pull_request"]["id"]) where body["pull_request"]["id"] != nil
+              - set(attributes["vcs.ref.head.revision"], body["pull_request"]["merge_commit_sha"]) where body["pull_request"]["merge_commit_sha"]
                 != nil
-              - set(attributes["vcs.repository.ref.message"], body["pull_request"]["title"]) where body["pull_request"]["title"] != nil
-              - set(attributes["vcs.repository.ref.name"], body["base"]["ref"]) where body["base"]["ref"] != nil
-              - set(attributes["vcs.repository.ref.type"], "branch")
+              - set(attributes["vcs.ref.head.message"], body["pull_request"]["title"]) where body["pull_request"]["title"] != nil
+              - set(attributes["vcs.ref.head.name"], body["base"]["ref"]) where body["base"]["ref"] != nil
+              - set(attributes["vcs.ref.head.type"], "branch")
               # End of Semantic Conventions v1.27.0
               - set(resource.attributes["team.name"], body["repository"]["custom_properties"]["team_name"]) where body["repository"]["custom_properties"]["team_name"]
                 != nil
@@ -206,9 +191,6 @@
 
     service:
       extensions: []
-        # - health_check
-        # - pprof
-        # - zpages
 
       pipelines:
         logs:
@@ -245,18 +227,18 @@
         #     - debug
         #     - otlp
         #
-        # logs/deployments:
-        #   receivers:
-        #     - webhookevent
-        #   processors:
-        #     - transform/body
-        #     - filter/deployments
-        #     # - filter/tag-o11y
-        #     - transform/deployments
-        #     # - transform/tag-o11y-attributes
-        #   exporters:
-        #     - debug
-        #     - otlp
+        logs/deployments:
+          receivers:
+            - webhookevent
+          processors:
+            - transform/body
+            - filter/deployments
+            # - filter/tag-o11y
+            - transform/deployments
+            # - transform/tag-o11y-attributes
+          exporters:
+            - debug
+            - otlp
         #
         # ############################################
         # # GitHub Pull Request Events

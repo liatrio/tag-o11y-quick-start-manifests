@@ -4,5 +4,5 @@ kind: OpenTelemetryCollector
 metadata:
   name: collector
 spec:
-  image: ghcr.io/liatrio/liatrio-otel-collector:0.75.1-amd64
+  image: ghcr.io/liatrio/liatrio-otel-collector:0.78.2
   mode: deployment
