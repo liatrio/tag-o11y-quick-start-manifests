@@ -56,6 +56,10 @@ gpr:
 ghr:
 	kubectl apply -k ./collectors/githubreceiver/
 
+.PHONY: glr
+glr:
+	kubectl apply -k ./collectors/gitlabreceiver/
+
 .PHONY: eck-operator
 eck-operator:
 	kubectl apply -k ./cluster-infra/eck-operator/

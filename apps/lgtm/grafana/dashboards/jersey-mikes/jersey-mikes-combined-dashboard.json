@@ -1,0 +1,2612 @@
+{
+	"annotations": {
+		"list": [
+			{
+				"builtIn": 1,
+				"datasource": {
+					"type": "grafana",
+					"uid": "-- Grafana --"
+				},
+				"enable": true,
+				"hide": true,
+				"iconColor": "rgba(0, 211, 255, 1)",
+				"name": "Annotations & Alerts",
+				"type": "dashboard"
+			}
+		]
+	},
+	"editable": true,
+	"fiscalYearStartMonth": 0,
+	"graphTooltip": 0,
+	"id": 14,
+	"links": [],
+	"panels": [
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 0
+			},
+			"id": 100,
+			"panels": [],
+			"title": "Key Metrics Overview",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 86400
+							},
+							{
+								"color": "red",
+								"value": 172800
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 5,
+				"w": 8,
+				"x": 0,
+				"y": 1
+			},
+			"id": 1,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": [
+						"mean"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"text": {},
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg(vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
+					"legendFormat": "Avg Time",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Average Time to Merge",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 3
+							},
+							{
+								"color": "green",
+								"value": 5
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 5,
+				"w": 8,
+				"x": 8,
+				"y": 1
+			},
+			"id": 2,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": [
+						"mean"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"text": {},
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg(sum by(vcs_repository_name) (vcs_contributor_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})) or vector(0)",
+					"legendFormat": "Avg Contributors",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Avg Contributors per Repo",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 5
+							},
+							{
+								"color": "red",
+								"value": 8
+							}
+						]
+					},
+					"unit": "none"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 5,
+				"w": 8,
+				"x": 16,
+				"y": 1
+			},
+			"id": 3,
+			"options": {
+				"cellHeight": "sm",
+				"footer": {
+					"countRows": true,
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": true
+				},
+				"showHeader": true,
+				"sortBy": [
+					{
+						"desc": true,
+						"displayName": "Contributors"
+					}
+				]
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "sum by(vcs_repository_name) (vcs_contributor_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) < 3 or vector(0)",
+					"format": "table",
+					"instant": true,
+					"range": false,
+					"refId": "A"
+				}
+			],
+			"title": "Potential Knowledge Silos",
+			"transformations": [
+				{
+					"id": "filterFieldsByName",
+					"options": {
+						"include": {
+							"names": [
+								"vcs_repository_name",
+								"Value"
+							]
+						}
+					}
+				},
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Contributors",
+							"vcs_repository_name": "Repository"
+						}
+					}
+				}
+			],
+			"type": "table"
+		},
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 6
+			},
+			"id": 101,
+			"panels": [],
+			"title": "Knowledge Silos",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "bars",
+						"fillOpacity": 100,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					},
+					"unit": "none"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 7
+			},
+			"id": 4,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "topk(10, bottomk(10, sum by(vcs_repository_name) (vcs_contributor_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))) or vector(0)",
+					"legendFormat": "{{vcs_repository_name}}",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Repositories with Low Contributor Count",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 3
+							},
+							{
+								"color": "green",
+								"value": 5
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 7
+			},
+			"id": 5,
+			"options": {
+				"displayMode": "gradient",
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": false
+				},
+				"maxVizHeight": 300,
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showUnfilled": true,
+				"sizing": "auto",
+				"text": {},
+				"valueMode": "color"
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "sum by(vcs_repository_name) (vcs_contributor_count{})",
+					"legendFormat": "{{vcs_repository_name}}",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Contributor Distribution by Repository",
+			"type": "bargauge"
+		},
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 15
+			},
+			"id": 102,
+			"panels": [],
+			"title": "Merge Request Performance",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "Hours",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 20,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 2,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					},
+					"unit": "h"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 16
+			},
+			"id": 6,
+			"options": {
+				"legend": {
+					"calcs": [
+						"mean",
+						"max",
+						"min"
+					],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "topk(10, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) / 3600) or vector(0)",
+					"legendFormat": "{{vcs_repository_name}}",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Average Time to Merge by Repository",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Based on data collected every 2 hours",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 20,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 2,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": true,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 16
+			},
+			"id": 7,
+			"options": {
+				"legend": {
+					"calcs": [
+						"mean",
+						"lastNotNull"
+					],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg_over_time(vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}[30d])",
+					"legendFormat": "{{vcs_repository_name}}",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Merge Time Trend (Based on Sparse 2h Data)",
+			"type": "timeseries"
+		},
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 24
+			},
+			"id": 103,
+			"panels": [],
+			"title": "Pipeline Performance",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 43200
+							},
+							{
+								"color": "red",
+								"value": 86400
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "Repository"
+						},
+						"properties": [
+							{
+								"id": "custom.width",
+								"value": 250
+							}
+						]
+					}
+				]
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 25
+			},
+			"id": 8,
+			"options": {
+				"cellHeight": "sm",
+				"footer": {
+					"countRows": false,
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": false
+				},
+				"showHeader": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "topk(5, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{})) or vector(0)",
+					"format": "table",
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Repositories with Longest Average Merge Times",
+			"transformations": [
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {
+							"Time": true
+						},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Average Merge Time (s)",
+							"vcs_repository_name": "Repository"
+						}
+					}
+				}
+			],
+			"type": "table"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"axisSoftMin": 0,
+						"fillOpacity": 80,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"lineWidth": 1,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 25
+			},
+			"id": 9,
+			"options": {
+				"barRadius": 0,
+				"barWidth": 0.97,
+				"fullHighlight": false,
+				"groupWidth": 0.7,
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"orientation": "auto",
+				"showValue": "auto",
+				"stacking": "none",
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				},
+				"xField": "vcs_repository_name",
+				"xTickLabelRotation": -45,
+				"xTickLabelSpacing": 0
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) / count by(vcs_repository_name) (vcs_ref_count{vcs_repository_name=~\"$repo\"}) * 100 or vector(0)",
+					"legendFormat": "{{vcs_repository_name}}",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Pipeline Success Rate by Repository",
+			"type": "timeseries"
+		},
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 33
+			},
+			"id": 200,
+			"panels": [],
+			"title": "Pipeline Performance",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 75
+							},
+							{
+								"color": "green",
+								"value": 90
+							}
+						]
+					},
+					"unit": "percent"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 0,
+				"y": 34
+			},
+			"id": 201,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg(sum by(vcs_repository_name) (cicd_pipeline_run_completed{result=\"success\", organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\"}) / sum by(vcs_repository_name) (cicd_pipeline_run_completed{organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\"})) * 100",
+					"legendFormat": "Average Success Rate",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Average Pipeline Success Rate",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 600
+							},
+							{
+								"color": "red",
+								"value": 1200
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 8,
+				"y": 34
+			},
+			"id": 202,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg(cicd_pipeline_run_duration_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
+					"legendFormat": "Average Duration",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Average Pipeline Duration",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 20,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "smooth",
+						"lineWidth": 2,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "never",
+						"spanNulls": true,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 16,
+				"y": 34
+			},
+			"id": 203,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": false
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg(cicd_pipeline_run_duration_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
+					"legendFormat": "Average Duration",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Pipeline Duration Trend",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Repositories with highest pipeline failure rates",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"filterable": true,
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 25
+							},
+							{
+								"color": "red",
+								"value": 50
+							}
+						]
+					},
+					"unit": "percent"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 42
+			},
+			"id": 204,
+			"options": {
+				"cellHeight": "sm",
+				"footer": {
+					"countRows": false,
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": false
+				},
+				"showHeader": true,
+				"sortBy": [
+					{
+						"desc": true,
+						"displayName": "Failure Rate"
+					}
+				]
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "(1 - (sum by(vcs_repository_name) (cicd_pipeline_run_completed{result=\"success\", organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\"}) / sum by(vcs_repository_name) (cicd_pipeline_run_completed{organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\"}))) * 100",
+					"format": "table",
+					"instant": true,
+					"range": false,
+					"refId": "A"
+				}
+			],
+			"title": "Pipeline Failure Hot Spots",
+			"transformations": [
+				{
+					"id": "filterFieldsByName",
+					"options": {
+						"include": {
+							"names": [
+								"vcs_repository_name",
+								"Value"
+							]
+						}
+					}
+				},
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Failure Rate",
+							"vcs_repository_name": "Repository"
+						}
+					}
+				}
+			],
+			"type": "table"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Repositories with longest pipeline durations",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"filterable": true,
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 600
+							},
+							{
+								"color": "red",
+								"value": 1200
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 42
+			},
+			"id": 205,
+			"options": {
+				"cellHeight": "sm",
+				"footer": {
+					"countRows": false,
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": false
+				},
+				"showHeader": true,
+				"sortBy": [
+					{
+						"desc": true,
+						"displayName": "Duration"
+					}
+				]
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg by(vcs_repository_name) (cicd_pipeline_run_duration_seconds{})",
+					"format": "table",
+					"instant": true,
+					"range": false,
+					"refId": "A"
+				}
+			],
+			"title": "Longest Running Pipelines",
+			"transformations": [
+				{
+					"id": "filterFieldsByName",
+					"options": {
+						"include": {
+							"names": [
+								"vcs_repository_name",
+								"Value"
+							]
+						}
+					}
+				},
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Duration",
+							"vcs_repository_name": "Repository"
+						}
+					}
+				}
+			],
+			"type": "table"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Repositories with high activity but few contributors - potential knowledge silos that represent business risk",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						}
+					},
+					"mappings": []
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 24,
+				"x": 0,
+				"y": 50
+			},
+			"id": 212,
+			"options": {
+				"displayLabels": [
+					"name",
+					"value"
+				],
+				"legend": {
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true,
+					"values": [
+						"value"
+					]
+				},
+				"pieType": "pie",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "bottomk(5, count by(vcs_repository_name) (vcs_ref_count{vcs_repository_name=~\"$repo\"})) and topk(5, sum by(vcs_repository_name) (rate(vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}[12h]))) or vector(0)",
+					"legendFormat": "{{vcs_repository_name}}",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "High Activity / Low Contributor Repositories",
+			"type": "piechart"
+		},
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 58
+			},
+			"id": 206,
+			"panels": [],
+			"title": "Trunk Based Development",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Average age of branches in days",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "continuous-BlPu"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 7
+							},
+							{
+								"color": "red",
+								"value": 14
+							}
+						]
+					},
+					"unit": "d"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 0,
+				"y": 59
+			},
+			"id": 207,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg(vcs_ref_time_seconds{}) / 86400",
+					"legendFormat": "Average Age",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Average Branch Age",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Total number of open pull requests",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "continuous-BlPu"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 10
+							},
+							{
+								"color": "red",
+								"value": 20
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 8,
+				"y": 59
+			},
+			"id": 208,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "sum(vcs_change_count{vcs_change_state=\"open\"})",
+					"legendFormat": "Open PRs",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Open Pull Requests",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Average time pull requests are open",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "continuous-BlPu"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 86400
+							},
+							{
+								"color": "red",
+								"value": 172800
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 16,
+				"y": 59
+			},
+			"id": 209,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg(vcs_change_duration_seconds{vcs_change_state=\"open\"})",
+					"legendFormat": "PR Age",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Average PR Age",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Repositories with oldest branches",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"filterable": true,
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 7
+							},
+							{
+								"color": "red",
+								"value": 14
+							}
+						]
+					},
+					"unit": "d"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 67
+			},
+			"id": 210,
+			"options": {
+				"cellHeight": "sm",
+				"footer": {
+					"countRows": false,
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": false
+				},
+				"showHeader": true,
+				"sortBy": [
+					{
+						"desc": true,
+						"displayName": "Age (Days)"
+					}
+				]
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "max by(vcs_repository_name) (vcs_ref_time_seconds{}) / 86400",
+					"format": "table",
+					"instant": true,
+					"range": false,
+					"refId": "A"
+				}
+			],
+			"title": "Oldest Branches by Repository",
+			"transformations": [
+				{
+					"id": "filterFieldsByName",
+					"options": {
+						"include": {
+							"names": [
+								"vcs_repository_name",
+								"Value"
+							]
+						}
+					}
+				},
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Age (Days)",
+							"vcs_repository_name": "Repository"
+						}
+					}
+				}
+			],
+			"type": "table"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Repositories with oldest pull requests",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"filterable": true,
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 86400
+							},
+							{
+								"color": "red",
+								"value": 172800
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 67
+			},
+			"id": 211,
+			"options": {
+				"cellHeight": "sm",
+				"footer": {
+					"countRows": false,
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": false
+				},
+				"showHeader": true,
+				"sortBy": [
+					{
+						"desc": true,
+						"displayName": "Age"
+					}
+				]
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "max by(vcs_repository_name) (vcs_change_duration_seconds{vcs_change_state=\"open\"})",
+					"format": "table",
+					"instant": true,
+					"range": false,
+					"refId": "A"
+				}
+			],
+			"title": "Oldest Pull Requests by Repository",
+			"transformations": [
+				{
+					"id": "filterFieldsByName",
+					"options": {
+						"include": {
+							"names": [
+								"vcs_repository_name",
+								"Value"
+							]
+						}
+					}
+				},
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Age",
+							"vcs_repository_name": "Repository"
+						}
+					}
+				}
+			],
+			"type": "table"
+		},
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 75
+			},
+			"id": 214,
+			"panels": [],
+			"title": "Pipeline Optimization Metrics",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Monitoring build times for repositories. Thresholds: Warning 15min (900s), Critical 30min (1800s)",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 20,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "smooth",
+						"lineWidth": 2,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "never",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "line+area"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 900
+							},
+							{
+								"color": "red",
+								"value": 1800
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 76
+			},
+			"id": 215,
+			"options": {
+				"legend": {
+					"calcs": [
+						"mean",
+						"max"
+					],
+					"displayMode": "table",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "multi",
+					"sort": "desc"
+				}
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) or vector(0)",
+					"legendFormat": "{{vcs_repository_name}}",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Average Build Time by Repository",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "95th and 50th percentile build times. Target: <15min for optimal developer productivity.",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 900
+							},
+							{
+								"color": "red",
+								"value": 1800
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 76
+			},
+			"id": 216,
+			"options": {
+				"minVizHeight": 75,
+				"minVizWidth": 75,
+				"orientation": "auto",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showThresholdLabels": false,
+				"showThresholdMarkers": true,
+				"sizing": "auto"
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "quantile(0.95, vcs_change_duration_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
+					"legendFormat": "p95",
+					"range": true,
+					"refId": "A"
+				},
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "quantile(0.50, vcs_change_duration_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
+					"hide": false,
+					"legendFormat": "p50",
+					"range": true,
+					"refId": "B"
+				}
+			],
+			"title": "Build Time SLO (p95 and p50)",
+			"type": "gauge"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 43200
+							},
+							{
+								"color": "red",
+								"value": 86400
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "Repository"
+						},
+						"properties": [
+							{
+								"id": "custom.width",
+								"value": 250
+							}
+						]
+					}
+				]
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 24,
+				"x": 0,
+				"y": 84
+			},
+			"id": 104,
+			"options": {
+				"cellHeight": "sm",
+				"footer": {
+					"countRows": false,
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": false
+				},
+				"showHeader": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "topk(5, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"})) or vector(0)",
+					"format": "table",
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Repositories with Longest Average Merge Times",
+			"transformations": [
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {
+							"Time": true
+						},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Average Merge Time (s)",
+							"vcs_repository_name": "Repository"
+						}
+					}
+				}
+			],
+			"type": "table"
+		},
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 94
+			},
+			"id": 105,
+			"panels": [],
+			"title": "Knowledge Silos Metrics",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "bars",
+						"fillOpacity": 100,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "never",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							}
+						]
+					},
+					"unit": "none"
+				},
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "Reviewer Count"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "blue",
+									"mode": "fixed"
+								}
+							}
+						]
+					}
+				]
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 0,
+				"y": 95
+			},
+			"id": 106,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "multi",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "max(max_over_time(vcs_repository_unique_reviewers{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}[$__range])) or vector(0)",
+					"legendFormat": "Reviewer Count",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Unique Reviewers per Repository",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"custom": {
+						"align": "auto",
+						"cellOptions": {
+							"type": "auto"
+						},
+						"inspect": false
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 3
+							},
+							{
+								"color": "green",
+								"value": 5
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 95
+			},
+			"id": 107,
+			"options": {
+				"cellHeight": "sm",
+				"footer": {
+					"countRows": false,
+					"fields": "",
+					"reducer": [
+						"sum"
+					],
+					"show": false
+				},
+				"showHeader": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "topk(5, max by(vcs_repository_name) (vcs_contributor_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})) or vector(0)",
+					"format": "table",
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Top Repositories by Contributor Count",
+			"transformations": [
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": {
+							"Time": true
+						},
+						"indexByName": {},
+						"renameByName": {
+							"Value": "Contributor Count",
+							"vcs_repository_name": "Repository"
+						}
+					}
+				}
+			],
+			"type": "table"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"description": "Estimates how many developers would need to leave to significantly impact the project. Higher values indicate less risk from developer departure.",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 2
+							},
+							{
+								"color": "green",
+								"value": 4
+							}
+						]
+					},
+					"unit": "none"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 9,
+				"w": 24,
+				"x": 0,
+				"y": 103
+			},
+			"id": 213,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"percentChangeColorMode": "standard",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"showPercentChange": false,
+				"textMode": "auto",
+				"wideLayout": true
+			},
+			"pluginVersion": "11.5.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "sum by(vcs_repository_name) (vcs_contributor_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / (1 + stddev by(vcs_repository_name) (vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})) or vector(0)",
+					"legendFormat": "{{vcs_repository_name}}",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Bus Factor Estimate by Repository (Higher is Better)",
+			"type": "stat"
+		}
+	],
+	"preload": false,
+	"refresh": "5m",
+	"schemaVersion": 40,
+	"tags": [
+		"gitlab",
+		"jersey-mikes",
+		"combined"
+	],
+	"templating": {
+		"list": [
+			{
+				"current": {
+					"text": "jerseymikes",
+					"value": "jerseymikes"
+				},
+				"datasource": {
+					"type": "prometheus",
+					"uid": "webstore-metrics"
+				},
+				"definition": "label_values(organization_name)",
+				"description": "The organization name resource attribute for metrics",
+				"includeAll": true,
+				"label": "Organization",
+				"multi": true,
+				"name": "organization",
+				"options": [
+					{
+						"selected": true,
+						"text": "jerseymikes",
+						"value": "jerseymikes"
+					}
+				],
+				"query": {
+					"qryType": 1,
+					"query": "label_values(organization_name)",
+					"refId": "PrometheusVariableQueryEditor-VariableQuery"
+				},
+				"refresh": 1,
+				"regex": "",
+				"type": "query"
+			},
+			{
+				"current": {
+					"text": "All",
+					"value": "$__all"
+				},
+				"datasource": {
+					"type": "prometheus",
+					"uid": "webstore-metrics"
+				},
+				"definition": "label_values({organization_name=~\"$organization\"},team_name)",
+				"description": "The name of the team",
+				"includeAll": true,
+				"label": "Team",
+				"multi": true,
+				"name": "team",
+				"options": [
+					{
+						"selected": true,
+						"text": "All",
+						"value": "$__all"
+					}
+				],
+				"query": {
+					"qryType": 1,
+					"query": "label_values({organization_name=~\"$organization\"},team_name)",
+					"refId": "PrometheusVariableQueryEditor-VariableQuery"
+				},
+				"refresh": 1,
+				"regex": "",
+				"type": "query"
+			},
+			{
+				"current": {
+					"text": "All",
+					"value": "$__all"
+				},
+				"datasource": {
+					"type": "prometheus",
+					"uid": "webstore-metrics"
+				},
+				"definition": "label_values({organization_name=~\"$organization\", team_name=~\"$team\"},vcs_repository_name)",
+				"description": "The repository name",
+				"includeAll": true,
+				"label": "Repository",
+				"multi": true,
+				"name": "repo",
+				"options": [
+					{
+						"selected": true,
+						"text": "All",
+						"value": "$__all"
+					}
+				],
+				"query": {
+					"qryType": 1,
+					"query": "label_values({organization_name=~\"$organization\", team_name=~\"$team\"},vcs_repository_name)",
+					"refId": "PrometheusVariableQueryEditor-VariableQuery"
+				},
+				"refresh": 1,
+				"regex": "",
+				"type": "query"
+			}
+		]
+	},
+	"time": {
+		"from": "now-12h",
+		"to": "now"
+	},
+	"timepicker": {},
+	"timezone": "",
+	"title": "Jersey Mikes - Comprehensive GitLab Metrics Dashboard",
+	"uid": "jersey-mikes-combined",
+	"version": 38,
+	"weekStart": ""
+}

@@ -5,7 +5,7 @@ kind: Kustomization
 namespace: grafana
 
 resources:
-  - ../../cluster-infra/namespace
+  - ../../../cluster-infra/namespace
   - deployment.yaml
   - pvc.yaml
   - service.yaml
@@ -25,7 +25,6 @@ configMapGenerator:
     files:
       - dashboards/providers.yaml
 
-
   # Demo Dashboards
   - name: dashboard-demo
     files:
@@ -40,16 +39,27 @@ configMapGenerator:
     files:
       - dashboards/demo/spanmetrics.json
 
-  # GitProviderReceiver dashboards
-  - name: dashboard-gpr-delivery-metrics
+  # DORA dashboards
+  - name: dashboard-dora-metrics
     files:
-      - dashboards/gpr/delivery-metrics.json
-  - name: dashboard-gpr-dora-metrics
+      - dashboards/dora/dora-metrics.json
+  - name: dashboard-dora-vcs-trunk-based-development
     files:
-      - dashboards/gpr/dora-metrics.json
-  - name: dashboard-gpr-engineering-effectiveness-metrics
+      - dashboards/dora/vcs-trunk-based-development.json
+
+  # Jersey Mikes GitLab dashboards
+  - name: dashboard-jersey-mikes-combined
     files:
-      - dashboards/gpr/engineering-effectiveness-metrics.json
-  - name: dashboard-gpr-vcs-trunk-based-development
+      - dashboards/jersey-mikes/jersey-mikes-combined-dashboard.json
+  - name: dashboard-jersey-mikes-merge-request
     files:
-      - dashboards/gpr/vcs-trunk-based-development.json
+      - dashboards/jersey-mikes/merge-request-dashboard.json
+  - name: dashboard-jersey-mikes-pipeline-activity
+    files:
+      - dashboards/jersey-mikes/pipeline-activity-dashboard.json
+  - name: dashboard-jersey-mikes-pipeline-optimization
+    files:
+      - dashboards/jersey-mikes/pipeline-optimization-dashboard.json
+  - name: dashboard-jersey-mikes-knowledge-silos
+    files:
+      - dashboards/jersey-mikes/knowledge-silos-dashboard.json

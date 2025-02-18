@@ -1,0 +1,105 @@
+- op: add
+  path: /spec/config
+  value:
+    extensions:
+      bearertokenauth/gitlab:
+        token: ${env:GL_PAT}
+    receivers:
+      gitlab/web:
+        initial_delay: 10s
+        collection_interval: 2h
+        scrapers:
+          gitlab:
+            gitlab_org: web
+            endpoint: "https://git.jerseymikes.com"
+            timeout: 120s
+            auth:
+              authenticator: bearertokenauth/gitlab
+      gitlab/pos:
+        initial_delay: 30s
+        collection_interval: 2h
+        scrapers:
+          gitlab:
+            gitlab_org: pos
+            endpoint: "https://git.jerseymikes.com"
+            timeout: 120s
+            auth:
+              authenticator: bearertokenauth/gitlab
+      gitlab/dba:
+        initial_delay: 50s
+        collection_interval: 2h
+        scrapers:
+          gitlab:
+            gitlab_org: dba
+            endpoint: "https://git.jerseymikes.com"
+            timeout: 120s
+            auth:
+              authenticator: bearertokenauth/gitlab
+      gitlab/asynchrony:
+        initial_delay: 70s
+        collection_interval: 2h
+        scrapers:
+          gitlab:
+            gitlab_org: asynchrony
+            endpoint: "https://git.jerseymikes.com"
+            timeout: 120s
+            auth:
+              authenticator: bearertokenauth/gitlab
+      gitlab/infrastructure:
+        initial_delay: 90s
+        collection_interval: 2h
+        scrapers:
+          gitlab:
+            gitlab_org: infrastructure
+            endpoint: "https://git.jerseymikes.com"
+            timeout: 120s
+            auth:
+              authenticator: bearertokenauth/gitlab
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 100
+        timeout: 10s
+      resource/o11y:
+        attributes:
+          - key: team.name
+            value: tag-o11y
+            action: upsert
+    exporters:
+      debug:
+        verbosity: normal
+        sampling_initial: 2
+        sampling_thereafter: 500
+      otlp:
+        endpoint: ${env:OTLP_ENDPOINT:-gateway-collector.collector.svc.cluster.local:4317}
+        tls:
+          insecure: true
+    service:
+      extensions:
+        - bearertokenauth/gitlab
+      pipelines:
+        metrics:
+          receivers:
+            - gitlab/web
+            - gitlab/pos
+            - gitlab/dba
+            - gitlab/asynchrony
+            - gitlab/infrastructure
+          processors:
+            - memory_limiter
+            - batch
+            - resource/o11y
+          exporters:
+            - debug
+            - otlp
+- op: add
+  path: /spec/env
+  value:
+    - name: GL_PAT
+      valueFrom:
+        secretKeyRef:
+          name: gitlab-pat
+          key: GL_PAT

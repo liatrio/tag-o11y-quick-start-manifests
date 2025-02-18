@@ -3,6 +3,8 @@ if k8s_context() != "k3d-otel-basic":
 
 USE_ARGO = os.getenv("DEPLOY_ARGO", False)
 USE_WEBHOOK = os.getenv("DEPLOY_WEBHOOK", False)
+USE_GITLAB = os.getenv("DEPLOY_GITLAB", False)
+USE_GITHUB = os.getenv("DEPLOY_GITHUB", False)
 USE_LGTM = os.getenv("DEPLOY_LGTM", False)
 USE_JAEGER = os.getenv("DEPLOY_JAEGER", False)
 
@@ -14,6 +16,12 @@ if USE_ARGO:
 
 if USE_WEBHOOK:
     include("../collectors/webhook/Tiltfile")
+
+if USE_GITLAB:
+    include("../collectors/gitlabreceiver/Tiltfile")
+
+if USE_GITHUB:
+    include("../collectors/githubreceiver/Tiltfile")
 
 if USE_LGTM:
     include("./lgtm/Tiltfile")
@@ -40,11 +48,43 @@ k8s_resource(
   ]
 )
 
-k8s_resource(
-  workload="openobserve",
-  port_forwards=5080,
-  labels=[
-    "default-apps"
-  ]
+local_resource(
+  name="port-forward-grafana",
+  cmd="echo 'Starting Grafana UI port forward'; while true; do kubectl port-forward svc/grafana -n grafana 3000:3000; sleep 1; done",
+  links=[link("http://localhost:3000", "Grafana UI")],
+  labels=["port-forwards"],
+  allow_parallel=True
 )
 
+local_resource(
+  name="port-forward-prometheus",
+  cmd="echo 'Starting Prometheus UI port forward'; while true; do kubectl port-forward svc/prometheus -n prometheus 9090:9090; sleep 1; done",
+  links=[link("http://localhost:9090", "Prometheus UI")],
+  labels=["port-forwards"],
+  allow_parallel=True
+)
+
+local_resource(
+  name="port-forward-gitlab-metrics",
+  cmd="echo 'Starting GitLab Metrics port forward'; while true; do kubectl port-forward svc/otel-gitlab-collector-collector -n collector 8890:8889; sleep 1; done",
+  links=[link("http://localhost:8890/metrics", "GitLab Metrics")],
+  labels=["port-forwards"],
+  allow_parallel=True
+)
+
+# Add OTLP Gateway port forwarding (required for GitLab metrics collection)
+local_resource(
+  name="port-forward-otlp-grpc",
+  cmd="echo 'Starting OTLP GRPC port forward'; while true; do kubectl port-forward svc/gateway-collector -n collector 4317:4317; sleep 1; done",
+  links=[link("http://localhost:4317", "OTLP GRPC Endpoint")],
+  labels=["port-forwards"],
+  allow_parallel=True
+)
+
+local_resource(
+  name="port-forward-otlp-http",
+  cmd="echo 'Starting OTLP HTTP port forward'; while true; do kubectl port-forward svc/gateway-collector -n collector 4318:4318; sleep 1; done",
+  links=[link("http://localhost:4318", "OTLP HTTP Endpoint")],
+  labels=["port-forwards"],
+  allow_parallel=True
+)
