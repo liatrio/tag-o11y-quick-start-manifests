@@ -1,0 +1,86 @@
+- op: add
+  path: /spec/config
+  value:
+    extensions:
+      # health_check: {}
+
+      # pprof:
+      #   endpoint: 0.0.0.0:1777
+
+      # zpages:
+      #   endpoint: 0.0.0.0:55679
+
+      bearertokenauth/gitlab:
+        token: ${env:GL_PAT}
+
+    receivers:
+      gitlab:
+        initial_delay: 10s
+        collection_interval: 60s
+        scrapers:
+          gitlab:
+            metrics:
+              #Optional Metrics
+              vcs.repository.contributor.count:
+                enabled: true
+            gitlab_org: asynchrony
+            #search_query: org:asynchrony topic:o11y archived:false  #Recommended optional query override, defaults to "{org,user}:<gitlab_org>"
+            endpoint: https://git.jerseymikes.com
+            auth:
+              authenticator: bearertokenauth/gitlab
+
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+
+      batch:
+        send_batch_size: 100
+        timeout: 10s
+
+      resource/o11y:
+        attributes:
+          - key: team.name
+            # Change this value if you want to associate your scraped repositories
+            # with a different team name
+            value: tag-o11y
+            action: upsert
+
+    exporters:
+      debug:
+        verbosity: normal
+        sampling_initial: 2
+        sampling_thereafter: 500
+
+      otlp:
+        endpoint: http://gateway-collector.collector.svc.cluster.local:4317
+        tls:
+          insecure: true
+
+    service:
+      extensions:
+        # - health_check
+        # - pprof
+        # - zpages
+        - bearertokenauth/gitlab
+      pipelines:
+        metrics:
+          receivers:
+            - gitlab
+          processors:
+            - memory_limiter
+            - batch
+            - resource/o11y
+          exporters:
+            - debug
+            - otlp
+
+- op: add
+  path: /spec/env
+  value: 
+    - name: GL_PAT
+      valueFrom:
+        secretKeyRef:
+          name: gitlab-pat
+          key: GL_PAT
