@@ -50,10 +50,10 @@
         sampling_initial: 2
         sampling_thereafter: 500
 
-      # prometheusremotewrite:
-      #   endpoint: http://prometheus.prometheus.svc.cluster.local:9090/api/v1/write
-      #   resource_to_telemetry_conversion:
-      #     enabled: true
+      prometheusremotewrite:
+         endpoint: http://prometheus.prometheus.svc.cluster.local:9090/api/v1/write
+         resource_to_telemetry_conversion:
+           enabled: true
       #
       # otlphttp/tempo:
       #   endpoint: http://tempo.tempo.svc.cluster.local:4318
