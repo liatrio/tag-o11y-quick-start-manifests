@@ -5,7 +5,7 @@ kind: Kustomization
 namespace: tempo
 
 resources:
-  - ../../cluster-infra/namespace/
+  - ../../../cluster-infra/namespace/
   - deployment.yaml
   - service.yaml
 

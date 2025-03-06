@@ -5,7 +5,7 @@ kind: Kustomization
 namespace: grafana
 
 resources:
-  - ../../cluster-infra/namespace
+  - ../../../cluster-infra/namespace
   - deployment.yaml
   - pvc.yaml
   - service.yaml
