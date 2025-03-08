@@ -42,7 +42,7 @@
             action: upsert
 
     # connectors:
-      # spanmetrics: {}
+    # spanmetrics: {}
 
     exporters:
       debug:
@@ -51,9 +51,9 @@
         sampling_thereafter: 500
 
       prometheusremotewrite:
-         endpoint: http://prometheus.prometheus.svc.cluster.local:9090/api/v1/write
-         resource_to_telemetry_conversion:
-           enabled: true
+        endpoint: http://prometheus.prometheus.svc.cluster.local:9090/api/v1/write
+        resource_to_telemetry_conversion:
+          enabled: true
       #
       # otlphttp/tempo:
       #   endpoint: http://tempo.tempo.svc.cluster.local:4318
@@ -81,17 +81,35 @@
       extensions: []
       pipelines:
         metrics:
-          receivers: [otlp]
-          processors: [memory_limiter, batch, resource/env]
-          exporters: [debug, otlphttp/openobserve]
-          # exporters: [debug, prometheusremotewrite]
+          receivers:
+            - otlp
+          processors:
+            - memory_limiter
+            - batch
+            - resource/env
+          exporters:
+            - debug
+            - otlphttp/openobserve
+            - prometheusremotewrite
 
         logs:
-          receivers: [otlp]
-          processors: [memory_limiter, batch, resource/env]
-          exporters: [debug, otlphttp/openobserve]
+          receivers:
+            - otlp
+          processors:
+            - memory_limiter
+            - batch
+            - resource/env
+          exporters:
+            - debug
+            - otlphttp/openobserve
 
         traces:
-          receivers: [otlp]
-          processors: [memory_limiter, batch, resource/env]
-          exporters: [debug, otlphttp/openobserve]
+          receivers:
+            - otlp
+          processors:
+            - memory_limiter
+            - batch
+            - resource/env
+          exporters:
+            - debug
+            - otlphttp/openobserve

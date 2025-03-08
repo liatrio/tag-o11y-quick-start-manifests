@@ -2,14 +2,6 @@
   path: /spec/config
   value:
     extensions:
-      # health_check: {}
-
-      # pprof:
-      #   endpoint: 0.0.0.0:1777
-
-      # zpages:
-      #   endpoint: 0.0.0.0:55679
-
       bearertokenauth/gitlab:
         token: ${env:GL_PAT}
 
@@ -21,11 +13,12 @@
           gitlab:
             metrics:
               #Optional Metrics
-              vcs.repository.contributor.count:
+              vcs.contributor.count:
                 enabled: true
-            gitlab_org: asynchrony
+            # gitlab_org: asynchrony
+            gitlab_org: liatrioinc/cn-platform/modules
             #search_query: org:asynchrony topic:o11y archived:false  #Recommended optional query override, defaults to "{org,user}:<gitlab_org>"
-            endpoint: https://git.jerseymikes.com
+            # endpoint: https://git.jerseymikes.com
             auth:
               authenticator: bearertokenauth/gitlab
 
@@ -54,15 +47,12 @@
         sampling_thereafter: 500
 
       otlp:
-        endpoint: http://gateway-collector.collector.svc.cluster.local:4317
+        endpoint: gateway-collector.collector.svc.cluster.local:4317
         tls:
           insecure: true
 
     service:
       extensions:
-        # - health_check
-        # - pprof
-        # - zpages
         - bearertokenauth/gitlab
       pipelines:
         metrics:
@@ -78,7 +68,7 @@
 
 - op: add
   path: /spec/env
-  value: 
+  value:
     - name: GL_PAT
       valueFrom:
         secretKeyRef:

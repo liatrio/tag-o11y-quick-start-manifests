@@ -11,11 +11,11 @@ providers:
     editable: true
     options:
       path: /etc/grafana/provisioning/dashboards/demo
-  - name: "OpenTelemetry GitProviderReceiver Demo"
+  - name: "OpenTelemetry DORA Metrics Demo Dashboards"
     orgId: 1
-    folder: "GitProviderReceiver"
+    folder: "DORA"
     type: file
     disableDeletion: false
     editable: true
     options:
-      path: /etc/grafana/provisioning/dashboards/gpr
+      path: /etc/grafana/provisioning/dashboards/dora
