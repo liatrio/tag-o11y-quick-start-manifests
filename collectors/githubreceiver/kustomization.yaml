@@ -26,4 +26,4 @@ patches:
     patch: |-
       - op: replace
         path: /metadata/name
-        value: githubreceiver
+        value: otel-github-collector

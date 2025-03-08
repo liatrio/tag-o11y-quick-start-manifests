@@ -2,14 +2,6 @@
   path: /spec/config
   value:
     extensions:
-      # health_check: {}
-
-      # pprof:
-      #   endpoint: 0.0.0.0:1777
-
-      # zpages:
-      #   endpoint: 0.0.0.0:55679
-
       bearertokenauth/github:
         token: ${env:GH_PAT}
 
@@ -21,10 +13,10 @@
           scraper:
             metrics:
               #Optional Metrics
-              vcs.repository.contributor.count:
+              vcs.contributor.count:
                 enabled: true
             github_org: liatrio
-            search_query: org:liatrio topic:o11y archived:false  #Recommended optional query override, defaults to "{org,user}:<github_org>"
+            search_query: org:liatrio topic:o11y archived:false #Recommended optional query override, defaults to "{org,user}:<github_org>"
             #endpoint: https://selfmanagedenterpriseserver.com
             auth:
               authenticator: bearertokenauth/github
@@ -60,9 +52,6 @@
 
     service:
       extensions:
-        # - health_check
-        # - pprof
-        # - zpages
         - bearertokenauth/github
       pipelines:
         metrics:
@@ -78,7 +67,7 @@
 
 - op: add
   path: /spec/env
-  value: 
+  value:
     - name: GH_PAT
       valueFrom:
         secretKeyRef:

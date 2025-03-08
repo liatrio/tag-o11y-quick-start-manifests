@@ -4,6 +4,7 @@ if k8s_context() != "k3d-otel-basic":
 USE_ARGO = os.getenv("DEPLOY_ARGO", False)
 USE_WEBHOOK = os.getenv("DEPLOY_WEBHOOK", False)
 USE_GITLAB = os.getenv("DEPLOY_GITLAB", False)
+USE_GITHUB = os.getenv("DEPLOY_GITHUB", False)
 USE_LGTM = os.getenv("DEPLOY_LGTM", False)
 USE_JAEGER = os.getenv("DEPLOY_JAEGER", False)
 
@@ -18,6 +19,9 @@ if USE_WEBHOOK:
 
 if USE_GITLAB:
     include("../collectors/gitlabreceiver/Tiltfile")
+
+if USE_GITHUB:
+    include("../collectors/githubreceiver/Tiltfile")
 
 if USE_LGTM:
     include("./lgtm/Tiltfile")
@@ -51,4 +55,3 @@ k8s_resource(
     "default-apps"
   ]
 )
-
