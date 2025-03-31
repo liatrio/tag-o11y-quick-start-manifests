@@ -407,7 +407,7 @@
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "label_values(vcs_ref_count,vcs_repository_name)",
+        "definition": "label_values(vcs_change_time_to_merge_seconds,vcs_repository_name)",
         "description": "The repository name",
         "includeAll": true,
         "label": "Repository",
@@ -416,7 +416,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(vcs_ref_count,vcs_repository_name)",
+          "query": "label_values(vcs_change_time_to_merge_seconds,vcs_repository_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
