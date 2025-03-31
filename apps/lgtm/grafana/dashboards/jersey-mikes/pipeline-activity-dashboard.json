@@ -25,7 +25,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "webstore-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -109,7 +109,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "webstore-metrics"
           },
           "editorMode": "code",
           "expr": "avg by(vcs_repository_name) (cicd_pipeline_run_duration_seconds{vcs_repository_name=~\"$repo\"}) / 60",
@@ -122,7 +122,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "webstore-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -204,7 +204,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "webstore-metrics"
           },
           "editorMode": "code",
           "expr": "avg_over_time(cicd_pipeline_run_duration_seconds{vcs_repository_name=~\"$repo\"}[30d]) / 60 or vector(0)",
@@ -217,7 +217,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "webstore-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -274,7 +274,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "webstore-metrics"
           },
           "editorMode": "code",
           "expr": "sum by(vcs_repository_name) (cicd_pipeline_run_completed{result=\"success\", vcs_repository_name=~\"$repo\"}) / sum by(vcs_repository_name) (cicd_pipeline_run_completed{vcs_repository_name=~\"$repo\"}) * 100 or vector(0)",
@@ -287,7 +287,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "webstore-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -344,7 +344,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "webstore-metrics"
           },
           "editorMode": "code",
           "expr": "sum by(vcs_repository_name) (cicd_pipeline_run_completed{vcs_repository_name=~\"$repo\"})",
@@ -377,7 +377,7 @@
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
-        "name": "DS_PROMETHEUS",
+        "name": "webstore-metrics",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
@@ -389,7 +389,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "webstore-metrics"
         },
         "definition": "label_values(organization_name)",
         "description": "The organization name resource attribute for metrics",
@@ -412,7 +412,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "webstore-metrics"
         },
         "definition": "label_values({organization_name=~\"$organization\"},team_name)",
         "description": "The name of the team",
@@ -435,7 +435,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "webstore-metrics"
         },
         "definition": "label_values(vcs_ref_count,vcs_repository_name)",
         "description": "The repository name",

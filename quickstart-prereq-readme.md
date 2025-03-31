@@ -16,18 +16,18 @@ This script automates the installation of essential development tools for Kubern
 
 ## Installation
 
-1. Download the o11y-quickstart here https://github.com/liatrio/tag-o11y-quick-start-manifests/archive/refs/heads/main.zip
+1. Download the o11y-quickstart here <https://github.com/liatrio/tag-o11y-quick-start-manifests/archive/refs/heads/main.zip>
 2. Unzip the folder in your user directory
 3. Open you terminal
 4. cd into the folder you just unzipped in your user directory
 5. Run the following command
-- `chmod +x install_dev_tools.sh`
-6. Run the script 
-- `./quickstart-prereq-setup.sh`
+    - `chmod +x install_dev_tools.sh`
+6. Run the script
+    - `./quickstart-prereq-setup.sh`
 7. Start Docker Desktop
 8. Setup your GitHub or GitLab Receiver
 
-#### GitHub/GitLab  Receiver Setup
+### GitHub/GitLab  Receiver Setup
 
 To deploy the GitHub Receiver
 
