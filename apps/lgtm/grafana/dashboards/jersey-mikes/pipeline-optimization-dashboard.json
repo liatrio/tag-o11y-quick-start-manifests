@@ -110,14 +110,14 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) or vector(0)",
+          "expr": "avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\"}) or vector(0)",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Average Build Time by Repository",
-      "description": "Monitoring build times for repositories. Thresholds: Warning 15min (900s), Critical 30min (1800s)",
+      "title": "Average Merge Time by Repository",
+      "description": "Monitoring merge times for repositories. Thresholds: Warning 15min (900s), Critical 30min (1800s)",
       "type": "timeseries"
     },
     {
@@ -179,7 +179,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "quantile(0.95, vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) or vector(0)",
+          "expr": "quantile(0.95, vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\"}) or vector(0)",
           "legendFormat": "p95",
           "range": true,
           "refId": "A"
@@ -190,15 +190,15 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "quantile(0.50, vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) or vector(0)",
+          "expr": "quantile(0.50, vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\"}) or vector(0)",
           "hide": false,
           "legendFormat": "p50",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "Build Time SLO (p95 and p50)",
-      "description": "95th and 50th percentile build times. Target: <15min for optimal developer productivity.",
+      "title": "Merge Time SLO (p95 and p50)",
+      "description": "95th and 50th percentile merge times. Target: <15min for optimal developer productivity.",
       "type": "gauge"
     },
     {
@@ -272,7 +272,7 @@
         "showHeader": true
       },
       "pluginVersion": "9.5.1",
-      "title": "Repositories with Longest Average Merge Times",
+      "title": "Repositories with Longest Average Merge Times (Top 10)",
       "type": "table",
       "targets": [
         {
@@ -281,7 +281,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "topk(5, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"})) or vector(0)",
+          "expr": "topk(10, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\"})) / 60 or vector(0)",
           "format": "table",
           "legendFormat": "__auto",
           "range": true,
@@ -374,7 +374,7 @@
         "showHeader": true
       },
       "pluginVersion": "9.5.1",
-      "title": "Merge Time Variability (Standard Deviation)",
+      "title": "Merge Time Variability (Standard Deviation) - Top 10 (minutes)",
       "type": "table",
       "targets": [
         {
@@ -383,7 +383,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "topk(5, stddev by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"})) or vector(0)",
+          "expr": "topk(10, stddev by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\"})) / 60 or vector(0)",
           "format": "table",
           "legendFormat": "__auto",
           "range": true,
@@ -477,7 +477,7 @@
         "showHeader": true
       },
       "pluginVersion": "9.5.1",
-      "title": "Repositories with Slowest Lead Time from Commit to Deployment",
+      "title": "Repositories with Longest Average Merge Times - Top 10 (minutes)",
       "type": "table",
       "targets": [
         {
@@ -486,7 +486,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "topk(5, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"})) or vector(0)",
+          "expr": "topk(10, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\"})) / 60 or vector(0)",
           "format": "table",
           "legendFormat": "__auto",
           "range": true,
@@ -588,7 +588,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "topk(10, count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"})) or vector(0)",
+          "expr": "topk(10, count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\"})) or vector(0)",
           "format": "table",
           "legendFormat": "__auto",
           "range": true,
@@ -712,8 +712,8 @@
       "1d"
     ]
   },
-  "title": "Pipeline Optimization Dashboard",
-  "uid": "pipeline-optimization",
+  "title": "Merge Time Analysis Dashboard",
+  "uid": "merge-time-analysis",
   "version": 1,
   "weekStart": ""
 }

@@ -112,7 +112,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) / 60",
+          "expr": "avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / 60",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
@@ -207,7 +207,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "avg_over_time(vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}[30d]) / 60 or vector(0)",
+          "expr": "avg_over_time(vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}[30d]) / 60 or vector(0)",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
@@ -277,7 +277,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) / count by(vcs_repository_name) (vcs_ref_count{vcs_repository_name=~\"$repo\"}) * 100 or vector(0)",
+          "expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / count by(vcs_repository_name) (vcs_ref_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) * 100 or vector(0)",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
@@ -347,7 +347,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) or vector(0)",
+          "expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
@@ -361,7 +361,7 @@
   "tags": [
     "gitlab",
     "devops",
-    "pipeline",
+    "repository",
     "metrics"
   ],
   "templating": {
@@ -462,8 +462,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "CI/CD Pipeline Performance Dashboard",
-  "uid": "gitlab-pipeline-activity",
+  "title": "Jersey Mikes - Repository Merge Activity Dashboard",
+  "uid": "gitlab-repository-merge-activity",
   "version": 1,
   "weekStart": ""
 }
