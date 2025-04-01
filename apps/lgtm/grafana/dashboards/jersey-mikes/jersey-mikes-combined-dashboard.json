@@ -438,7 +438,7 @@
 					"refId": "A"
 				}
 			],
-			"title": "Pipeline Success Rate by Repository",
+			"title": "Merge Request Success Rate by Repository",
 			"type": "timeseries"
 		},
 		{
