@@ -99,7 +99,8 @@
           "sort": "none"
         }
       },
-      "title": "Repositories with Low Contributor Count (Potential Silos)",
+      "title": "Repositories with Low Activity (Potential Silos)",
+      "description": "Repositories with low merge request activity, indicating potential knowledge silos",
       "type": "timeseries",
       "targets": [
         {
@@ -108,7 +109,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "topk(10, bottomk(10, count by(vcs_repository_name) (vcs_ref_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})))",
+          "expr": "bottomk(10, count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
@@ -169,7 +170,8 @@
         "text": {}
       },
       "pluginVersion": "9.5.1",
-      "title": "Contributor Distribution by Repository",
+      "title": "Merge Request Activity Distribution",
+      "description": "Distribution of merge request activity across repositories",
       "type": "bargauge",
       "targets": [
         {
@@ -178,7 +180,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "count by(vcs_repository_name) (vcs_ref_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+          "expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
@@ -239,7 +241,8 @@
         "textMode": "auto"
       },
       "pluginVersion": "9.5.1",
-      "title": "Bus Factor Estimate (Higher is Better)",
+      "title": "Activity Distribution Score",
+      "description": "Score based on merge request activity distribution and code changes",
       "type": "stat",
       "targets": [
         {
@@ -248,7 +251,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "count by(vcs_repository_name) (vcs_ref_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / (1 + stddev by(vcs_repository_name) (vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
+          "expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / (1 + stddev by(vcs_repository_name) (vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
@@ -309,7 +312,8 @@
           "sort": "none"
         }
       },
-      "title": "High Activity / Low Contributor Repositories",
+      "title": "High Activity / Low Distribution Repositories",
+      "description": "Repositories with high merge activity but concentrated among few contributors",
       "type": "piechart",
       "targets": [
         {
@@ -318,7 +322,193 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "bottomk(5, count by(vcs_repository_name) (vcs_ref_count{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})) and topk(5, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
+          "expr": "topk(5, sum by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
+          "legendFormat": "{{vcs_repository_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Lines of Code",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "title": "Code Change Distribution",
+      "description": "Distribution of code changes across repositories",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "editorMode": "code",
+          "expr": "sum by(vcs_repository_name) (vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+          "legendFormat": "{{vcs_repository_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Active Branches",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "title": "Active Branches by Repository",
+      "description": "Number of active branches per repository",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "editorMode": "code",
+          "expr": "count by(vcs_repository_name) (vcs_ref_lines_delta{vcs_ref_head_type=\"branch\", organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"

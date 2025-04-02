@@ -31,7 +31,7 @@
 			},
 			"id": 100,
 			"panels": [],
-			"title": "Key Metrics Overview",
+			"title": "Key Performance Indicators",
 			"type": "row"
 		},
 		{
@@ -49,46 +49,41 @@
 						"mode": "absolute",
 						"steps": [
 							{
-								"color": "green"
+								"color": "red",
+								"value": null
 							},
 							{
 								"color": "yellow",
-								"value": 86400
+								"value": 80
 							},
 							{
-								"color": "red",
-								"value": 172800
+								"color": "green",
+								"value": 95
 							}
 						]
 					},
-					"unit": "s"
+					"unit": "percent"
 				},
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 5,
-				"w": 24,
+				"h": 8,
+				"w": 8,
 				"x": 0,
 				"y": 1
 			},
 			"id": 1,
 			"options": {
-				"colorMode": "value",
-				"graphMode": "area",
-				"justifyMode": "auto",
 				"orientation": "auto",
-				"percentChangeColorMode": "standard",
 				"reduceOptions": {
 					"calcs": [
-						"mean"
+						"lastNotNull"
 					],
 					"fields": "",
 					"values": false
 				},
-				"showPercentChange": false,
-				"text": {},
-				"textMode": "auto",
-				"wideLayout": true
+				"showThresholdLabels": true,
+				"showThresholdMarkers": true
 			},
 			"pluginVersion": "11.6.0",
 			"targets": [
@@ -98,13 +93,156 @@
 						"uid": "webstore-metrics"
 					},
 					"editorMode": "code",
-					"expr": "avg(vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
-					"legendFormat": "Avg Time",
+					"expr": "100 * count(vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} < 900) / count(vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+					"legendFormat": "SLO Compliance",
 					"range": true,
 					"refId": "A"
 				}
 			],
-			"title": "Average Time to Merge",
+			"title": "Merge Time SLO Compliance",
+			"description": "Percentage of merge requests meeting the 15-minute SLO target",
+			"type": "gauge"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 900
+							},
+							{
+								"color": "red",
+								"value": 1800
+							}
+						]
+					},
+					"unit": "s"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 8,
+				"y": 1
+			},
+			"id": 2,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"reduceOptions": {
+					"calcs": [
+						"mean"
+					],
+					"fields": "",
+					"values": false
+				},
+				"textMode": "auto"
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "avg(vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+					"legendFormat": "Average Time",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Average Merge Time",
+			"description": "Overall average time to merge across all repositories",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "webstore-metrics"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 50
+							},
+							{
+								"color": "red",
+								"value": 100
+							}
+						]
+					},
+					"unit": "none"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 8,
+				"x": 16,
+				"y": 1
+			},
+			"id": 3,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"reduceOptions": {
+					"calcs": [
+						"lastNotNull"
+					],
+					"fields": "",
+					"values": false
+				},
+				"textMode": "auto"
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "webstore-metrics"
+					},
+					"editorMode": "code",
+					"expr": "sum(count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
+					"legendFormat": "Total MRs",
+					"range": true,
+					"refId": "A"
+				}
+			],
+			"title": "Active Merge Requests",
+			"description": "Total number of merge requests across all repositories",
 			"type": "stat"
 		},
 		{
@@ -113,24 +251,11 @@
 				"h": 1,
 				"w": 24,
 				"x": 0,
-				"y": 6
+				"y": 9
 			},
 			"id": 101,
 			"panels": [],
-			"title": "Knowledge Silos",
-			"type": "row"
-		},
-		{
-			"collapsed": false,
-			"gridPos": {
-				"h": 1,
-				"w": 24,
-				"x": 0,
-				"y": 7
-			},
-			"id": 102,
-			"panels": [],
-			"title": "Merge Request Performance",
+			"title": "Repository Performance",
 			"type": "row"
 		},
 		{
@@ -144,13 +269,11 @@
 						"mode": "palette-classic"
 					},
 					"custom": {
-						"axisBorderShow": false,
 						"axisCenteredZero": false,
 						"axisColorMode": "text",
 						"axisLabel": "Hours",
 						"axisPlacement": "auto",
 						"barAlignment": 0,
-						"barWidthFactor": 0.6,
 						"drawStyle": "line",
 						"fillOpacity": 20,
 						"gradientMode": "none",
@@ -159,8 +282,7 @@
 							"tooltip": false,
 							"viz": false
 						},
-						"insertNulls": false,
-						"lineInterpolation": "linear",
+						"lineInterpolation": "smooth",
 						"lineWidth": 2,
 						"pointSize": 5,
 						"scaleDistribution": {
@@ -173,7 +295,7 @@
 							"mode": "none"
 						},
 						"thresholdsStyle": {
-							"mode": "off"
+							"mode": "line+area"
 						}
 					},
 					"mappings": [],
@@ -181,15 +303,20 @@
 						"mode": "absolute",
 						"steps": [
 							{
-								"color": "green"
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "yellow",
+								"value": 900
 							},
 							{
 								"color": "red",
-								"value": 80
+								"value": 1800
 							}
 						]
 					},
-					"unit": "h"
+					"unit": "s"
 				},
 				"overrides": []
 			},
@@ -197,27 +324,24 @@
 				"h": 8,
 				"w": 12,
 				"x": 0,
-				"y": 8
+				"y": 10
 			},
-			"id": 6,
+			"id": 4,
 			"options": {
 				"legend": {
 					"calcs": [
 						"mean",
-						"max",
-						"min"
+						"max"
 					],
 					"displayMode": "table",
-					"placement": "bottom",
+					"placement": "right",
 					"showLegend": true
 				},
 				"tooltip": {
-					"hideZeros": false,
-					"mode": "single",
-					"sort": "none"
+					"mode": "multi",
+					"sort": "desc"
 				}
 			},
-			"pluginVersion": "11.6.0",
 			"targets": [
 				{
 					"datasource": {
@@ -225,113 +349,14 @@
 						"uid": "webstore-metrics"
 					},
 					"editorMode": "code",
-					"expr": "topk(10, avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) / 3600) or vector(0)",
+					"expr": "avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
 					"legendFormat": "{{vcs_repository_name}}",
 					"range": true,
 					"refId": "A"
 				}
 			],
-			"title": "Average Time to Merge by Repository",
-			"type": "timeseries"
-		},
-		{
-			"datasource": {
-				"type": "prometheus",
-				"uid": "webstore-metrics"
-			},
-			"description": "Based on data collected every 2 hours",
-			"fieldConfig": {
-				"defaults": {
-					"color": {
-						"mode": "palette-classic"
-					},
-					"custom": {
-						"axisBorderShow": false,
-						"axisCenteredZero": false,
-						"axisColorMode": "text",
-						"axisLabel": "",
-						"axisPlacement": "auto",
-						"barAlignment": 0,
-						"barWidthFactor": 0.6,
-						"drawStyle": "line",
-						"fillOpacity": 20,
-						"gradientMode": "none",
-						"hideFrom": {
-							"legend": false,
-							"tooltip": false,
-							"viz": false
-						},
-						"insertNulls": false,
-						"lineInterpolation": "linear",
-						"lineWidth": 2,
-						"pointSize": 5,
-						"scaleDistribution": {
-							"type": "linear"
-						},
-						"showPoints": "auto",
-						"spanNulls": true,
-						"stacking": {
-							"group": "A",
-							"mode": "none"
-						},
-						"thresholdsStyle": {
-							"mode": "off"
-						}
-					},
-					"mappings": [],
-					"thresholds": {
-						"mode": "absolute",
-						"steps": [
-							{
-								"color": "green"
-							},
-							{
-								"color": "red",
-								"value": 80
-							}
-						]
-					}
-				},
-				"overrides": []
-			},
-			"gridPos": {
-				"h": 8,
-				"w": 12,
-				"x": 12,
-				"y": 8
-			},
-			"id": 7,
-			"options": {
-				"legend": {
-					"calcs": [
-						"mean",
-						"lastNotNull"
-					],
-					"displayMode": "list",
-					"placement": "bottom",
-					"showLegend": true
-				},
-				"tooltip": {
-					"hideZeros": false,
-					"mode": "single",
-					"sort": "none"
-				}
-			},
-			"pluginVersion": "11.6.0",
-			"targets": [
-				{
-					"datasource": {
-						"type": "prometheus",
-						"uid": "webstore-metrics"
-					},
-					"editorMode": "code",
-					"expr": "avg_over_time(vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}[30d])",
-					"legendFormat": "{{vcs_repository_name}}",
-					"range": true,
-					"refId": "A"
-				}
-			],
-			"title": "Merge Time Trend (Based on Sparse 2h Data)",
+			"title": "Merge Time by Repository",
+			"description": "Average merge time trends across repositories",
 			"type": "timeseries"
 		},
 		{
@@ -345,23 +370,19 @@
 						"mode": "palette-classic"
 					},
 					"custom": {
-						"axisBorderShow": false,
 						"axisCenteredZero": false,
 						"axisColorMode": "text",
-						"axisLabel": "",
+						"axisLabel": "Lines of Code",
 						"axisPlacement": "auto",
-						"axisSoftMin": 0,
 						"barAlignment": 0,
-						"barWidthFactor": 0.6,
-						"drawStyle": "line",
-						"fillOpacity": 80,
+						"drawStyle": "bars",
+						"fillOpacity": 100,
 						"gradientMode": "none",
 						"hideFrom": {
 							"legend": false,
 							"tooltip": false,
 							"viz": false
 						},
-						"insertNulls": false,
 						"lineInterpolation": "linear",
 						"lineWidth": 1,
 						"pointSize": 5,
@@ -383,7 +404,8 @@
 						"mode": "absolute",
 						"steps": [
 							{
-								"color": "green"
+								"color": "green",
+								"value": null
 							},
 							{
 								"color": "red",
@@ -395,36 +417,26 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 11,
-				"w": 24,
-				"x": 0,
-				"y": 16
+				"h": 8,
+				"w": 12,
+				"x": 12,
+				"y": 10
 			},
-			"id": 9,
+			"id": 5,
 			"options": {
-				"barRadius": 0,
-				"barWidth": 0.97,
-				"fullHighlight": false,
-				"groupWidth": 0.7,
 				"legend": {
-					"calcs": [],
-					"displayMode": "list",
+					"calcs": [
+						"sum"
+					],
+					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
 				},
-				"orientation": "auto",
-				"showValue": "auto",
-				"stacking": "none",
 				"tooltip": {
-					"hideZeros": false,
 					"mode": "single",
 					"sort": "none"
-				},
-				"xField": "vcs_repository_name",
-				"xTickLabelRotation": -45,
-				"xTickLabelSpacing": 0
+				}
 			},
-			"pluginVersion": "11.6.0",
 			"targets": [
 				{
 					"datasource": {
@@ -432,13 +444,14 @@
 						"uid": "webstore-metrics"
 					},
 					"editorMode": "code",
-					"expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{vcs_repository_name=~\"$repo\"}) / count by(vcs_repository_name) (vcs_ref_count{vcs_repository_name=~\"$repo\"}) * 100 or vector(0)",
+					"expr": "sum by(vcs_repository_name) (abs(delta(vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}[$__range])))",
 					"legendFormat": "{{vcs_repository_name}}",
 					"range": true,
 					"refId": "A"
 				}
 			],
-			"title": "Merge Request Success Rate by Repository",
+			"title": "Code Change Volume (Within Time Range)",
+			"description": "Total lines of code changed within the selected time period by repository",
 			"type": "timeseries"
 		},
 		{
@@ -447,11 +460,11 @@
 				"h": 1,
 				"w": 24,
 				"x": 0,
-				"y": 27
+				"y": 18
 			},
-			"id": 206,
+			"id": 102,
 			"panels": [],
-			"title": "Trunk Based Development",
+			"title": "Review Efficiency",
 			"type": "row"
 		},
 		{
@@ -459,58 +472,77 @@
 				"type": "prometheus",
 				"uid": "webstore-metrics"
 			},
-			"description": "Average age of branches in days",
 			"fieldConfig": {
 				"defaults": {
 					"color": {
-						"mode": "continuous-BlPu"
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "Review Time per Line (s)",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"drawStyle": "points",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
 					},
 					"mappings": [],
 					"thresholds": {
 						"mode": "absolute",
 						"steps": [
 							{
-								"color": "green"
-							},
-							{
-								"color": "yellow",
-								"value": 7
+								"color": "green",
+								"value": null
 							},
 							{
 								"color": "red",
-								"value": 14
+								"value": 80
 							}
 						]
-					},
-					"unit": "d"
+					}
 				},
 				"overrides": []
 			},
 			"gridPos": {
 				"h": 8,
-				"w": 11,
+				"w": 24,
 				"x": 0,
-				"y": 28
+				"y": 19
 			},
-			"id": 207,
+			"id": 6,
 			"options": {
-				"colorMode": "value",
-				"graphMode": "area",
-				"justifyMode": "auto",
-				"orientation": "auto",
-				"percentChangeColorMode": "standard",
-				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
-					"fields": "",
-					"values": false
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
 				},
-				"showPercentChange": false,
-				"textMode": "auto",
-				"wideLayout": true
+				"tooltip": {
+					"mode": "single",
+					"sort": "none"
+				}
 			},
-			"pluginVersion": "11.6.0",
 			"targets": [
 				{
 					"datasource": {
@@ -518,87 +550,15 @@
 						"uid": "webstore-metrics"
 					},
 					"editorMode": "code",
-					"expr": "avg(vcs_ref_time_seconds{}) / 86400",
-					"legendFormat": "Average Age",
+					"expr": "avg by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / sum by(vcs_repository_name) (vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+					"legendFormat": "{{vcs_repository_name}}",
 					"range": true,
 					"refId": "A"
 				}
 			],
-			"title": "Average Branch Age",
-			"type": "stat"
-		},
-		{
-			"datasource": {
-				"type": "prometheus",
-				"uid": "webstore-metrics"
-			},
-			"description": "Average time pull requests are open",
-			"fieldConfig": {
-				"defaults": {
-					"color": {
-						"mode": "continuous-BlPu"
-					},
-					"mappings": [],
-					"thresholds": {
-						"mode": "absolute",
-						"steps": [
-							{
-								"color": "green"
-							},
-							{
-								"color": "yellow",
-								"value": 86400
-							},
-							{
-								"color": "red",
-								"value": 172800
-							}
-						]
-					},
-					"unit": "s"
-				},
-				"overrides": []
-			},
-			"gridPos": {
-				"h": 8,
-				"w": 13,
-				"x": 11,
-				"y": 28
-			},
-			"id": 209,
-			"options": {
-				"colorMode": "value",
-				"graphMode": "area",
-				"justifyMode": "auto",
-				"orientation": "auto",
-				"percentChangeColorMode": "standard",
-				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
-					"fields": "",
-					"values": false
-				},
-				"showPercentChange": false,
-				"textMode": "auto",
-				"wideLayout": true
-			},
-			"pluginVersion": "11.6.0",
-			"targets": [
-				{
-					"datasource": {
-						"type": "prometheus",
-						"uid": "webstore-metrics"
-					},
-					"editorMode": "code",
-					"expr": "avg(vcs_change_duration_seconds{vcs_change_state=\"open\"})",
-					"legendFormat": "PR Age",
-					"range": true,
-					"refId": "A"
-				}
-			],
-			"title": "Average PR Age",
-			"type": "stat"
+			"title": "Review Efficiency by Repository",
+			"description": "Time spent reviewing per line of code changed",
+			"type": "timeseries"
 		}
 	],
 	"preload": false,
