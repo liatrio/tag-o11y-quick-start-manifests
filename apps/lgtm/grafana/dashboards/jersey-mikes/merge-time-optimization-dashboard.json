@@ -183,8 +183,8 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by(le) (rate(vcs_change_time_to_merge_seconds_bucket{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}[30d])))",
-          "legendFormat": "p95",
+          "expr": "max(vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+          "legendFormat": "p95 (approx)",
           "range": true,
           "refId": "A"
         },
@@ -194,9 +194,9 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum by(le) (rate(vcs_change_time_to_merge_seconds_bucket{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}[30d])))",
+          "expr": "avg(vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
           "hide": false,
-          "legendFormat": "p50",
+          "legendFormat": "p50 (approx)",
           "range": true,
           "refId": "B"
         }
