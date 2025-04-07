@@ -48,9 +48,9 @@ configMapGenerator:
       - dashboards/dora/vcs-trunk-based-development.json
 
   # Jersey Mikes GitLab dashboards
-  - name: dashboard-jersey-mikes-consolidated-merge-metrics
+  - name: dashboard-jersey-mikes-merge-metrics
     files:
-      - dashboards/jersey-mikes/consolidated-merge-metrics-dashboard.json
+      - dashboards/jersey-mikes/merge-metrics-dashboard.json
   - name: dashboard-jersey-mikes-knowledge-silos
     files:
       - dashboards/jersey-mikes/knowledge-silos-dashboard.json
