@@ -77,14 +77,8 @@ spec:
               mountPath: /etc/grafana/provisioning/dashboards/dora/vcs-trunk-based-development.json
 
             # Jersey Mikes GitLab dashboards
-            - name: dashboard-jersey-mikes-combined
-              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/jersey-mikes-combined-dashboard.json
-            - name: dashboard-jersey-mikes-merge-request-processing
-              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/merge-request-processing-dashboard.json
-            - name: dashboard-jersey-mikes-merge-request-activity
-              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/merge-request-activity-dashboard.json
-            - name: dashboard-jersey-mikes-merge-time-optimization
-              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/merge-time-optimization-dashboard.json
+            - name: dashboard-jersey-mikes-consolidated-merge-metrics
+              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/consolidated-merge-metrics-dashboard.json
             - name: dashboard-jersey-mikes-knowledge-silos
               mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/knowledge-silos-dashboard.json
 
@@ -125,18 +119,9 @@ spec:
             name: dashboard-dora-vcs-trunk-based-development
 
         # Jersey Mikes GitLab dashboards
-        - name: dashboard-jersey-mikes-combined
+        - name: dashboard-jersey-mikes-consolidated-merge-metrics
           configMap:
-            name: dashboard-jersey-mikes-combined
-        - name: dashboard-jersey-mikes-merge-request-processing
-          configMap:
-            name: dashboard-jersey-mikes-merge-request-processing
-        - name: dashboard-jersey-mikes-merge-request-activity
-          configMap:
-            name: dashboard-jersey-mikes-merge-request-activity
-        - name: dashboard-jersey-mikes-merge-time-optimization
-          configMap:
-            name: dashboard-jersey-mikes-merge-time-optimization
+            name: dashboard-jersey-mikes-consolidated-merge-metrics
         - name: dashboard-jersey-mikes-knowledge-silos
           configMap:
             name: dashboard-jersey-mikes-knowledge-silos
