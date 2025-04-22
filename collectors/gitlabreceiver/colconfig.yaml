@@ -15,10 +15,10 @@
               #Optional Metrics
               vcs.contributor.count:
                 enabled: true
-            gitlab_org: asynchrony
-            #gitlab_org: liatrioinc/cn-platform/modules
+            gitlab_org: example #replace with the GitLab Org
+            #gitlab_org: myorg/mygroup/subgroup
             #search_query:   #Recommended optional query override, defaults to "{org,user}:<gitlab_org>"
-            endpoint: https://git.jerseymikes.com
+            endpoint: self-hostinggitlab.org #replace with the URL to GitLab
             timeout: 120s
             auth:
               authenticator: bearertokenauth/gitlab
@@ -38,7 +38,7 @@
           - key: team.name
             # Change this value if you want to associate your scraped repositories
             # with a different team name
-            value: jmliatrio
+            value: example-team
             action: upsert
 
     exporters:
