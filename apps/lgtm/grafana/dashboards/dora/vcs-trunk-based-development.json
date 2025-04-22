@@ -21,20 +21,208 @@
       }
     ]
   },
+  "description": "Includes metrics that align with Trunk Based Development and Small Batch Delivery.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 11,
+  "id": 8,
   "links": [],
-  "liveNow": false,
   "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-purple",
+            "mode": "shades"
+          },
+          "custom": {
+            "fillOpacity": 69,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 2,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "d"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 28,
+      "options": {
+        "bucketSize": 7,
+        "combine": true,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vcs_ref_time_seconds{organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=\"$team\"} / 86400",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Branch Time Buckets",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "labelsToFields": false,
+            "mode": "seriesToRows",
+            "reducers": ["max"]
+          }
+        }
+      ],
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "webstore-metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-purple",
+            "mode": "shades"
+          },
+          "custom": {
+            "fillOpacity": 69,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 2,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "d"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 29,
+      "options": {
+        "bucketSize": 5,
+        "combine": true,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "vcs_change_duration_seconds{organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"} / 86400",
+          "format": "time_series",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Pull Request Open Time Buckets",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "labelsToFields": false,
+            "mode": "seriesToRows",
+            "reducers": ["max"]
+          }
+        }
+      ],
+      "type": "histogram"
+    },
     {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 16
       },
       "id": 15,
       "panels": [],
@@ -50,7 +238,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-BlPu"
           },
           "displayName": "{repository_name}",
           "fieldMinMax": false,
@@ -61,18 +249,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 7
-              },
-              {
-                "color": "orange",
-                "value": 10
-              },
-              {
-                "color": "red",
-                "value": 11
               }
             ]
           },
@@ -84,7 +260,7 @@
         "h": 7,
         "w": 7,
         "x": 0,
-        "y": 1
+        "y": 17
       },
       "id": 17,
       "options": {
@@ -92,10 +268,9 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -103,24 +278,23 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "exemplar": false,
-          "expr": "avg by(team_name) (git_repository_branch_time_seconds{organization_name=~\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}) / 86400",
-          "format": "time_series",
+          "editorMode": "code",
+          "expr": "avg by(team_name) (vcs_ref_time_seconds{organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}) / 86400",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -136,7 +310,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-BlPu"
           },
           "custom": {
             "axisBorderShow": true,
@@ -145,6 +319,7 @@
             "axisLabel": "",
             "axisPlacement": "left",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -160,7 +335,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "always",
+            "showPoints": "never",
             "spanNulls": true,
             "stacking": {
               "group": "A",
@@ -178,18 +353,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 7
-              },
-              {
-                "color": "orange",
-                "value": 10
-              },
-              {
-                "color": "red",
-                "value": 11
               }
             ]
           },
@@ -201,7 +364,7 @@
         "h": 7,
         "w": 17,
         "x": 7,
-        "y": 1
+        "y": 17
       },
       "id": 19,
       "options": {
@@ -214,28 +377,28 @@
           "sortDesc": false
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.1.0-69372",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "git_repository_branch_time_seconds{organization_name=\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}",
-          "format": "time_series",
+          "expr": "vcs_ref_time_seconds{organization_name=\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{{{organization_name}}/{{repository_name}}/{{branch_name}}}}",
+          "legendFormat": "{{{{organization_name}}/{{repository_name}}/{{ref_name}}}}",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -251,7 +414,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-BlPu"
           },
           "fieldMinMax": false,
           "mappings": [],
@@ -261,14 +424,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 5
-              },
-              {
-                "color": "red",
-                "value": 7
               }
             ]
           }
@@ -279,7 +434,7 @@
         "h": 7,
         "w": 7,
         "x": 0,
-        "y": 8
+        "y": 24
       },
       "id": 18,
       "options": {
@@ -287,10 +442,9 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -298,25 +452,23 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "avg by(team_name) (git_repository_branch_count{organization_name=~\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"})",
-          "format": "time_series",
+          "expr": "avg by(team_name) (vcs_ref_count{organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"})",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "interval": "",
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -332,7 +484,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "mappings": [],
           "thresholds": {
@@ -341,14 +493,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 5
-              },
-              {
-                "color": "red",
-                "value": 7
               }
             ]
           },
@@ -360,20 +504,24 @@
         "h": 7,
         "w": 17,
         "x": 7,
-        "y": 8
+        "y": 24
       },
       "id": 16,
       "options": {
         "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -381,24 +529,24 @@
         "sizing": "auto",
         "valueMode": "text"
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "avg by(repository_name) (git_repository_branch_count{organization_name=~\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"} > 1)",
-          "format": "time_series",
+          "expr": "avg by(repository_name) (vcs_ref_count{organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\"} > 1)",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
+          "interval": "",
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -413,7 +561,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-BlPu"
           },
           "mappings": [],
           "thresholds": {
@@ -422,18 +570,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 7
-              },
-              {
-                "color": "orange",
-                "value": 10
-              },
-              {
-                "color": "red",
-                "value": 11
               }
             ]
           },
@@ -445,7 +581,7 @@
         "h": 7,
         "w": 7,
         "x": 0,
-        "y": 15
+        "y": 31
       },
       "id": 21,
       "options": {
@@ -453,10 +589,9 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -464,23 +599,23 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(team_name) (git_repository_pull_request_time_open_seconds{organization_name=\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}) / 86400",
+          "editorMode": "code",
+          "expr": "avg by(team_name) (vcs_change_duration_seconds{organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\", vcs_change_state=\"open\"}) / 86400",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -495,7 +630,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-BlPu"
           },
           "custom": {
             "axisBorderShow": true,
@@ -504,6 +639,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -547,7 +683,7 @@
         "h": 7,
         "w": 17,
         "x": 7,
-        "y": 15
+        "y": 31
       },
       "id": 20,
       "options": {
@@ -558,28 +694,26 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_pull_request_time_open_seconds{organization_name=~\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"} / 86400",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "vcs_change_duration_seconds{organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\",vcs_change_state=\"open\"} / 86400",
+          "hide": false,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
-          "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
+          "legendFormat": "{{repository_name}}/{{ref_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Open Pull Request Age",
@@ -591,7 +725,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 38
       },
       "id": 22,
       "panels": [],
@@ -606,7 +740,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-YlRd"
           },
           "mappings": [],
           "noValue": "0",
@@ -616,10 +750,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
               }
             ]
           }
@@ -630,7 +760,7 @@
         "h": 7,
         "w": 7,
         "x": 0,
-        "y": 23
+        "y": 39
       },
       "id": 25,
       "options": {
@@ -638,10 +768,9 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -649,22 +778,23 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(cve_severity) (git_repository_cve_count{organization_name=~\"$organization\", team_name=~\"$team\", repository_name=~\"$repo\", cve_severity=\"critical\"})",
+          "editorMode": "code",
+          "expr": "ceil(avg by(cve_severity) (vcs_cve_count{organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\", cve_severity=\"critical\"}))",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -679,7 +809,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "continuous-YlRd"
           },
           "mappings": [],
           "noValue": "0",
@@ -699,20 +829,24 @@
         "h": 14,
         "w": 17,
         "x": 7,
-        "y": 23
+        "y": 39
       },
       "id": 26,
       "options": {
         "displayMode": "basic",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 16,
         "minVizWidth": 8,
         "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -721,25 +855,20 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "exemplar": false,
-          "expr": "sum by(repository_name) (git_repository_cve_count{organization_name=~\"$organization\", team_name=~\"$team\", repository_name=~\"$repo\"})",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "sum by(repository_name) (vcs_cve_count{organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\"})",
+          "hide": false,
           "instant": false,
           "legendFormat": "{{label_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Vulnerabilities by Repo",
@@ -753,7 +882,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-YlRd"
           },
           "mappings": [],
           "noValue": "0",
@@ -761,20 +890,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "super-light-orange",
                 "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 1
-              },
-              {
-                "color": "orange",
-                "value": 3
-              },
-              {
-                "color": "red",
-                "value": 5
               }
             ]
           }
@@ -785,7 +902,7 @@
         "h": 7,
         "w": 7,
         "x": 0,
-        "y": 30
+        "y": 46
       },
       "id": 24,
       "options": {
@@ -793,10 +910,9 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -804,23 +920,20 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(cve_severity) (git_repository_cve_count{organization_name=~\"$organization\", team_name=~\"$team\", repository_name=~\"$repo\", cve_severity=\"high\"})",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "avg by(cve_severity) (vcs_cve_count{organization_name=~\"$organization\", team_name=~\"$team\", vcs_repository_name=~\"$repo\", cve_severity=\"high\"})",
+          "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "High Vulnerabilities (CVEs)",
@@ -832,11 +945,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 53
       },
       "id": 14,
       "panels": [],
-      "title": "Detailed Git Metrics",
+      "title": "Detailed VCS Metrics",
       "type": "row"
     },
     {
@@ -847,7 +960,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-BlPu"
           },
           "mappings": [],
           "thresholds": {
@@ -856,10 +969,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "orange",
-                "value": 10
               }
             ]
           }
@@ -870,7 +979,7 @@
         "h": 6,
         "w": 3,
         "x": 0,
-        "y": 38
+        "y": 54
       },
       "id": 3,
       "options": {
@@ -878,10 +987,9 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -889,23 +997,23 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_count{organization_name=\"$organization\", team_name=~\"$team\"}",
+          "editorMode": "code",
+          "expr": "vcs_repository_count{organization_name=\"$organization\", team_name=~\"$team\"}",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-02c41670-371f-491d-a64b-bc9b29c20bc3-0",
           "legendFormat": "{{organization_name}}",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -920,7 +1028,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-BlPu"
           },
           "mappings": [],
           "thresholds": {
@@ -929,14 +1037,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 5
-              },
-              {
-                "color": "dark-red",
-                "value": 7
               }
             ]
           }
@@ -947,7 +1047,7 @@
         "h": 6,
         "w": 4,
         "x": 3,
-        "y": 38
+        "y": 54
       },
       "id": 7,
       "options": {
@@ -955,9 +1055,7 @@
         "minVizWidth": 200,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -965,24 +1063,23 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "ceil(avg by(team_name) (git_repository_branch_count{organization_name=~\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"} > 1))",
+          "expr": "ceil(avg by(team_name) (vcs_ref_count{organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"})) > 1",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-12be8e8c-5d52-4ee5-8ea8-7b4a5dfbac4f-0",
           "legendFormat": "{{organization_name}}",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -997,7 +1094,69 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-BlPu"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 7,
+        "y": 54
+      },
+      "id": 27,
+      "options": {
+        "minVizHeight": 200,
+        "minVizWidth": 200,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "ceil(avg by(team_name) (vcs_change_count{organization_name=~\"$organization\",  vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"})) > 1",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{organization_name}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Average  Open Pull Request Count",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
           },
           "fieldMinMax": false,
           "mappings": [],
@@ -1008,18 +1167,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 7
-              },
-              {
-                "color": "orange",
-                "value": 10
-              },
-              {
-                "color": "red",
-                "value": 11
               }
             ]
           },
@@ -1029,9 +1176,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 17,
-        "x": 7,
-        "y": 38
+        "w": 13,
+        "x": 11,
+        "y": 54
       },
       "id": 6,
       "options": {
@@ -1039,9 +1186,7 @@
         "minVizWidth": 200,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -1050,24 +1195,20 @@
         "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(repository_name) (git_repository_branch_time_seconds{organization_name=\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}) / 86400",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "avg by(repository_name) (vcs_ref_time_seconds{organization_name=\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}) / 86400",
+          "hide": false,
           "instant": false,
-          "key": "Q-12be8e8c-5d52-4ee5-8ea8-7b4a5dfbac4f-0",
           "legendFormat": "{{repository_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Average Branch Age Per Repo In Days",
@@ -1090,6 +1231,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -1132,7 +1274,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 44
+        "y": 60
       },
       "id": 8,
       "options": {
@@ -1143,28 +1285,26 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_contributor_count{organization_name=\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "vcs_contributor_count{organization_name=\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
+          "hide": false,
           "instant": false,
-          "key": "Q-08537169-6de5-41f1-b2d6-693fc148edad-0",
           "legendFormat": "{{organization_name}}/{{repository_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Contributor Count",
@@ -1187,6 +1327,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -1232,7 +1373,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 44
+        "y": 60
       },
       "id": 2,
       "options": {
@@ -1243,28 +1384,26 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "git_repository_branch_count{organization_name=\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"} - 1",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "expr": "vcs_ref_count{organization_name=\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"} - 1",
+          "hide": false,
           "instant": false,
-          "key": "Q-12be8e8c-5d52-4ee5-8ea8-7b4a5dfbac4f-0",
           "legendFormat": "{{organization_name}}/{{repository_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Branch Count",
@@ -1287,6 +1426,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -1330,7 +1470,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 53
+        "y": 69
       },
       "id": 1,
       "options": {
@@ -1341,28 +1481,26 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "git_repository_branch_time_seconds{organization_name=\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "expr": "vcs_ref_time_seconds{organization_name=\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
+          "hide": false,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
           "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Branch Age",
@@ -1385,6 +1523,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 43,
             "gradientMode": "opacity",
@@ -1395,6 +1534,9 @@
             },
             "insertNulls": false,
             "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
@@ -1427,7 +1569,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 53
+        "y": 69
       },
       "id": 9,
       "options": {
@@ -1438,27 +1580,29 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "git_repository_pull_request_count{pull_request_state=\"open\", organization_name=\"$organization\", repository_name=~\"$repo\"}",
+          "expr": "vcs_change_count{vcs_change_state=\"open\", organization_name=\"$organization\", vcs_repository_name=~\"$repo\"}",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
           "legendFormat": "{{organization_name}}/{{repository_name}}",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         }
       ],
@@ -1482,6 +1626,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -1525,7 +1670,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 61
+        "y": 77
       },
       "id": 10,
       "options": {
@@ -1536,28 +1681,26 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_pull_request_time_open_seconds{organization_name=\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "vcs_change_duration_seconds{organization_name=\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"}",
+          "hide": false,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
           "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Open Pull Request Age",
@@ -1580,6 +1723,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -1623,7 +1767,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 61
+        "y": 77
       },
       "id": 13,
       "options": {
@@ -1634,28 +1778,26 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_pull_request_time_to_approval_seconds{organization_name=~\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "vcs_change_time_to_approval{organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
+          "hide": false,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
           "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Approved Pull Request Age",
@@ -1678,6 +1820,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -1720,7 +1863,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 70
+        "y": 86
       },
       "id": 11,
       "options": {
@@ -1731,28 +1874,26 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_pull_request_count{pull_request_state=\"merged\", organization_name=~\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "vcs_change_count{vcs_change_state=\"merged\", organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
+          "hide": false,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
           "legendFormat": "{{organization_name}}/{{repository_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Merged Pull Request Count",
@@ -1775,6 +1916,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 50,
             "gradientMode": "opacity",
@@ -1818,7 +1960,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 70
+        "y": 86
       },
       "id": 12,
       "options": {
@@ -1829,53 +1971,46 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${DS_PROMETHEUS}"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "git_repository_pull_request_time_to_merge_seconds{organization_name=~\"$organization\", repository_name=~\"$repo\", team_name=~\"$team\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "vcs_change_time_to_merge_seconds{organization_name=~\"$organization\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
+          "hide": false,
           "instant": false,
-          "key": "Q-0b7776a7-47df-4758-b3ba-2640342f1db9-0",
           "legendFormat": "{{organization_name}}/{{repository_name}}/{{branch_name}}",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "B"
         }
       ],
       "title": "Merged Pull Request Age",
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "revision": 1,
-  "schemaVersion": 39,
+  "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
         "definition": "label_values(organization_name)",
         "description": "The organization name resource attribute for metrics. ",
-        "hide": 0,
         "includeAll": true,
         "label": "organization",
         "multi": true,
@@ -1888,23 +2023,16 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
         "definition": "label_values({organization_name=\"$organization\"},team_name)",
         "description": "The name of the team ",
-        "hide": 0,
         "includeAll": true,
         "label": "team",
         "multi": true,
@@ -1917,22 +2045,15 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "label_values({team_name=~\"$team\"},repository_name)",
-        "hide": 0,
+        "definition": "label_values({team_name=~\"$team\"},vcs_repository_name)",
         "includeAll": true,
         "label": "repo",
         "multi": true,
@@ -1940,45 +2061,35 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({team_name=~\"$team\"},repository_name)",
+          "query": "label_values({team_name=~\"$team\"},vcs_repository_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "Prometheus",
-          "value": "webstore-metrics"
-        },
+        "current": {},
         "description": "The metric datasource",
-        "hide": 0,
         "includeAll": false,
         "label": "datasource",
-        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
-        "queryValue": "",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       }
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Engineering Effectiveness Metrics",
-  "uid": "a12j",
-  "version": 2,
+  "title": "DORA Version Control System Capability Metrics",
+  "uid": "fe1v1hd9eiosgb",
+  "version": 1,
   "weekStart": ""
 }
