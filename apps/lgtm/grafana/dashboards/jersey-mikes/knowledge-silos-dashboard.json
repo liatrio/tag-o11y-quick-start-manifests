@@ -18,26 +18,29 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 31,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "thanos"
       },
+      "description": "Repositories with low merge request activity, indicating potential knowledge silos",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "bars",
             "fillOpacity": 100,
             "gradientMode": "none",
@@ -46,6 +49,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -99,28 +103,29 @@
           "sort": "none"
         }
       },
-      "title": "Repositories with Low Activity (Potential Silos)",
-      "description": "Repositories with low merge request activity, indicating potential knowledge silos",
-      "type": "timeseries",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "thanos"
           },
           "editorMode": "code",
-          "expr": "bottomk(10, count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
+          "expr": "bottomk(10, count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Repositories with Low Activity (Potential Silos)",
+      "type": "timeseries"
     },
     {
       "datasource": {
+        "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "thanos"
       },
+      "description": "Distribution of merge request activity across repositories",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -156,8 +161,10 @@
       "id": 2,
       "options": {
         "displayMode": "gradient",
+        "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -167,31 +174,36 @@
           "values": false
         },
         "showUnfilled": true,
-        "text": {}
+        "sizing": "auto",
+        "text": {},
+        "valueMode": "color"
       },
-      "pluginVersion": "9.5.1",
-      "title": "Merge Request Activity Distribution",
-      "description": "Distribution of merge request activity across repositories",
-      "type": "bargauge",
+      "pluginVersion": "11.2.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "thanos"
           },
           "editorMode": "code",
-          "expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+          "exemplar": false,
+          "expr": "count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m)",
+          "instant": true,
           "legendFormat": "{{vcs_repository_name}}",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Merge Request Activity Distribution",
+      "type": "bargauge"
     },
     {
       "datasource": {
+        "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "thanos"
       },
+      "description": "Score based on merge request activity distribution and code changes",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -231,6 +243,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -238,31 +251,36 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "9.5.1",
-      "title": "Activity Distribution Score",
-      "description": "Score based on merge request activity distribution and code changes",
-      "type": "stat",
+      "pluginVersion": "11.2.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "thanos"
           },
           "editorMode": "code",
-          "expr": "count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / (1 + stddev by(vcs_repository_name) (vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
+          "exemplar": false,
+          "expr": "count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m) / (1 + stddev by(vcs_repository_name) (monitoring_vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m))",
+          "instant": true,
           "legendFormat": "{{vcs_repository_name}}",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Activity Distribution Score",
+      "type": "stat"
     },
     {
       "datasource": {
+        "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "thanos"
       },
+      "description": "Repositories with high merge activity but concentrated among few contributors",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -312,39 +330,43 @@
           "sort": "none"
         }
       },
-      "title": "High Activity / Low Distribution Repositories",
-      "description": "Repositories with high merge activity but concentrated among few contributors",
-      "type": "piechart",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "thanos"
           },
           "editorMode": "code",
-          "expr": "topk(5, sum by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / count by(vcs_repository_name) (vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
+          "exemplar": false,
+          "expr": "topk(5, sum by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m) / count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m))",
+          "instant": true,
           "legendFormat": "{{vcs_repository_name}}",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
-      ]
+      ],
+      "title": "High Activity / Low Distribution Repositories",
+      "type": "piechart"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "thanos"
       },
+      "description": "Distribution of code changes across repositories",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Lines of Code",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "bars",
             "fillOpacity": 100,
             "gradientMode": "none",
@@ -353,6 +375,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -405,39 +428,41 @@
           "sort": "none"
         }
       },
-      "title": "Code Change Distribution",
-      "description": "Distribution of code changes across repositories",
-      "type": "timeseries",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "thanos"
           },
           "editorMode": "code",
-          "expr": "sum by(vcs_repository_name) (vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+          "expr": "sum by(vcs_repository_name) (monitoring_vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Code Change Distribution",
+      "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "thanos"
       },
+      "description": "Number of active branches per repository",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Active Branches",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "bars",
             "fillOpacity": 100,
             "gradientMode": "none",
@@ -446,6 +471,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -498,27 +524,25 @@
           "sort": "none"
         }
       },
-      "title": "Active Branches by Repository",
-      "description": "Number of active branches per repository",
-      "type": "timeseries",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "thanos"
           },
           "editorMode": "code",
-          "expr": "count by(vcs_repository_name) (vcs_ref_lines_delta{vcs_ref_head_type=\"branch\", organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+          "expr": "count by(vcs_repository_name) (monitoring_vcs_ref_lines_delta{vcs_ref_head_type=\"branch\", organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Active Branches by Repository",
+      "type": "timeseries"
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 38,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [
     "gitlab",
     "devops",
@@ -528,31 +552,41 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "Prometheus",
-          "value": "Prometheus"
+          "selected": true,
+          "text": "thanos",
+          "value": "thanos"
         },
         "description": "Prometheus data source",
         "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
-        "name": "webstore-metrics",
+        "name": "thanos",
         "options": [],
         "query": "prometheus",
+        "queryValue": "",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
       },
       {
-        "current": {},
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "thanos"
         },
         "definition": "label_values(organization_name)",
         "description": "The organization name resource attribute for metrics",
+        "hide": 0,
         "includeAll": true,
         "label": "Organization",
         "multi": true,
@@ -566,16 +600,26 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+        "sort": 0,
         "type": "query"
       },
       {
-        "current": {},
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "thanos"
         },
         "definition": "label_values({organization_name=~\"$organization\"},team_name)",
         "description": "The name of the team",
+        "hide": 0,
         "includeAll": true,
         "label": "Team",
         "multi": true,
@@ -589,16 +633,22 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+        "sort": 0,
         "type": "query"
       },
       {
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "thanos"
         },
-        "definition": "label_values(vcs_change_time_to_merge_seconds,vcs_repository_name)",
+        "definition": "label_values(monitoring_vcs_change_time_to_merge_seconds,vcs_repository_name)",
         "description": "The repository name",
+        "hide": 0,
         "includeAll": true,
         "label": "Repository",
         "multi": true,
@@ -606,12 +656,13 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(vcs_change_time_to_merge_seconds,vcs_repository_name)",
+          "query": "label_values(monitoring_vcs_change_time_to_merge_seconds,vcs_repository_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+        "sort": 0,
         "type": "query"
       }
     ]
@@ -622,8 +673,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Knowledge Silos Monitoring Dashboard",
+  "title": "Knowledge Silos Monitoring",
   "uid": "gitlab-knowledge-silos",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }
