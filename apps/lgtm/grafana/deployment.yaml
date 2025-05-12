@@ -81,6 +81,8 @@ spec:
               mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/merge-metrics-dashboard.json
             - name: dashboard-jersey-mikes-knowledge-silos
               mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/knowledge-silos-dashboard.json
+            - name: dashboard-jersey-mikes-sonarqube
+              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/sonarqube-dashboard.json
 
       volumes:
         - name: pv

@@ -27,7 +27,7 @@
             "type": "grafana",
             "id": "grafana",
             "name": "Grafana",
-            "version": "10.0.0"
+            "version": "latest"
         },
         {
             "type": "panel",
@@ -2513,7 +2513,7 @@
     ],
     "schemaVersion": 37,
     "style": "dark",
-    "tags": [],
+    "tags": ["jersey-mikes", "sonarqube", "code-quality"],
     "templating": {
         "list": [
             {

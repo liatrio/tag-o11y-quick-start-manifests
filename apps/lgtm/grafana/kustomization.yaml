@@ -54,3 +54,6 @@ configMapGenerator:
   - name: dashboard-jersey-mikes-knowledge-silos
     files:
       - dashboards/jersey-mikes/knowledge-silos-dashboard.json
+  - name: dashboard-jersey-mikes-sonarqube
+    files:
+      - dashboards/jersey-mikes/sonarqube-dashboard.json
