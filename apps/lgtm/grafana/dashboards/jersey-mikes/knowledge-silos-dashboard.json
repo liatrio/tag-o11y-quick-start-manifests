@@ -18,9 +18,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 31,
+  "id": 28,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "datasource": {
@@ -71,8 +70,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -99,10 +97,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.0-pre",
       "targets": [
         {
           "datasource": {
@@ -136,8 +136,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "yellow",
@@ -161,6 +160,12 @@
       "id": 2,
       "options": {
         "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
@@ -178,7 +183,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "11.2.2",
+      "pluginVersion": "11.6.0-pre",
       "targets": [
         {
           "datasource": {
@@ -214,8 +219,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "yellow",
@@ -255,7 +259,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.2",
+      "pluginVersion": "11.6.0-pre",
       "targets": [
         {
           "datasource": {
@@ -326,10 +330,12 @@
           "values": false
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.0-pre",
       "targets": [
         {
           "datasource": {
@@ -397,8 +403,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -424,10 +429,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.0-pre",
       "targets": [
         {
           "datasource": {
@@ -493,8 +500,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -520,10 +526,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.0-pre",
       "targets": [
         {
           "datasource": {
@@ -541,8 +549,9 @@
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "5m",
-  "schemaVersion": 39,
+  "schemaVersion": 41,
   "tags": [
     "gitlab",
     "devops",
@@ -552,30 +561,22 @@
     "list": [
       {
         "current": {
-          "selected": true,
           "text": "thanos",
           "value": "thanos"
         },
         "description": "Prometheus data source",
-        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
-        "multi": false,
         "name": "thanos",
         "options": [],
         "query": "prometheus",
-        "queryValue": "",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
+          "text": "All",
           "value": [
             "$__all"
           ]
@@ -586,7 +587,6 @@
         },
         "definition": "label_values(organization_name)",
         "description": "The organization name resource attribute for metrics",
-        "hide": 0,
         "includeAll": true,
         "label": "Organization",
         "multi": true,
@@ -599,19 +599,12 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
         "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
@@ -619,7 +612,6 @@
         },
         "definition": "label_values({organization_name=~\"$organization\"},team_name)",
         "description": "The name of the team",
-        "hide": 0,
         "includeAll": true,
         "label": "Team",
         "multi": true,
@@ -632,13 +624,10 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
         "current": {
-          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -648,7 +637,6 @@
         },
         "definition": "label_values(monitoring_vcs_change_time_to_merge_seconds,vcs_repository_name)",
         "description": "The repository name",
-        "hide": 0,
         "includeAll": true,
         "label": "Repository",
         "multi": true,
@@ -661,8 +649,6 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       }
     ]
@@ -675,6 +661,5 @@
   "timezone": "",
   "title": "Knowledge Silos Monitoring",
   "uid": "gitlab-knowledge-silos",
-  "version": 4,
-  "weekStart": ""
+  "version": 1
 }
