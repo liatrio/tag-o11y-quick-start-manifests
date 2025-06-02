@@ -77,10 +77,8 @@ spec:
               mountPath: /etc/grafana/provisioning/dashboards/dora/vcs-trunk-based-development.json
 
             # Jersey Mikes GitLab dashboards
-            - name: dashboard-jersey-mikes-merge-metrics
-              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/merge-metrics-dashboard.json
-            - name: dashboard-jersey-mikes-knowledge-silos
-              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/knowledge-silos-dashboard.json
+            - name: dashboard-jersey-mikes-metrics
+              mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/gitlab-metrics-dashboard.json
             - name: dashboard-jersey-mikes-sonarqube
               mountPath: /etc/grafana/provisioning/dashboards/jersey-mikes/sonarqube-dashboard.json
 
@@ -121,9 +119,9 @@ spec:
             name: dashboard-dora-vcs-trunk-based-development
 
         # Jersey Mikes GitLab dashboards
-        - name: dashboard-jersey-mikes-merge-metrics
+        - name: dashboard-jersey-mikes-metrics
           configMap:
-            name: dashboard-jersey-mikes-merge-metrics
-        - name: dashboard-jersey-mikes-knowledge-silos
+            name: dashboard-jersey-mikes-metrics
+        - name: dashboard-jersey-mikes-sonarqube
           configMap:
-            name: dashboard-jersey-mikes-knowledge-silos
+            name: dashboard-jersey-mikes-sonarqube

@@ -15,13 +15,233 @@
       }
     ]
   },
-  "description": "Knowledge Silos Dashboard monitors repository activity distribution to identify potential knowledge silos and improve collaboration.",
+  "description": "Consolidated GitLab Metrics Dashboard combines repository activity, merge request metrics, and knowledge distribution indicators to provide comprehensive insights into development workflows.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 28,
+  "id": 30,
   "links": [],
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 100,
+      "panels": [],
+      "title": "Merge Request Performance",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "thanos"
+      },
+      "description": "Monitoring merge times for repositories. Thresholds: Warning 15min (900s), Critical 30min (1800s)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Hours",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line+area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2173B9"
+              },
+              {
+                "color": "#E66100",
+                "value": 900
+              },
+              {
+                "color": "#8A2BE2",
+                "value": 1800
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "11.6.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "thanos"
+          },
+          "editorMode": "code",
+          "expr": "avg by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
+          "interval": "30m",
+          "legendFormat": "{{vcs_repository_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Average Merge Time by Repository",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "prometheus",
+        "uid": "thanos"
+      },
+      "description": "95th and 50th percentile merge times. Shorter times (<15min) contribute to improved developer productivity.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 3600,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2173B9"
+              },
+              {
+                "color": "#E66100",
+                "value": 900
+              },
+              {
+                "color": "#8A2BE2",
+                "value": 1800
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.6.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "thanos"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "quantile(0.95, monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
+          "instant": true,
+          "legendFormat": "p95",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "thanos"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "quantile(0.5, monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) or vector(0)",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "p50 (approx)",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Merge Request Processing Time (p95/p50)",
+      "type": "gauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 101,
+      "panels": [],
+      "title": "Knowledge Distribution",
+      "type": "row"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -87,9 +307,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 10
       },
-      "id": 1,
+      "id": 3,
       "options": {
         "legend": {
           "calcs": [],
@@ -156,9 +376,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 10
       },
-      "id": 2,
+      "id": 4,
       "options": {
         "displayMode": "gradient",
         "legend": {
@@ -168,10 +388,10 @@
           "showLegend": false
         },
         "maxVizHeight": 300,
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
+        "maxVizWidth": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -181,8 +401,7 @@
         },
         "showUnfilled": true,
         "sizing": "auto",
-        "text": {},
-        "valueMode": "color"
+        "text": {}
       },
       "pluginVersion": "11.6.0-pre",
       "targets": [
@@ -193,7 +412,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m)",
+          "expr": "count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
           "instant": true,
           "legendFormat": "{{vcs_repository_name}}",
           "range": false,
@@ -202,6 +421,19 @@
       ],
       "title": "Merge Request Activity Distribution",
       "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 102,
+      "panels": [],
+      "title": "Merge Time Distribution",
+      "type": "row"
     },
     {
       "datasource": {
@@ -215,22 +447,8 @@
             "mode": "thresholds"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Seconds",
-            "axisPlacement": "auto",
             "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            }
+            "lineWidth": 1
           },
           "mappings": [],
           "thresholds": {
@@ -257,9 +475,9 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 19
       },
-      "id": 7,
+      "id": 5,
       "options": {
         "bucketOffset": 0,
         "combine": false,
@@ -312,31 +530,30 @@
               },
               {
                 "color": "#E66100",
-                "value": 2
+                "value": 0.4
               },
               {
                 "color": "#2173B9",
-                "value": 4
+                "value": 0.7
               }
             ]
           },
-          "unit": "none"
+          "unit": "percentunit"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 27
       },
-      "id": 3,
+      "id": 6,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -357,7 +574,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m) / (1 + stddev by(vcs_repository_name) (monitoring_vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m))",
+          "expr": "count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / count(count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
           "instant": true,
           "legendFormat": "{{vcs_repository_name}}",
           "range": false,
@@ -368,87 +585,24 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "default": true,
-        "type": "prometheus",
-        "uid": "thanos"
-      },
-      "description": "Repositories with high merge activity but concentrated among few contributors",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
+      "collapsed": false,
       "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 8
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 35
       },
-      "id": 4,
-      "options": {
-        "displayLabels": [
-          "name",
-          "value"
-        ],
-        "legend": {
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.6.0-pre",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "thanos"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "topk(5, sum by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m) / count by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"} offset 10m))",
-          "instant": true,
-          "legendFormat": "{{vcs_repository_name}}",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "High Activity / Low Distribution Repositories",
-      "type": "piechart"
+      "id": 103,
+      "panels": [],
+      "title": "Repository Activity",
+      "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
         "uid": "thanos"
       },
-      "description": "Distribution of code changes across repositories",
+      "description": "Tracking active branches across repositories",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -458,12 +612,12 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Lines of Code",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 100,
+            "drawStyle": "line",
+            "fillOpacity": 20,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -471,8 +625,8 @@
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -507,106 +661,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 17
+        "y": 36
       },
-      "id": 5,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.6.0-pre",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "thanos"
-          },
-          "editorMode": "code",
-          "expr": "sum by(vcs_repository_name) (monitoring_vcs_ref_lines_delta{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
-          "legendFormat": "{{vcs_repository_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Code Change Distribution",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "thanos"
-      },
-      "description": "Number of active branches per repository",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Active Branches",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#2173B9"
-              },
-              {
-                "color": "#8A2BE2",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 17
-      },
-      "id": 6,
+      "id": 7,
       "options": {
         "legend": {
           "calcs": [],
@@ -636,15 +693,112 @@
       ],
       "title": "Active Branches by Repository",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "thanos"
+      },
+      "description": "Relationship between merge request size and processing time",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Lines per Second",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2173B9"
+              },
+              {
+                "color": "#8A2BE2",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 36
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "thanos"
+          },
+          "editorMode": "code",
+          "expr": "sum by(vcs_repository_name) (monitoring_vcs_ref_lines_delta{vcs_line_change_type=\"added\", organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}) / avg by(vcs_repository_name) (monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+          "interval": "30m",
+          "legendFormat": "{{vcs_repository_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "MR Size vs Processing Time",
+      "type": "timeseries"
     }
   ],
-  "preload": false,
   "refresh": "5m",
   "schemaVersion": 41,
   "tags": [
     "gitlab",
     "devops",
-    "metrics"
+    "metrics",
+    "merge-requests",
+    "knowledge-silos"
   ],
   "templating": {
     "list": [
@@ -748,7 +902,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Knowledge Silos Monitoring",
-  "uid": "gitlab-knowledge-silos",
+  "title": "GitLab Metrics Dashboard",
+  "uid": "gitlab-combined-metrics",
   "version": 1
 }
