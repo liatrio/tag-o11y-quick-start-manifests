@@ -15,6 +15,7 @@
       }
     ]
   },
+  "description": "Merge Metrics Dashboard tracks GitLab merge request performance metrics with a focus on optimizing development workflows.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -31,7 +32,7 @@
       },
       "id": 100,
       "panels": [],
-      "title": "Key Merge Time & SLO Metrics",
+      "title": "GitLab Merge Request Performance Metrics",
       "type": "row"
     },
     {
@@ -84,14 +85,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "yellow",
+                "color": "#E66100",
                 "value": 900
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 1800
               }
             ]
@@ -147,6 +148,95 @@
         "type": "prometheus",
         "uid": "thanos"
       },
+      "description": "Histogram of merge request durations showing the frequency distribution of merge times",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Seconds",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2173B9"
+              },
+              {
+                "color": "#E66100",
+                "value": 900
+              },
+              {
+                "color": "#8A2BE2",
+                "value": 1800
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 15,
+      "options": {
+        "bucketOffset": 0,
+        "combine": false,
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      },
+      "pluginVersion": "11.6.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "thanos"
+          },
+          "editorMode": "code",
+          "expr": "monitoring_vcs_change_time_to_merge_seconds{organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}",
+          "format": "heatmap",
+          "legendFormat": "{{vcs_repository_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Merge Request Duration Distribution",
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "prometheus",
+        "uid": "thanos"
+      },
       "description": "95th and 50th percentile merge times. Target: <15min for optimal developer productivity.",
       "fieldConfig": {
         "defaults": {
@@ -158,14 +248,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "yellow",
+                "color": "#E66100",
                 "value": 900
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 1800
               }
             ]
@@ -226,7 +316,7 @@
           "refId": "B"
         }
       ],
-      "title": "Merge Time SLO (p95 and p50)",
+      "title": "Merge Request Processing Time (p95/p50)",
       "type": "gauge"
     },
     {
@@ -244,7 +334,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "SLO Compliance Rate (%)",
+            "axisLabel": "Merge Success Rate (%)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -278,14 +368,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "#8A2BE2"
               },
               {
-                "color": "yellow",
+                "color": "#E66100",
                 "value": 80
               },
               {
-                "color": "green",
+                "color": "#2173B9",
                 "value": 95
               }
             ]
@@ -329,7 +419,7 @@
           "refId": "A"
         }
       ],
-      "title": "SLO Compliance by Repository",
+      "title": "Merge Performance by Repository",
       "type": "timeseries"
     },
     {
@@ -348,14 +438,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "yellow",
+                "color": "#E66100",
                 "value": 259200
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 604800
               }
             ]
@@ -457,10 +547,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -552,14 +642,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "yellow",
+                "color": "#E66100",
                 "value": 500
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 1000
               }
             ]
@@ -630,14 +720,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "yellow",
+                "color": "#E66100",
                 "value": 50
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -736,10 +826,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -875,14 +965,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "yellow",
+                "color": "#E66100",
                 "value": 86400
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 172800
               }
             ]
@@ -1026,10 +1116,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1122,10 +1212,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1192,14 +1282,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "yellow",
+                "color": "#E66100",
                 "value": 10
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 20
               }
             ]
@@ -1329,10 +1419,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1471,7 +1561,7 @@
     ]
   },
   "time": {
-    "from": "now-30d",
+    "from": "now-14d",
     "to": "now"
   },
   "timepicker": {},

@@ -53,7 +53,7 @@
             {
               "options": {
                 "0": {
-                  "color": "dark-red",
+                  "color": "#663399",
                   "index": 1,
                   "text": "Failed"
                 },
@@ -70,7 +70,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -145,7 +145,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -237,14 +237,14 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
                 "color": "orange",
                 "value": 70
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 85
               }
             ]
@@ -343,10 +343,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -404,7 +404,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -468,7 +468,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -532,7 +532,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -601,6 +601,93 @@
         "type": "prometheus",
         "uid": "thanos"
       },
+      "description": "Distribution of code quality metrics across projects",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2173B9"
+              },
+              {
+                "color": "#E66100",
+                "value": 5
+              },
+              {
+                "color": "#8A2BE2",
+                "value": 10
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 90,
+      "options": {
+        "bucketOffset": 0,
+        "combine": false,
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      },
+      "pluginVersion": "11.6.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "thanos"
+          },
+          "editorMode": "code",
+          "expr": "sonar_violations{id=~\"$project\"}",
+          "format": "heatmap",
+          "legendFormat": "{{id}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Code Violations Distribution (Histogram)",
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "thanos"
+      },
       "description": "The total count of issues in all states.",
       "fieldConfig": {
         "defaults": {
@@ -609,7 +696,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -912,6 +999,94 @@
         "type": "prometheus",
         "uid": "thanos"
       },
+      "description": "Distribution of technical debt across projects",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Percentage",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2173B9"
+              },
+              {
+                "color": "#E66100",
+                "value": 5
+              },
+              {
+                "color": "#8A2BE2",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 91,
+      "options": {
+        "bucketOffset": 0,
+        "combine": false,
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      },
+      "pluginVersion": "11.6.0-pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "thanos"
+          },
+          "editorMode": "code",
+          "expr": "sonar_sqale_debt_ratio{id=~\"$project\"} * 100",
+          "format": "heatmap",
+          "legendFormat": "{{id}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Technical Debt Ratio Distribution (Histogram)",
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "thanos"
+      },
       "description": "The number of vulnerability issues.",
       "fieldConfig": {
         "defaults": {
@@ -920,10 +1095,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -986,10 +1161,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1052,10 +1227,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1127,7 +1302,7 @@
                   "text": "B"
                 },
                 "3": {
-                  "color": "yellow",
+                  "color": "#E66100",
                   "index": 2,
                   "text": "C"
                 },
@@ -1137,7 +1312,7 @@
                   "text": "D"
                 },
                 "5": {
-                  "color": "dark-red",
+                  "color": "#663399",
                   "index": 4,
                   "text": "E"
                 }
@@ -1149,7 +1324,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -1222,7 +1397,7 @@
                   "text": "B"
                 },
                 "3": {
-                  "color": "yellow",
+                  "color": "#E66100",
                   "index": 2,
                   "text": "C"
                 },
@@ -1232,7 +1407,7 @@
                   "text": "D"
                 },
                 "5": {
-                  "color": "dark-red",
+                  "color": "#663399",
                   "index": 4,
                   "text": "E"
                 }
@@ -1244,10 +1419,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1323,10 +1498,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1419,14 +1594,14 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
                 "color": "orange",
                 "value": 70
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 85
               }
             ]
@@ -1502,14 +1677,14 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
                 "color": "orange",
                 "value": 70
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 85
               }
             ]
@@ -1571,7 +1746,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -1635,7 +1810,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -1700,10 +1875,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1792,10 +1967,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1869,7 +2044,7 @@
                   "text": "B"
                 },
                 "3": {
-                  "color": "yellow",
+                  "color": "#E66100",
                   "index": 2,
                   "text": "C"
                 },
@@ -1879,7 +2054,7 @@
                   "text": "D"
                 },
                 "5": {
-                  "color": "dark-red",
+                  "color": "#663399",
                   "index": 4,
                   "text": "E"
                 }
@@ -1891,10 +2066,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -1959,7 +2134,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -2036,7 +2211,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -2110,7 +2285,7 @@
               "options": {
                 "from": 0.06,
                 "result": {
-                  "color": "yellow",
+                  "color": "#E66100",
                   "index": 1,
                   "text": "B"
                 },
@@ -2134,7 +2309,7 @@
               "options": {
                 "from": 0.21,
                 "result": {
-                  "color": "red",
+                  "color": "#8A2BE2",
                   "index": 3,
                   "text": "D"
                 },
@@ -2146,7 +2321,7 @@
               "options": {
                 "from": 0.51,
                 "result": {
-                  "color": "dark-red",
+                  "color": "#663399",
                   "index": 4,
                   "text": "E"
                 },
@@ -2159,7 +2334,7 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           }
@@ -2218,7 +2393,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -2293,10 +2468,10 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               },
               {
-                "color": "red",
+                "color": "#8A2BE2",
                 "value": 80
               }
             ]
@@ -2359,7 +2534,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -2423,7 +2598,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -2492,7 +2667,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "#2173B9"
               }
             ]
           },
@@ -2622,7 +2797,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-14d",
     "to": "now"
   },
   "timepicker": {},
