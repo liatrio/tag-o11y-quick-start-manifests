@@ -685,13 +685,13 @@
             "uid": "thanos"
           },
           "editorMode": "code",
-          "expr": "count by(vcs_repository_name) (monitoring_vcs_ref_lines_delta{vcs_ref_head_type=\"branch\", organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"})",
+          "expr": "count by(vcs_repository_name) (count by(vcs_repository_name, vcs_ref_name) (monitoring_vcs_ref_lines_delta{vcs_ref_head_type=\"branch\", organization_name=~\"$organization|jerseymikes\", vcs_repository_name=~\"$repo\"}))",
           "legendFormat": "{{vcs_repository_name}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Active Branches by Repository",
+      "title": "Unique Active Branches by Repository",
       "type": "timeseries"
     },
     {
