@@ -2,24 +2,26 @@
   path: /spec/config
   value:
     extensions:
-      bearertokenauth/github:
-        token: ${env:GH_PAT}
+      bearertokenauth/gitlab:
+        token: ${env:GL_PAT}
 
     receivers:
-      github:
+      gitlab:
         initial_delay: 10s
         collection_interval: 60s
         scrapers:
-          scraper:
+          gitlab:
             metrics:
               #Optional Metrics
               vcs.contributor.count:
                 enabled: true
-            github_org: liatrio
-            search_query: org:liatrio topic:o11y archived:false #Recommended optional query override, defaults to "{org,user}:<github_org>"
-            #endpoint: https://selfmanagedenterpriseserver.com
+            gitlab_org: example #replace with the GitLab Org
+            #gitlab_org: myorg/mygroup/subgroup
+            #search_query:   #Recommended optional query override, defaults to "{org,user}:<gitlab_org>"
+            endpoint: self-hostinggitlab.org #replace with the URL to GitLab
+            timeout: 120s
             auth:
-              authenticator: bearertokenauth/github
+              authenticator: bearertokenauth/gitlab
 
     processors:
       memory_limiter:
@@ -36,7 +38,7 @@
           - key: team.name
             # Change this value if you want to associate your scraped repositories
             # with a different team name
-            value: tag-o11y
+            value: example-team
             action: upsert
 
     exporters:
@@ -46,17 +48,17 @@
         sampling_thereafter: 500
 
       otlp:
-        endpoint: http://gateway-collector.collector.svc.cluster.local:4317
+        endpoint: gateway-collector.collector.svc.cluster.local:4317
         tls:
           insecure: true
 
     service:
       extensions:
-        - bearertokenauth/github
+        - bearertokenauth/gitlab
       pipelines:
         metrics:
           receivers:
-            - github
+            - gitlab
           processors:
             - memory_limiter
             - batch
@@ -68,8 +70,8 @@
 - op: add
   path: /spec/env
   value:
-    - name: GH_PAT
+    - name: GL_PAT
       valueFrom:
         secretKeyRef:
-          name: github-pat
-          key: GH_PAT
+          name: gitlab-pat
+          key: GL_PAT

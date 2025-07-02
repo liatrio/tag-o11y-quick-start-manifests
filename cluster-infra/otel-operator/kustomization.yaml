@@ -3,6 +3,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  #- https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.111.0/opentelemetry-operator.yaml
-  - localized.yaml
+  - https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.127.0/opentelemetry-operator.yaml
+  # - localized.yaml
   - rbac.yaml

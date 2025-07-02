@@ -1,0 +1,17 @@
+if k8s_context() != "k3d-otel-basic":
+  fail("Expected context to be k3d-otel-basic")
+
+k8s_yaml(kustomize("."), allow_duplicates=True)
+
+k8s_resource(
+  objects=[
+    "otel-gitlab-collector:opentelemetrycollector"
+  ],
+  new_name="otel-gitlab-collector",
+  labels=[
+    "otel-gitlab-collector"
+  ],
+  resource_deps=[
+    "opentelemetry-operator-controller-manager"
+  ]
+)

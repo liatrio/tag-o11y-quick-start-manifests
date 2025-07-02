@@ -11,16 +11,6 @@ k8s_resource(
   ]
 )
 k8s_resource(
-  workload="jaeger-all-in-one",
-  port_forwards=16686, 
-  resource_deps=[
-    "jaeger-operator"
-  ],
-  labels=[
-    "default-apps"
-  ]
-)
-k8s_resource(
   workload="loki",
   port_forwards=3100,
   labels=[

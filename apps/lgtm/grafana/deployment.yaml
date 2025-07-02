@@ -70,14 +70,11 @@ spec:
             - name: dashboard-spanmetrics
               mountPath: /etc/grafana/provisioning/dashboards/demo/spanmetrics.json
 
-            # GitProviderReceiver dashboards
-            - name: dashboard-gpr-delivery-metrics
-              mountPath: /etc/grafana/provisioning/dashboards/gpr/delivery-metrics.json
-            - name: dashboard-gpr-dora-metrics
-              mountPath: /etc/grafana/provisioning/dashboards/gpr/dora-metrics.json
-            # - name: dashboard-gpr-engineering-effectiveness-metrics
-            - name: dashboard-gpr-vcs-trunk-based-development
-              mountPath: /etc/grafana/provisioning/dashboards/gpr/vcs-trunk-based-development.json
+            # DORA dashboards
+            - name: dashboard-dora-metrics
+              mountPath: /etc/grafana/provisioning/dashboards/dora/dora-metrics.json
+            - name: dashboard-dora-vcs-trunk-based-development
+              mountPath: /etc/grafana/provisioning/dashboards/dora/vcs-trunk-based-development.json
 
       volumes:
         - name: pv
@@ -107,16 +104,10 @@ spec:
           configMap:
             name: dashboard-spanmetrics
 
-        # GitProviderReceiver dashboards
-        - name: dashboard-gpr-delivery-metrics
+        # DORA dashboards
+        - name: dashboard-dora-metrics
           configMap:
-            name: dashboard-gpr-delivery-metrics
-        - name: dashboard-gpr-dora-metrics
+            name: dashboard-dora-metrics
+        - name: dashboard-dora-vcs-trunk-based-development
           configMap:
-            name: dashboard-gpr-dora-metrics
-        - name: dashboard-gpr-engineering-effectiveness-metrics
-          configMap:
-            name: dashboard-gpr-engineering-effectiveness-metrics
-        - name: dashboard-gpr-vcs-trunk-based-development
-          configMap:
-            name: dashboard-gpr-vcs-trunk-based-development
+            name: dashboard-dora-vcs-trunk-based-development
