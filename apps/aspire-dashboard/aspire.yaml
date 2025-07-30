@@ -8,6 +8,7 @@ spec:
   clusterIP: None
   selector:
     app: aspire-dashboard
+    name: aspire-dashboard
   ports:
   - name: frontend
     port: 18888
