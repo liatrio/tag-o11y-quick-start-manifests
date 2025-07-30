@@ -38,7 +38,7 @@ It can optionally install the following services: (requires reading through the 
 
 ## Quick Start
 
-To deploy the basic set of configuration with OpenObserve and a Gateway
+To deploy the basic set of configuration with Aspire Dashboard and a Gateway
 Collector, run `make`. Then login to Tilt using by navigating to
 [http://localhost:10350](http://localhost:10350) in your browser.
 
