@@ -43,7 +43,8 @@ Collector, run `make`. Then login to Tilt using by navigating to
 [http://localhost:10350](http://localhost:10350) in your browser.
 
 Port forwarding is automatically enabled when running Tilt. To view Telemetry
-in Aspire Dashboard, navigate to [http://localhost:18888/](http://localhost:18888/).
+in Aspire Dashboard, navigate to [http://localhost:18888/](http://localhost:18888/)
+or click the `frontend` port forward in the Tilt dashboard.
 
 ## Gateway Collector
 
