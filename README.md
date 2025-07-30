@@ -6,7 +6,7 @@
 This set of manifests gets a local obersvability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
-- [OpenObserve](https://openobserve.ai/)
+- [Aspire Dashboard](https://aspiredashboard.com/)
 - [OpenTelemetry Operator](https://opentelemetry.io/docs/kubernetes/operator/)
 - [Cert Manager](https://cert-manager.io/)
 - [Liatrio OpenTelemetry Collector](https://github.com/liatrio/otel-collector)
@@ -43,19 +43,7 @@ Collector, run `make`. Then login to Tilt using by navigating to
 [http://localhost:10350](http://localhost:10350) in your browser.
 
 Port forwarding is automatically enabled when running Tilt. To view Telemetry
-in OpenObserve, navigate to [http://localhost:5080/](http://localhost:5080/).
-
-Login with:
-
-- Username: `root@example.com`
-- Password: `Complexpass#123`
-
-
-This corresponds with the `ZO_ROOT_USER_EMAIL` and `ZO_ROOT_USER_PASSWORD`
-values that are default in the OpenObserve Statefulset.
-
-> Note: These are default credentials, not to be used for any production
-> deployment.
+in Aspire Dashboard, navigate to [http://localhost:18888/](http://localhost:18888/).
 
 ## Gateway Collector
 

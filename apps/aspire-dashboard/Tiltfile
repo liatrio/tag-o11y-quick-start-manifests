@@ -1,0 +1,11 @@
+k8s_resource(
+    workload='aspire-dashboard',
+    labels=[
+        'aspire'
+    ],
+    port_forwards=[
+        port_forward(18888, 18888, name="frontend"),
+        port_forward(18889, 18889, name="otlp-grpc"),
+        port_forward(18890, 18890, name="otlp-http")
+    ]
+)
