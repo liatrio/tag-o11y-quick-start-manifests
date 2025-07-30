@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > Visiting here from DevOps Days Montreal? Your demo is [here](#tracing-demo)
 
-This set of manifests gets a local obersvability stack up and running quickly.
+This set of manifests gets a local observability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
 - [Aspire Dashboard](https://aspiredashboard.com/)
