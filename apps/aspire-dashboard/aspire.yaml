@@ -63,10 +63,6 @@ spec:
         env:
         - name: DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS
           value: "true"
-        - name: DOTNET_DASHBOARD_OTLP_STORAGE_PATH
-          value: "/data"
-        - name: DOTNET_DASHBOARD_OTLP_HTTP_PROTOCOL
-          value: "HttpProtocols.Http1AndHttp2"
         resources:
           limits:
             cpu: 2048m
