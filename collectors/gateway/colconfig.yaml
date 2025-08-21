@@ -75,6 +75,18 @@
           stream-name: default
         # tls:
         #   insecure: true
+      
+      clickhouse:
+        endpoint: http://hyperdx-hdx-oss-v2-clickhouse.clickstack.svc.cluster.local:8123
+        username: otelcollector
+        password: otelcollectorpass
+        timeout: 5s
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 30s
+          max_elapsed_time: 300s
+        
 
     service:
       # extensions: [health_check, pprof, zpages]
@@ -90,7 +102,8 @@
           exporters:
             - debug
             - otlphttp/openobserve
-            - prometheusremotewrite
+            # - prometheusremotewrite
+            - clickhouse
 
         logs:
           receivers:
@@ -102,6 +115,7 @@
           exporters:
             - debug
             - otlphttp/openobserve
+            - clickhouse
 
         traces:
           receivers:
@@ -113,3 +127,4 @@
           exporters:
             - debug
             - otlphttp/openobserve
+            - clickhouse

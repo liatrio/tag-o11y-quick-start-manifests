@@ -1,0 +1,33 @@
+# HyperDx Deployment Configuration
+print("🔍 Deploying HyperDx with MongoDB...")
+
+k8s_yaml(kustomize(".", flags=["--enable-helm"]))
+
+# MongoDB StatefulSet resource configuration
+k8s_resource(
+    workload='hyperdx-hdx-oss-v2-mongodb',
+    labels=['hyperdx'],
+    port_forwards=[
+        port_forward(27017, 27017, name="mongodb")
+    ]
+)
+
+# Clickhouse server resource configuration
+k8s_resource(
+    workload='hyperdx-hdx-oss-v2-clickhouse',
+    labels=['hyperdx'],
+    port_forwards=[
+        port_forward(8123, 8123, name="http_port"),
+        port_forward(9000, 9000, name="tcp_port")
+    ]
+)
+
+# HyperDx application resource configuration
+k8s_resource(
+    workload='hyperdx-hdx-oss-v2-app',
+    labels=['hyperdx'],
+    port_forwards=[
+        port_forward(3000, 3000, name="hyperdx_ui")
+    ],
+    resource_deps=['hyperdx-hdx-oss-v2-mongodb', 'hyperdx-hdx-oss-v2-clickhouse']  # Depends on MongoDB and ClickHouse
+)
