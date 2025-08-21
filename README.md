@@ -57,6 +57,12 @@ values that are default in the OpenObserve Statefulset.
 > Note: These are default credentials, not to be used for any production
 > deployment.
 
+Telemetry data is also sent to ClickHouse with HyperDX available for
+querying and visualization of the data. HyperDX is port-forwarded to
+[http://localhost:3000](http://localhost:3000). On the first login,
+it will prompt to create a new user. This is just for the local
+instance and can be any value for the email - e.g. `test@test.com`.
+
 ## Gateway Collector
 
 The gateway collector is created using an  OpenTelemetry Collector distribution

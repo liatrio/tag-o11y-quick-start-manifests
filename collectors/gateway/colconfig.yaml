@@ -50,10 +50,10 @@
         sampling_initial: 2
         sampling_thereafter: 500
 
-      prometheusremotewrite:
-        endpoint: http://prometheus.prometheus.svc.cluster.local:9090/api/v1/write
-        resource_to_telemetry_conversion:
-          enabled: true
+      # prometheusremotewrite:
+      #   endpoint: http://prometheus.prometheus.svc.cluster.local:9090/api/v1/write
+      #   resource_to_telemetry_conversion:
+      #     enabled: true
       #
       # otlphttp/tempo:
       #   endpoint: http://tempo.tempo.svc.cluster.local:4318
@@ -76,6 +76,17 @@
         # tls:
         #   insecure: true
 
+      clickhouse:
+        endpoint: http://hyperdx-hdx-oss-v2-clickhouse.clickstack.svc.cluster.local:8123
+        username: otelcollector
+        password: otelcollectorpass
+        timeout: 5s
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 30s
+          max_elapsed_time: 300s
+
     service:
       # extensions: [health_check, pprof, zpages]
       extensions: []
@@ -90,7 +101,7 @@
           exporters:
             - debug
             - otlphttp/openobserve
-            - prometheusremotewrite
+            - clickhouse
 
         logs:
           receivers:
@@ -102,6 +113,7 @@
           exporters:
             - debug
             - otlphttp/openobserve
+            - clickhouse
 
         traces:
           receivers:
@@ -113,3 +125,4 @@
           exporters:
             - debug
             - otlphttp/openobserve
+            - clickhouse
