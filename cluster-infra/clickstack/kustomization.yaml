@@ -10,7 +10,7 @@ resources:
 helmCharts:
   - name: hdx-oss-v2
     repo: https://hyperdxio.github.io/helm-charts
-    version: ">=0.1.0"
+    version: "0.1.0"
     releaseName: hyperdx
     valuesInline:
       # Disable otel since it's deployed elsewhere
