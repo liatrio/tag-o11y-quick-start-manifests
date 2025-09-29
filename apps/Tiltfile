@@ -11,6 +11,7 @@ USE_JAEGER = os.getenv("DEPLOY_JAEGER", False)
 include("../cluster-infra/cert-manager/Tiltfile")
 include("../cluster-infra/otel-operator/Tiltfile")
 include('./aspire-dashboard/Tiltfile')
+include("../cluster-infra/clickstack/Tiltfile")
 
 if USE_ARGO:
     include("./argocd/Tiltfile")

@@ -1,0 +1,24 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: clickstack
+
+resources:
+  - ../namespace
+
+helmCharts:
+  - name: hdx-oss-v2
+    repo: https://hyperdxio.github.io/helm-charts
+    version: "0.1.0"
+    releaseName: hyperdx
+    valuesInline:
+      # Disable otel since it's deployed elsewhere
+      otel:
+        enabled: false
+      
+      # HyperDx configuration
+      hyperdx:
+        image:
+          repository: hyperdx/hyperdx
+          tag: "2.2.1"

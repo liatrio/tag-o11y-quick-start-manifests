@@ -46,6 +46,12 @@ Port forwarding is automatically enabled when running Tilt. To view Telemetry
 in Aspire Dashboard, navigate to [http://localhost:18888/](http://localhost:18888/)
 or click the `frontend` port forward in the Tilt dashboard.
 
+Telemetry data is also sent to ClickHouse with HyperDX available for
+querying and visualization of the data. HyperDX is port-forwarded to
+[http://localhost:3000](http://localhost:3000). On the first login,
+it will prompt to create a new user. This is just for the local
+instance and can be any value for the email - e.g. `test@test.com`.
+
 ## Gateway Collector
 
 The gateway collector is created using an  OpenTelemetry Collector distribution
