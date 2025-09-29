@@ -10,6 +10,7 @@ USE_JAEGER = os.getenv("DEPLOY_JAEGER", False)
 
 include("../cluster-infra/cert-manager/Tiltfile")
 include("../cluster-infra/otel-operator/Tiltfile")
+include('./aspire-dashboard/Tiltfile')
 include("../cluster-infra/clickstack/Tiltfile")
 
 if USE_ARGO:
@@ -46,13 +47,5 @@ k8s_resource(
   ],
   resource_deps=[
     "opentelemetry-operator-controller-manager"
-  ]
-)
-
-k8s_resource(
-  workload="openobserve",
-  port_forwards=5080,
-  labels=[
-    "default-apps"
   ]
 )

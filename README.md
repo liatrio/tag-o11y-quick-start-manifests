@@ -3,10 +3,10 @@
 > [!IMPORTANT]
 > Visiting here from DevOps Days Montreal? Your demo is [here](#tracing-demo)
 
-This set of manifests gets a local obersvability stack up and running quickly.
+This set of manifests gets a local observability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
-- [OpenObserve](https://openobserve.ai/)
+- [Aspire Dashboard](https://aspiredashboard.com/)
 - [OpenTelemetry Operator](https://opentelemetry.io/docs/kubernetes/operator/)
 - [Cert Manager](https://cert-manager.io/)
 - [Liatrio OpenTelemetry Collector](https://github.com/liatrio/otel-collector)
@@ -38,24 +38,13 @@ It can optionally install the following services: (requires reading through the 
 
 ## Quick Start
 
-To deploy the basic set of configuration with OpenObserve and a Gateway
+To deploy the basic set of configuration with Aspire Dashboard and a Gateway
 Collector, run `make`. Then login to Tilt using by navigating to
 [http://localhost:10350](http://localhost:10350) in your browser.
 
 Port forwarding is automatically enabled when running Tilt. To view Telemetry
-in OpenObserve, navigate to [http://localhost:5080/](http://localhost:5080/).
-
-Login with:
-
-- Username: `root@example.com`
-- Password: `Complexpass#123`
-
-
-This corresponds with the `ZO_ROOT_USER_EMAIL` and `ZO_ROOT_USER_PASSWORD`
-values that are default in the OpenObserve Statefulset.
-
-> Note: These are default credentials, not to be used for any production
-> deployment.
+in Aspire Dashboard, navigate to [http://localhost:18888/](http://localhost:18888/)
+or click the `frontend` port forward in the Tilt dashboard.
 
 Telemetry data is also sent to ClickHouse with HyperDX available for
 querying and visualization of the data. HyperDX is port-forwarded to
