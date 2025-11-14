@@ -46,3 +46,6 @@ configMapGenerator:
   - name: dashboard-dora-vcs-trunk-based-development
     files:
       - dashboards/dora/vcs-trunk-based-development.json
+  - name: dashboard-dora-vcs-ado
+    files:
+      - dashboards/dora/vcs-trunk-based-development-ado.json

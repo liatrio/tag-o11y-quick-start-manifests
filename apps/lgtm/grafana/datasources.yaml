@@ -1,15 +1,25 @@
-# Copyright The OpenTelemetry Authors
+ # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: 1
 
 datasources:
+  - name: OpenObserve
+    uid: openobserve-metrics
+    type: prometheus
+    url: http://openobserve.openobserve.svc.cluster.local:5080/api/default/prometheus
+    editable: true
+    isDefault: true
+    jsonData:
+      httpHeaderName1: 'Authorization'
+    secureJsonData:
+      httpHeaderValue1: 'Basic cm9vdEBleGFtcGxlLmNvbTpDb21wbGV4cGFzcyMxMjM='
   - name: Prometheus
     uid: webstore-metrics
     type: prometheus
     url: http://prometheus.prometheus.svc.cluster.local:9090/
     editable: true
-    isDefault: true
+    isDefault: false
     jsonData:
       exemplarTraceIdDestinations:
         - datasourceUid: webstore-traces

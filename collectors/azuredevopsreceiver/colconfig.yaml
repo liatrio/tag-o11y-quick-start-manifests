@@ -1,0 +1,95 @@
+- op: add
+  path: /spec/config
+  value:
+    extensions:
+      bearertokenauth/azuredevops:
+        token: ${env:ADO_PAT}
+
+    receivers:
+      azuredevops:
+        initial_delay: 10s
+        collection_interval: 300s  # 5 minutes - ADO API has rate limits
+        scrapers:
+          azuredevops:
+            metrics:
+              # Optional metric - enable to get contributor counts
+              vcs.contributor.count:
+                enabled: true
+            organization: ${env:ADO_ORG}
+            project: ${env:ADO_PROJECT}
+            # Base URL for Azure DevOps API (required)
+            base_url: "https://dev.azure.com"
+            # Optional: limit PR queries to last 30 days to reduce API calls
+            limit_pull_requests: 30
+            # Optional: custom search query (defaults to empty string if not set)
+            search_query: "${env:ADO_SEARCH_QUERY:-}"
+            auth:
+              authenticator: bearertokenauth/azuredevops
+
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+
+      batch:
+        send_batch_size: 100
+        timeout: 10s
+
+      resource/o11y:
+        attributes:
+          - key: team.name
+            # Change this to your team name
+            value: tag-o11y
+            action: upsert
+
+    exporters:
+      debug:
+        verbosity: basic
+        sampling_initial: 2
+        sampling_thereafter: 500
+
+      otlphttp:
+        endpoint: http://gateway-collector.collector.svc.cluster.local:4318
+        tls:
+          insecure: true
+
+    service:
+      extensions:
+        - bearertokenauth/azuredevops
+      pipelines:
+        metrics:
+          receivers:
+            - azuredevops
+          processors:
+            - memory_limiter
+            - batch
+            - resource/o11y
+          exporters:
+            - debug
+            - otlphttp
+
+- op: add
+  path: /spec/env
+  value:
+    - name: ADO_PAT
+      valueFrom:
+        secretKeyRef:
+          name: azuredevops-pat
+          key: ADO_PAT
+    - name: ADO_ORG
+      valueFrom:
+        secretKeyRef:
+          name: azuredevops-pat
+          key: ADO_ORG
+    - name: ADO_PROJECT
+      valueFrom:
+        secretKeyRef:
+          name: azuredevops-pat
+          key: ADO_PROJECT
+    - name: ADO_SEARCH_QUERY
+      valueFrom:
+        secretKeyRef:
+          name: azuredevops-pat
+          key: ADO_SEARCH_QUERY
+          optional: true

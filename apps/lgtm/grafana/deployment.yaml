@@ -75,6 +75,8 @@ spec:
               mountPath: /etc/grafana/provisioning/dashboards/dora/dora-metrics.json
             - name: dashboard-dora-vcs-trunk-based-development
               mountPath: /etc/grafana/provisioning/dashboards/dora/vcs-trunk-based-development.json
+            - name: dashboard-dora-vcs-ado
+              mountPath: /etc/grafana/provisioning/dashboards/dora/vcs-trunk-based-development-ado.json
 
       volumes:
         - name: pv
@@ -111,3 +113,6 @@ spec:
         - name: dashboard-dora-vcs-trunk-based-development
           configMap:
             name: dashboard-dora-vcs-trunk-based-development
+        - name: dashboard-dora-vcs-ado
+          configMap:
+            name: dashboard-dora-vcs-ado
