@@ -126,6 +126,36 @@ To deploy the GitHub Receiver
 
 <!-- TODO: Add instructions for GitLab -->
 
+### Azure DevOps Receiver
+
+To deploy the Azure DevOps Receiver and visualize VCS metrics in Grafana:
+
+1. **Create an Azure DevOps Personal Access Token (PAT)**
+   - See [azuredevops-pat-readme.md](./azuredevops-pat-readme.md) for detailed instructions
+   - Required scopes: **Code (Read)** and **Project and Team (Read)**
+
+2. **Configure the receiver**
+   - Create a `./collectors/azuredevopsreceiver/.env` file with:
+     ```bash
+     ADO_PAT=your_personal_access_token
+     ADO_ORG=your_organization_name
+     ADO_PROJECT=your_project_name
+     ADO_SEARCH_QUERY=  # Optional: filter repos by name
+     ```
+
+3. **Deploy with ADO receiver and Grafana**
+   ```bash
+   DEPLOY_ADO=true DEPLOY_LGTM=true make
+   ```
+
+4. **Access the dashboard**
+   - Navigate to [http://localhost:3001](http://localhost:3001)
+   - Go to **Dashboards** → **DORA** → **DORA VCS Metrics - Azure DevOps**
+
+For detailed dashboard setup and troubleshooting, see [azuredevops-dashboard-readme.md](./azuredevops-dashboard-readme.md).
+
+**Note:** The ADO dashboard differs from the GitHub dashboard - it does not include organization filters, PR count metrics, or security/CVE metrics. See the dashboard readme for a complete comparison.
+
 ## DORA
 
 The DORA Collector leverages the WebHook Events OpenTelemetry Receiver. As

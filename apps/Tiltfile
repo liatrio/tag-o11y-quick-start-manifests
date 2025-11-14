@@ -11,7 +11,7 @@ USE_JAEGER = os.getenv("DEPLOY_JAEGER", False)
 
 include("../cluster-infra/cert-manager/Tiltfile")
 include("../cluster-infra/otel-operator/Tiltfile")
-include("../cluster-infra/clickstack/Tiltfile")
+# include("../cluster-infra/clickstack/Tiltfile")  # Disabled - not needed for ADO work
 
 if USE_ARGO:
     include("./argocd/Tiltfile")
