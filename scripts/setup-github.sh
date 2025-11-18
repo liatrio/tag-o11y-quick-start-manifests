@@ -81,7 +81,8 @@ echo "  1. (Optional) Edit ./collectors/githubreceiver/colconfig.yaml to customi
 echo "     - github_org: Your organization name"
 echo "     - search_query: Repository search query"
 echo "  2. Deploy the GitHub receiver:"
-echo "     make ghr"
+echo "     make deploy-github"
+echo "     (You can also use 'make ghr' - both commands do the same thing)"
 echo "  3. Check the logs:"
 echo "     kubectl logs -n collector -l app.kubernetes.io/name=opentelemetry-collector | grep github"
 

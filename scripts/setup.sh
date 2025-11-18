@@ -277,8 +277,8 @@ check_integrations() {
     if [ $integrations_configured -eq 0 ]; then
         print_info "No integrations configured. This is optional - you can run 'make' without them."
         print_info "To add integrations later:"
-        print_info "  - GitHub: make setup-github"
-        print_info "  - GitLab: make setup-gitlab"
+        print_info "  - GitHub: make setup-github, then make deploy-github"
+        print_info "  - GitLab: make setup-gitlab, then make deploy-gitlab"
     fi
 }
 

@@ -77,8 +77,8 @@ setup-gitlab:
 	@chmod +x scripts/setup-gitlab.sh
 	@./scripts/setup-gitlab.sh
 
-.PHONY: ghr
-ghr:
+.PHONY: ghr deploy-github
+ghr deploy-github:
 	@if [ ! -f ./collectors/githubreceiver/.env ]; then \
 		echo "ERROR: GitHub PAT not configured. Run 'make setup-github' first."; \
 		exit 1; \
@@ -105,8 +105,8 @@ ghr:
 	fi; \
 	echo "GitHub receiver deployed successfully!"
 
-.PHONY: glr
-glr:
+.PHONY: glr deploy-gitlab
+glr deploy-gitlab:
 	@if [ ! -f ./collectors/gitlabreceiver/.env ]; then \
 		echo "ERROR: GitLab PAT not configured. Run 'make setup-gitlab' first."; \
 		exit 1; \

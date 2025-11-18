@@ -109,7 +109,7 @@ If you want to collect metrics from GitHub or GitLab repositories, follow these 
 
 3. **Deploy the GitHub receiver**:
    ```bash
-   make ghr
+   make deploy-github
    ```
 
 #### GitHub Receiver Setup (Manual Method)
@@ -129,7 +129,7 @@ If you prefer to set it up manually:
 4. Save the file
 5. Deploy:
    ```bash
-   make ghr
+   make deploy-github
    ```
 
 #### GitLab Receiver Setup (Easiest Method)
@@ -143,7 +143,7 @@ If you prefer to set it up manually:
 
 3. **Deploy the GitLab receiver**:
    ```bash
-   make glr
+   make deploy-gitlab
    ```
 
 #### GitLab Receiver Setup (Manual Method)
@@ -163,7 +163,7 @@ If you prefer to set it up manually:
 4. Save the file
 5. Deploy:
    ```bash
-   make glr
+   make deploy-gitlab
    ```
 
 ### Step 7: Run the Quick Start

@@ -152,7 +152,7 @@ After the stack is running, you can optionally add GitHub or GitLab integrations
 make setup-github
 
 # Deploy the GitHub receiver
-make ghr
+make deploy-github
 ```
 
 See the [GitHub Integration](#github-integration) section below for detailed instructions.
@@ -164,7 +164,7 @@ See the [GitHub Integration](#github-integration) section below for detailed ins
 make setup-gitlab
 
 # Deploy the GitLab receiver
-make glr
+make deploy-gitlab
 ```
 
 See the [GitLab Integration](#gitlab-integration) section below for detailed instructions.
@@ -446,10 +446,11 @@ With your observability stack running and the `.env` file configured:
 export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
 
 # Deploy the GitHub receiver
-make ghr
+make deploy-github
 ```
+(You can also use `make ghr` - both commands do the same thing)
 
-**Note**: The `make ghr` command now automatically checks if your GitHub PAT is configured. If it's missing, you'll be prompted to run `make setup-github` first.
+**Note**: The `make deploy-github` command (or `make ghr`) automatically checks if your GitHub PAT is configured. If it's missing, you'll be prompted to run `make setup-github` first.
 
 This will:
 - ✅ Create a Kubernetes secret from your `.env` file
@@ -623,7 +624,7 @@ OpenObserve uses SQL-like syntax for querying metrics. Attribute names with dots
 - Check that your PAT has access to the repositories you're trying to scrape
 - **If using an SSO-enabled organization**: Ensure your token is authorized for SSO (see Step 1 above). This is a common cause of 0 repositories being found.
 - Test your search query on GitHub's search page to ensure it returns results
-- After changing `colconfig.yaml`, remember to run `make ghr` to apply the changes
+- After changing `colconfig.yaml`, remember to run `make deploy-github` (or `make ghr`) to apply the changes
 - Review collector logs for authentication errors or search query issues
 - Check logs to see what search query is being used: `kubectl logs -n collector <github-collector-pod-name> | grep -i "search\|query\|repository"`
 - If you see authentication errors in the logs, verify your token is authorized for SSO organizations
@@ -751,10 +752,11 @@ With your observability stack running and the `.env` file configured:
 export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
 
 # Deploy the GitLab receiver
-make glr
+make deploy-gitlab
 ```
+(You can also use `make glr` - both commands do the same thing)
 
-**Note**: The `make glr` command now automatically checks if your GitLab PAT is configured. If it's missing, you'll be prompted to run `make setup-gitlab` first.
+**Note**: The `make deploy-gitlab` command (or `make glr`) automatically checks if your GitLab PAT is configured. If it's missing, you'll be prompted to run `make setup-gitlab` first.
 
 This will:
 - ✅ Create a Kubernetes secret from your `.env` file
