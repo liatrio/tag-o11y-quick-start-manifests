@@ -9,7 +9,7 @@ It installs the following services into your local kubernetes cluster:
 - [OpenObserve](https://openobserve.ai/)
 - [OpenTelemetry Operator](https://opentelemetry.io/docs/kubernetes/operator/)
 - [Cert Manager](https://cert-manager.io/)
-- [Liatrio OpenTelemetry Collector](https://github.com/liatrio/otel-collector)
+- [Liatrio OpenTelemetry Collector](https://github.com/liatrio/liatrio-otel-collector)
 
 See the [Quick Start](#quick-start) section below for step-by-step instructions.
 
