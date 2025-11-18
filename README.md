@@ -36,9 +36,6 @@ It can optionally install the following services: (requires reading through the 
 3. Have kubectl installed
 4. Have kustomize installed
 5. Have [tilt][tilt] installed
-6. If using DORA, have NGROK configured with a domain and update the configuration accordingly.
-7. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
-8. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
 
 ### Verifying Prerequisites
 
@@ -125,8 +122,8 @@ make
 3. ✅ If the cluster doesn't exist, automatically creates one (this may take a minute or two)
 4. ✅ Automatically configures kubectl context
 5. ✅ Tilt starts up and begins deploying the observability stack
-4. Tilt runs in the foreground - keep the terminal window open
-5. Services will start deploying - you can monitor progress in the Tilt dashboard
+6. ✅ Tilt runs in the foreground - keep the terminal window open
+7. ✅ Services will start deploying - you can monitor progress in the Tilt dashboard
 
 **Expected startup time:** Initial deployment typically takes 2-5 minutes depending on your system. The Tilt dashboard will show the status of each service as it starts up.
 
@@ -802,6 +799,16 @@ This will:
 - Default is `https://gitlab.com/` for GitLab.com
 
 ## DORA
+
+> **Note**: DORA functionality requires additional prerequisites (Helm and NGrok) that are not needed for basic observability. If you're only using the observability stack without DORA metrics, you can skip this section.
+
+### DORA Prerequisites
+
+The DORA Collector requires the following additional prerequisites beyond the basic observability stack:
+
+1. **Helm** - Required for deploying the NGrok ingress controller
+2. **NGrok Account** - Free account with a permanent domain (required for webhook routing)
+3. **NGrok API Key and Auth Token** - Obtained from your NGrok dashboard
 
 The DORA Collector leverages the WebHook Events OpenTelemetry Receiver. As
 events occur (like deployments) the event LogRecords are sent to the collector.

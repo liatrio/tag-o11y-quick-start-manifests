@@ -30,6 +30,11 @@ print_header() {
     echo -e "\n${BLUE}=== $1 ===${NC}\n"
 }
 
+# Resolve script directory using BASH_SOURCE for robust path resolution
+# This works even when the script is sourced or symlinked
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # Check if a command exists
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -246,8 +251,8 @@ configure_kubectl() {
 check_integrations() {
     print_header "Checking Integration Setup"
     
-    local github_env="./collectors/githubreceiver/.env"
-    local gitlab_env="./collectors/gitlabreceiver/.env"
+    local github_env="$REPO_ROOT/collectors/githubreceiver/.env"
+    local gitlab_env="$REPO_ROOT/collectors/gitlabreceiver/.env"
     local integrations_configured=0
     
     # Check GitHub

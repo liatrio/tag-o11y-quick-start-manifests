@@ -20,7 +20,19 @@ print_warning() {
     echo -e "${YELLOW}⚠${NC} $1"
 }
 
-ENV_FILE="./collectors/githubreceiver/.env"
+# Resolve script directory using BASH_SOURCE for robust path resolution
+# This works even when the script is sourced or symlinked
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Validate that we're in the repository root by checking for known markers
+if [ ! -f "$REPO_ROOT/Makefile" ] && [ ! -d "$REPO_ROOT/.git" ]; then
+    echo "Error: Cannot find repository root. Expected to find Makefile or .git directory."
+    echo "Please run this script from the repository root directory."
+    exit 1
+fi
+
+ENV_FILE="$REPO_ROOT/collectors/githubreceiver/.env"
 
 echo -e "${BLUE}"
 echo "╔═══════════════════════════════════════════════════════════╗"
@@ -68,11 +80,49 @@ if [ -z "$GH_PAT" ]; then
     exit 1
 fi
 
-# Create directory if it doesn't exist
-mkdir -p "$(dirname "$ENV_FILE")"
+# Create directory if it doesn't exist, checking for errors
+if ! mkdir -p "$(dirname "$ENV_FILE")"; then
+    echo "Error: Failed to create directory $(dirname "$ENV_FILE")"
+    exit 1
+fi
 
-# Write the token to .env file
-echo "GH_PAT=$GH_PAT" > "$ENV_FILE"
+# Remove any existing GH_PAT line if the file exists, then append the new one
+# Use atomic operations where possible for race-safety
+if [ -f "$ENV_FILE" ]; then
+    # Store current permissions to preserve if stricter than 600
+    current_perms=$(stat -f "%OLp" "$ENV_FILE" 2>/dev/null || stat -c "%a" "$ENV_FILE" 2>/dev/null || echo "644")
+    
+    # Use sed to remove any existing GH_PAT line (works on both macOS and Linux)
+    # Create temp file for atomic operation
+    TEMP_FILE="${ENV_FILE}.tmp"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS sed requires -i '' for in-place editing, but we'll use temp file for atomicity
+        sed '/^GH_PAT=/d' "$ENV_FILE" > "$TEMP_FILE" && mv "$TEMP_FILE" "$ENV_FILE"
+    else
+        # Linux sed uses -i without extension, but we'll use temp file for atomicity
+        sed '/^GH_PAT=/d' "$ENV_FILE" > "$TEMP_FILE" && mv "$TEMP_FILE" "$ENV_FILE"
+    fi
+    
+    # Append new GH_PAT line atomically
+    echo "GH_PAT=$GH_PAT" >> "$ENV_FILE"
+    
+    # Set permissions to 600 only if current permissions are less restrictive
+    # 600 = rw------- (owner read/write only)
+    # Only change if current permissions allow group/other access (e.g., 644, 755, etc.)
+    if [ "$current_perms" != "600" ] && [ "$current_perms" != "400" ] && [ "$current_perms" != "600" ]; then
+        chmod 600 "$ENV_FILE" 2>/dev/null || true
+    fi
+else
+    # File doesn't exist, create it with restrictive permissions
+    # Set umask temporarily to ensure file is created with 600 permissions
+    OLD_UMASK=$(umask)
+    umask 0177  # Results in 600 permissions (rw-------)
+    echo "GH_PAT=$GH_PAT" > "$ENV_FILE"
+    umask "$OLD_UMASK"
+    # Explicitly set permissions as backup (in case umask didn't work as expected)
+    chmod 600 "$ENV_FILE" 2>/dev/null || true
+fi
+
 print_success "GitHub PAT saved to $ENV_FILE"
 
 echo ""
