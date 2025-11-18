@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > Visiting here from DevOps Days Montreal? Your demo is [here](#tracing-demo)
 
-This set of manifests gets a local obersvability stack up and running quickly.
+This set of manifests gets a local observability stack up and running quickly.
 It installs the following services into your local kubernetes cluster:
 
 - [OpenObserve](https://openobserve.ai/)
@@ -11,7 +11,7 @@ It installs the following services into your local kubernetes cluster:
 - [Cert Manager](https://cert-manager.io/)
 - [Liatrio OpenTelemetry Collector](https://github.com/liatrio/otel-collector)
 
-Simply run `brew bundle` and `make` to get started.
+See the [Quick Start](#quick-start) section below for step-by-step instructions.
 
 It can optionally install the following services: (requires reading through the command options)
 
@@ -26,36 +26,203 @@ It can optionally install the following services: (requires reading through the 
 
 > OSX users with [Homebrew][brew] installed can install the Prerequisites by running the command `brew bundle`
 
-1. Run kubernetes locally. Here are a few options:
+1. **Docker must be running** - Ensure Docker Desktop is installed and running before proceeding. The project uses k3d which requires Docker to be active.
+2. Run kubernetes locally. Here are a few options:
    1. [Docker Desktop][dd]: Local instance of Docker and k8s.
-   2. [k3d][k3d]: a lightweight wrapper to run k3s (Rancher Lab’s minimal k8s distribution) in docker. (Required if using tilt)
-2. Have kubectl installed
-3. Have kustomize installed
-4. Have [tilt][tilt] installed
-5. If using DORA, have NGROK configured with a domain and update the configuration accordingly.
-6. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
-7. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
+   2. [k3d][k3d]: a lightweight wrapper to run k3s (Rancher Lab's minimal k8s distribution) in docker. (Required if using tilt)
+   - **Note**: The `make` command will automatically create a k3d cluster named `otel-basic` if it doesn't exist, so you don't need to create it manually.
+3. Have kubectl installed
+4. Have kustomize installed
+5. Have [tilt][tilt] installed
+6. If using DORA, have NGROK configured with a domain and update the configuration accordingly.
+7. Have a free NGrok Account with a Permanent domain (if wanting to deploy DORA)
+8. Have helm installed (gross, only for the ngrok helm chart, will remove this eventually)
+
+### Verifying Prerequisites
+
+Before running the project, verify your prerequisites are installed:
+
+```bash
+# Check Docker is running
+docker ps
+
+# Check required tools are installed
+which k3d kubectl kustomize tilt helm
+
+# If any are missing, install them:
+brew bundle  # Installs all prerequisites from Brewfile
+```
 
 ## Quick Start
 
-To deploy the basic set of configuration with OpenObserve and a Gateway
-Collector, run `make`. Then login to Tilt using by navigating to
-[http://localhost:10350](http://localhost:10350) in your browser.
+### Option 1: Automated Setup (Recommended for First-Time Users)
 
-Port forwarding is automatically enabled when running Tilt. To view Telemetry
-in OpenObserve, navigate to [http://localhost:5080/](http://localhost:5080/).
+Run the setup check to verify everything is configured correctly:
 
-Login with:
+```bash
+make setup
+```
+
+This will:
+- ✅ Check if Docker is running
+- ✅ Verify all prerequisites are installed (k3d, kubectl, kustomize, tilt, helm)
+- ✅ Configure kubectl context automatically
+- ✅ Check GitHub receiver setup status
+
+If any checks fail, the script will tell you exactly what to fix.
+
+### Option 2: Manual Setup
+
+#### Step 1: Install Prerequisites (if not already installed)
+
+```bash
+brew bundle
+```
+
+This will install: kubectl, kustomize, helm, tilt, and k3d.
+
+#### Step 2: Ensure Docker is Running
+
+Make sure Docker Desktop is running before proceeding. You can verify this by running:
+
+```bash
+docker ps
+```
+
+If Docker is not running, start Docker Desktop and wait for it to fully start.
+
+#### Step 3: Configure kubectl Context (if needed)
+
+The `make` command now automatically configures kubectl context, but if you need to do it manually:
+
+```bash
+# Write the k3d kubeconfig
+k3d kubeconfig write otel-basic
+
+# Set KUBECONFIG to use the k3d cluster
+export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
+
+# Verify the context is set correctly
+kubectl config current-context
+# Should output: k3d-otel-basic
+```
+
+> **Note**: The `make` command now automatically sets the kubectl context, so you typically don't need to do this manually.
+
+### Step 4: Run the Project
+
+To deploy the basic set of configuration with OpenObserve and a Gateway Collector, run:
+
+```bash
+make
+```
+
+**What happens when you run `make`:**
+1. ✅ Checks if Docker is running (exits with error if not)
+2. ✅ Checks if a k3d cluster named `otel-basic` exists
+3. ✅ If the cluster doesn't exist, automatically creates one (this may take a minute or two)
+4. ✅ Automatically configures kubectl context
+5. ✅ Tilt starts up and begins deploying the observability stack
+4. Tilt runs in the foreground - keep the terminal window open
+5. Services will start deploying - you can monitor progress in the Tilt dashboard
+
+**Expected startup time:** Initial deployment typically takes 2-5 minutes depending on your system. The Tilt dashboard will show the status of each service as it starts up.
+
+### Step 5: Access the Services
+
+Once Tilt is running, you can access the services:
+
+- **Tilt Dashboard**: Navigate to [http://localhost:10350](http://localhost:10350) in your browser to view the Tilt dashboard and monitor deployment progress
+- **OpenObserve**: Navigate to [http://localhost:5080/](http://localhost:5080/) to view telemetry data
+
+Port forwarding is automatically enabled when running Tilt. The Tilt dashboard shows the status of all services and provides easy access to logs.
+
+**Verifying services are running:**
+
+You can verify that pods are running in your cluster:
+
+```bash
+# Ensure you're using the k3d context
+export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
+
+# Check all pods across all namespaces
+kubectl get pods --all-namespaces
+
+# Check pods in specific namespaces
+kubectl get pods -n openobserve
+kubectl get pods -n collector
+kubectl get pods -n cert-manager
+```
+
+**Expected running services:**
+- `openobserve-0` in the `openobserve` namespace should be `Running`
+- `cert-manager-*` pods in the `cert-manager` namespace should be `Running`
+- `opentelemetry-operator-controller-manager-*` in the `opentelemetry-operator-system` namespace should be `Running`
+
+> **Note**: Some optional components (like ClickHouse/HyperDX) may show errors initially. The core observability stack (OpenObserve, cert-manager, OpenTelemetry operator) should be running for basic functionality.
+
+Wait until core pods show `Running` status before accessing the services.
+
+> **Note**: If you see port conflicts (e.g., port 3000 or 5080 already in use), you may need to stop other services using those ports or modify the port forwarding configuration.
+
+**OpenObserve Login Credentials:**
 
 - Username: `root@example.com`
 - Password: `Complexpass#123`
 
-
 This corresponds with the `ZO_ROOT_USER_EMAIL` and `ZO_ROOT_USER_PASSWORD`
 values that are default in the OpenObserve Statefulset.
 
-> Note: These are default credentials, not to be used for any production
+> **Note**: These are default credentials, not to be used for any production
 > deployment.
+
+### Step 6: Stopping the Project
+
+To stop the project, press `Ctrl+C` in the terminal where Tilt is running. This will stop Tilt and the port forwarding, but the k3d cluster will remain running.
+
+To delete the k3d cluster (optional cleanup):
+
+```bash
+k3d cluster delete otel-basic
+```
+
+### Troubleshooting
+
+**Issue: Port already in use**
+- Check if ports 3000, 5080, or 10350 are already in use: `lsof -i :3000 -i :5080 -i :10350`
+- Stop the conflicting service or modify the port configuration
+
+**Issue: Docker not running**
+- Ensure Docker Desktop is installed and running
+- Verify with `docker ps`
+
+**Issue: k3d cluster creation fails**
+- Ensure Docker has enough resources allocated (at least 2GB RAM recommended)
+- Check Docker Desktop settings and increase resources if needed
+
+**Issue: Tilt doesn't start or fails with context error**
+- Verify all prerequisites are installed: `which k3d kubectl kustomize tilt`
+- Check that the k3d cluster exists: `k3d cluster ls`
+- Ensure kubectl context is set to `k3d-otel-basic`:
+  ```bash
+  k3d kubeconfig write otel-basic
+  export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
+  kubectl config current-context  # Should show: k3d-otel-basic
+  ```
+- Review Tilt logs in the terminal output
+
+**Issue: kubectl commands hang or timeout**
+- Check if kubectl is pointing to the correct cluster: `kubectl config current-context`
+- If you have multiple kubeconfig files, set KUBECONFIG explicitly:
+  ```bash
+  export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
+  ```
+- Verify the k3d cluster is running: `k3d cluster ls`
+
+**Issue: Some pods are in CrashLoopBackOff**
+- Check pod logs: `kubectl logs -n <namespace> <pod-name>`
+- Some optional components (like ClickHouse/HyperDX) may have configuration issues but won't affect core functionality
+- Core services (OpenObserve, cert-manager, OpenTelemetry operator) should be running
 
 Telemetry data is also sent to ClickHouse with HyperDX available for
 querying and visualization of the data. HyperDX is port-forwarded to
@@ -104,23 +271,360 @@ Below are a couple of examples of what the tilt dashboard provides you.
 
 ![tilt detailed view](content/tilt_detail.png)
 
-## Delivery Metrics
+## GitHub Integration
 
-### Git Provider Receiver (GitHub) (Deprecated: Use GitHub Receiver)
+The GitHub Receiver collects metrics from your GitHub repositories and sends them to your observability stack. This enables you to track DORA metrics, contributor counts, and other repository-level metrics.
 
-To deploy the GitProvider Receiver:
+### Prerequisites
 
-1. Create a GitHub PAT
-2. Create a `./collectors/gitproviderreceiver/.env` file containing `GH_PAT=<your GitHub PAT>`
-3. Run `make gpr`
+- A GitHub account
+- A GitHub Personal Access Token (PAT) with appropriate permissions
+- The observability stack running (see [Quick Start](#quick-start))
 
-### GitHub Receiver
+### Step 1: Set Up GitHub Integration (Recommended)
 
-To deploy the GitHub Receiver
+The easiest way to configure the GitHub receiver is using the interactive setup script:
 
-1. Create a GitHub PAT
-2. Create a `./collectors/githubreceiver/.env` file containing `GH_PAT=<your GitHub PAT>`
-3. Run `make ghr`
+```bash
+make setup-github
+```
+
+This script will:
+- ✅ Guide you through creating a GitHub PAT
+- ✅ Prompt you to enter your token securely (input is hidden)
+- ✅ Save the token to the correct location
+- ✅ Provide next steps for deployment
+
+### Step 2: Manual GitHub Setup (Alternative)
+
+If you prefer to set it up manually:
+
+#### Create a GitHub Personal Access Token
+
+1. Go to GitHub and log in to your account
+2. Click your profile picture → **Settings**
+3. Scroll down and click **Developer settings**
+4. Click **Personal access tokens** → **Tokens (classic)**
+5. Click **Generate new token** → **Generate new token (classic)**
+6. Give your token a descriptive name (e.g., `Observability Stack`)
+7. Set an expiration date (or choose "No expiration" for development)
+8. Select the following permissions:
+   - `repo` (Full control of private repositories) - Required to access repository data
+   - `read:org` (Read org and team membership) - Required if scraping organization repositories
+9. Click **Generate token**
+10. **Copy the token immediately** - GitHub will only show it once!
+
+For detailed instructions, see [github-pat-readme.md](./github-pat-readme.md).
+
+#### Authorize Token for SSO Organizations (Required for Enterprise/SSO-enabled Orgs)
+
+If you're scraping repositories from a GitHub organization that has **SSO (Single Sign-On)** enabled, you must authorize your token for that organization:
+
+1. After generating your token, you'll see a banner or notification if SSO authorization is required
+2. Alternatively, go to your **Personal access tokens** page
+3. Find your newly created token
+4. Click **Configure SSO** or **Authorize** next to the organization name
+5. Click **Authorize** to grant the token access to the SSO-enabled organization
+6. You may be redirected to your organization's SSO provider to complete authentication
+
+> **Important**: Without SSO authorization, the GitHub receiver will not be able to access repositories in SSO-enabled organizations, even if your token has the correct permissions. You'll see authentication errors or 0 repositories found in the collector logs.
+
+**Verifying SSO Authorization:**
+- Your token should show "Authorized" or a checkmark next to the organization name
+- If you see "Not authorized" or a warning icon, click it to complete the authorization
+
+#### Configure the GitHub Receiver
+
+1. Create the `.env` file in the GitHub receiver directory:
+
+   ```bash
+   # Create the .env file
+   touch ./collectors/githubreceiver/.env
+   ```
+
+2. Add your GitHub PAT to the `.env` file:
+
+   ```bash
+   # Add your token (replace YOUR_TOKEN_HERE with your actual token)
+   echo "GH_PAT=YOUR_TOKEN_HERE" > ./collectors/githubreceiver/.env
+   ```
+
+   Or manually edit the file:
+
+   ```bash
+   # Open the file in your editor
+   nano ./collectors/githubreceiver/.env
+   # Add this line:
+   GH_PAT=ghp_your_actual_token_here
+   ```
+
+   > **Security Note**: The `.env` file is in `.gitignore` and will not be committed to git. Never commit your PAT to version control.
+
+### Step 3: Customize Repository Selection (Optional)
+
+By default, the GitHub receiver scrapes repositories from the `liatrio` organization. To customize which repositories are scraped:
+
+1. Edit `./collectors/githubreceiver/colconfig.yaml`
+2. Update the `github_org` field (line 18) to your GitHub organization or username:
+
+   ```yaml
+   github_org: your-org-name  # or your-username for personal repos
+   ```
+
+3. Update the `search_query` field (line 19) to customize which repositories to scrape:
+
+   ```yaml
+   search_query: org:your-org-name archived:false  # Scrape all non-archived repos
+   # Or for a specific user:
+   search_query: user:your-username archived:false
+   # Or for repos with a specific topic:
+   search_query: org:your-org-name topic:observability archived:false
+   # Or for a specific repository:
+   search_query: repo:your-org-name/your-repo-name
+   ```
+
+   For more search query options, see [GitHub's search syntax](https://docs.github.com/en/search-github/searching-on-github/searching-for-repositories).
+
+4. (Optional) Update the team name (line 39) to associate metrics with your team:
+
+   ```yaml
+   - key: team.name
+     value: your-team-name  # Change from "tag-o11y" to your team name
+     action: upsert
+   ```
+
+5. **Apply the changes** to update the collector:
+
+   ```bash
+   # Ensure you're using the k3d context
+   export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
+   
+   # Apply the updated configuration
+   make ghr
+   ```
+
+   This will update the OpenTelemetry Collector configuration and restart the pod with the new settings. The collector will pick up the changes within the `collection_interval` (default: 60 seconds).
+
+### Step 4: Deploy the GitHub Receiver
+
+With your observability stack running and the `.env` file configured:
+
+```bash
+# Ensure you're using the k3d context (usually done automatically by make)
+export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
+
+# Deploy the GitHub receiver
+make ghr
+```
+
+**Note**: The `make ghr` command now automatically checks if your GitHub PAT is configured. If it's missing, you'll be prompted to run `make setup-github` first.
+
+This will:
+- ✅ Create a Kubernetes secret from your `.env` file
+- ✅ Deploy an OpenTelemetry Collector configured to scrape GitHub
+- ✅ Start collecting metrics from your specified repositories
+
+### Step 5: Verify the GitHub Receiver is Working
+
+1. Check that the collector pod is running:
+
+   ```bash
+   export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
+   kubectl get pods -n collector | grep github
+   ```
+
+   You should see `otel-github-collector-*` pod in `Running` status.
+
+2. Check the collector logs:
+
+   ```bash
+   # Get the pod name first
+   kubectl get pods -n collector | grep github
+   
+   # Then view logs using the pod name (replace with your actual pod name)
+   kubectl logs -n collector otel-github-collector-collector-<pod-id> --tail=50
+   
+   # Or view logs and filter for GitHub-related messages
+   kubectl logs -n collector otel-github-collector-collector-<pod-id> | grep -i "github\|metrics\|repository"
+   ```
+
+   You should see messages like:
+   - `starting the GitHub scraper` - indicates the receiver started successfully
+   - `Metrics` with `vcs.repository.count` - shows metrics are being collected
+   - If you see `connection refused` errors, the gateway collector may not be running yet
+
+3. View metrics in OpenObserve:
+   - Navigate to [http://localhost:5080](http://localhost:5080)
+   - Log in with `root@example.com` / `Complexpass#123`
+   - **Go to the "Metrics" section** (click "Metrics" in the left sidebar - bar chart icon)
+   - **Query your metrics** using the query builder:
+     - Search for: `vcs.repository.count` or `vcs_repository_count`
+     - Or search for: `vcs.contributor.count` or `vcs_contributor_count`
+     - Or search for: `organization.name="liatrio"` to see all metrics for your organization
+   - **Note**: The "Streams" view may show 0 events even when data is ingested - use the "Metrics" query interface to view your data
+
+### What Metrics Are Collected?
+
+The GitHub receiver collects various repository metrics including:
+
+- **Repository count** (`vcs.repository.count`) - Number of repositories found
+- **Contributor counts** (`vcs.contributor.count`) - Number of contributors per repository
+- **Change/Pull Request metrics** (`vcs.change.count`, `vcs.change.duration`, etc.) - PR counts and durations
+- **Repository metadata** - Repository names, URLs, organization info
+- **DORA metrics** (when combined with deployment events)
+
+**Available Metrics:**
+- `vcs.repository.count` - Total repositories
+- `vcs.contributor.count` - Contributors per repository
+- `vcs.change.count` - Pull requests (by state: open/merged)
+- `vcs.change.duration` - Time PRs are open
+- `vcs.change.time_to_approval` - Time to approval
+- `vcs.change.time_to_merge` - Time to merge
+- `vcs.ref.count` - Branch/tag counts
+- `vcs.ref.lines_delta` - Lines changed
+- `vcs.ref.revisions_delta` - Number of commits
+- `vcs.ref.time` - Time metrics for branches
+
+**Note**: Commit-level data (individual commits) is not collected - only aggregated metrics like commit counts (`vcs.ref.revisions_delta`) are available.
+
+Metrics are sent to the gateway collector and then forwarded to your observability backends (OpenObserve, Prometheus, etc.).
+
+### Understanding OpenObserve: Streams, Metrics, and Attributes
+
+#### What are Streams?
+
+**Streams** in OpenObserve are like "buckets" or "tables" that store your telemetry data. Each stream corresponds to a metric name (like `vcs_repository_count`). Think of streams as containers that hold data points.
+
+- **Streams view** shows metadata about streams (names, types, sizes)
+- **Metrics query interface** is where you actually query and visualize the data
+
+#### Understanding Metrics and Attributes (Labels)
+
+Each metric has:
+- **Metric name**: e.g., `vcs.repository.count`
+- **Value**: The numeric value (e.g., `1` repository)
+- **Attributes/Labels**: Additional context like:
+  - `vcs.repository.name` = "Liatrio-Delivery-Methodology"
+  - `organization.name` = "liatrio"
+  - `team.name` = "tag-o11y"
+  - `vcs.change.state` = "open" or "merged"
+
+#### How to Visualize Metrics with Repository Names
+
+OpenObserve uses SQL-like syntax for querying metrics. Attribute names with dots may need to be quoted or accessed differently.
+
+**Basic Query Syntax:**
+
+1. **Simple metric query:**
+   ```
+   vcs_repository_count
+   ```
+   Note: Dots in metric names may be converted to underscores in OpenObserve.
+
+2. **Query with filters (try these variations):**
+   ```
+   vcs_repository_count WHERE "vcs.repository.name" = 'Liatrio-Delivery-Methodology'
+   ```
+   Or:
+   ```
+   vcs_repository_count WHERE vcs_repository_name = 'Liatrio-Delivery-Methodology'
+   ```
+
+3. **Group by repository (SQL syntax):**
+   ```
+   SELECT "vcs.repository.name", SUM(vcs_change_count) 
+   FROM metrics 
+   GROUP BY "vcs.repository.name"
+   ```
+   Or try:
+   ```
+   SELECT vcs_repository_name, SUM(vcs_change_count) 
+   FROM metrics 
+   GROUP BY vcs_repository_name
+   ```
+
+**Important Notes:**
+- OpenObserve may convert dots (`.`) to underscores (`_`) in field names
+- Attribute names with dots may need to be quoted with double quotes: `"vcs.repository.name"`
+- Try the query builder UI to see available fields and their exact names
+- Use the autocomplete/suggestions in the query interface to see correct field names
+
+**Recommended Approach:**
+1. Start with a simple query: `vcs_repository_count` or `vcs_change_count`
+2. Use the query builder's field selector to see available attributes
+3. Build queries incrementally, checking what fields are actually available
+4. Use SQL `GROUP BY` syntax for grouping, not PromQL `by` syntax
+
+#### Example Queries (SQL-style)
+
+- **All repositories:**
+  ```sql
+  SELECT * FROM vcs_repository_count
+  ```
+
+- **PR counts by repository:**
+  ```sql
+  SELECT "vcs.repository.name", SUM(vcs_change_count) 
+  FROM metrics 
+  WHERE metric_name = 'vcs.change.count'
+  GROUP BY "vcs.repository.name"
+  ```
+
+- **Filter by organization:**
+  ```sql
+  SELECT * FROM metrics 
+  WHERE "organization.name" = 'liatrio'
+  ```
+
+**Tip:** Use OpenObserve's query builder interface to explore available metrics and attributes interactively, as the exact field names may vary based on how OpenObserve stores the data.
+
+### Troubleshooting
+
+**Issue: Pod fails to start or shows errors**
+- Verify your `.env` file exists and contains `GH_PAT=your_token`
+- Check that your PAT has the correct permissions (`repo` and `read:org`)
+- **If using an SSO-enabled organization**: Ensure you've authorized your token for SSO (see Step 1 above)
+- Check pod logs: `kubectl logs -n collector <github-collector-pod-name>`
+
+**Issue: No metrics appearing or 0 repositories found**
+- Verify the `github_org` and `search_query` match repositories you have access to
+- Check that your PAT has access to the repositories you're trying to scrape
+- **If using an SSO-enabled organization**: Ensure your token is authorized for SSO (see Step 1 above). This is a common cause of 0 repositories being found.
+- Test your search query on GitHub's search page to ensure it returns results
+- After changing `colconfig.yaml`, remember to run `make ghr` to apply the changes
+- Review collector logs for authentication errors or search query issues
+- Check logs to see what search query is being used: `kubectl logs -n collector <github-collector-pod-name> | grep -i "search\|query\|repository"`
+- If you see authentication errors in the logs, verify your token is authorized for SSO organizations
+
+**Issue: Rate limiting**
+- GitHub API has rate limits. The collector uses a 60-second collection interval by default
+- If you hit rate limits, increase the `collection_interval` in `colconfig.yaml`
+- Check your rate limit status: `curl -H "Authorization: token YOUR_PAT" https://api.github.com/rate_limit`
+
+**Issue: Timeout errors ("Client.Timeout exceeded while awaiting headers")**
+- The collector may timeout when scraping large repositories or repositories with many contributors
+- This is often seen in logs as: `error getting contributor count: Client.Timeout exceeded`
+- These errors are non-fatal - the collector will continue and retry on the next collection interval
+- If timeouts persist, consider:
+  - Filtering out very large repositories from your `search_query`
+  - Increasing the `collection_interval` to give more time between scrapes
+  - The collector will still collect basic repository metrics even if detailed metrics timeout
+
+**Issue: GraphQL query errors ("GraphQL query did not return the Commit Target")**
+- Some repositories may have unusual commit histories that cause GraphQL query failures
+- This error is typically non-fatal - the collector will skip that specific metric for that repository
+- Other metrics (like repository count, contributor count) will still be collected
+- If this error appears frequently, check if specific repositories are causing issues and consider excluding them from your search query
+
+**Issue: Connection refused to gateway collector**
+- If you see `connection refused` errors to `gateway-collector.collector.svc.cluster.local:4317`, the gateway collector may not be running
+- Check gateway collector status: `kubectl get pods -n collector | grep gateway`
+- The GitHub collector will still collect metrics (visible in debug logs) but won't forward them until the gateway collector is running
+- This is expected if the gateway collector pod is in `CrashLoopBackOff` state
+
+### Deprecated: Git Provider Receiver
+
+The Git Provider Receiver is deprecated. Use the GitHub Receiver instead (instructions above).
 
 ### Git Provider Receiver (GitLab)
 
