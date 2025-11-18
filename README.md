@@ -136,37 +136,7 @@ Once Tilt is running, you can access the services:
 
 Port forwarding is automatically enabled when running Tilt. The Tilt dashboard shows the status of all services and provides easy access to logs.
 
-**Verifying services are running:**
-
-### Step 6: Set Up Integrations (Optional)
-
-After the stack is running, you can optionally add GitHub or GitLab integrations to collect repository metrics:
-
-#### GitHub Integration
-
-```bash
-# Set up GitHub PAT interactively
-make setup-github
-
-# Deploy the GitHub receiver
-make deploy-github
-```
-
-See the [GitHub Integration](#github-integration) section below for detailed instructions.
-
-#### GitLab Integration
-
-```bash
-# Set up GitLab PAT interactively
-make setup-gitlab
-
-# Deploy the GitLab receiver
-make deploy-gitlab
-```
-
-See the [GitLab Integration](#gitlab-integration) section below for detailed instructions.
-
-**Note:** Integrations are optional. The observability stack works without them - you just won't have repository metrics.
+### Step 6: Verify Services Are Running
 
 You can verify that pods are running in your cluster:
 
@@ -205,7 +175,37 @@ values that are default in the OpenObserve Statefulset.
 > **Note**: These are default credentials, not to be used for any production
 > deployment.
 
-### Step 6: Stopping the Project
+### Step 7: Set Up Integrations (Optional)
+
+After the stack is running, you can optionally add GitHub or GitLab integrations to collect repository metrics:
+
+#### GitHub Integration
+
+```bash
+# Set up GitHub PAT interactively
+make setup-github
+
+# Deploy the GitHub receiver
+make deploy-github
+```
+
+See the [GitHub Integration](#github-integration) section below for detailed instructions.
+
+#### GitLab Integration
+
+```bash
+# Set up GitLab PAT interactively
+make setup-gitlab
+
+# Deploy the GitLab receiver
+make deploy-gitlab
+```
+
+See the [GitLab Integration](#gitlab-integration) section below for detailed instructions.
+
+**Note:** Integrations are optional. The observability stack works without them - you just won't have repository metrics.
+
+### Step 8: Stopping the Project
 
 To stop the project, press `Ctrl+C` in the terminal where Tilt is running. This will stop Tilt and the port forwarding, but the k3d cluster will remain running.
 
@@ -429,8 +429,9 @@ By default, the GitHub receiver scrapes repositories from the `liatrio` organiza
    export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
    
    # Apply the updated configuration
-   make ghr
+   make deploy-github
    ```
+   (You can also use `make ghr` - both commands do the same thing)
 
    This will update the OpenTelemetry Collector configuration and restart the pod with the new settings. The collector will pick up the changes within the `collection_interval` (default: 60 seconds).
 
