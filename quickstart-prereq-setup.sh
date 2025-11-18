@@ -37,10 +37,15 @@ install_homebrew
 # Install Docker Desktop
 install_brew_cask docker
 
-# Install k3d, kubectl, kustomize, and Tilt
+# Install k3d, kubectl, kustomize, Tilt, and helm
 install_brew_package k3d
 install_brew_package kubectl
 install_brew_package kustomize
 install_brew_package tilt
+install_brew_package helm
 
-echo "Installation complete! Ensure Docker Desktop is running before using k3d."
+echo ""
+echo "Installation complete! Next steps:"
+echo "1. Start Docker Desktop (if not already running)"
+echo "2. Run 'make setup' to verify everything is configured correctly"
+echo "3. Run 'make' to start the observability stack"

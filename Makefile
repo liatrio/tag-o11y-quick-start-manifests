@@ -72,6 +72,11 @@ setup-github:
 	@chmod +x scripts/setup-github.sh
 	@./scripts/setup-github.sh
 
+.PHONY: setup-gitlab
+setup-gitlab:
+	@chmod +x scripts/setup-gitlab.sh
+	@./scripts/setup-gitlab.sh
+
 .PHONY: ghr
 ghr:
 	@if [ ! -f ./collectors/githubreceiver/.env ]; then \
@@ -102,7 +107,31 @@ ghr:
 
 .PHONY: glr
 glr:
-	kubectl apply -k ./collectors/gitlabreceiver/
+	@if [ ! -f ./collectors/gitlabreceiver/.env ]; then \
+		echo "ERROR: GitLab PAT not configured. Run 'make setup-gitlab' first."; \
+		exit 1; \
+	fi
+	@if [ ! -s ./collectors/gitlabreceiver/.env ]; then \
+		echo "ERROR: GitLab PAT file exists but is empty. Run 'make setup-gitlab' to configure it."; \
+		exit 1; \
+	fi
+	@if ! grep -q "^GL_PAT=" ./collectors/gitlabreceiver/.env || grep -q "^GL_PAT=$$" ./collectors/gitlabreceiver/.env || grep -q "GL_PAT=YOUR_TOKEN_HERE" ./collectors/gitlabreceiver/.env; then \
+		echo "ERROR: GitLab PAT is not set in .env file. Run 'make setup-gitlab' to configure it."; \
+		exit 1; \
+	fi
+	@echo "Applying GitLab receiver configuration..."
+	@export KUBECONFIG=$$HOME/.config/k3d/kubeconfig-otel-basic.yaml; \
+	echo "Building kustomize resources..."; \
+	if ! kustomize build ./collectors/gitlabreceiver/ > /tmp/glr-resources.yaml 2>&1; then \
+		echo "ERROR: kustomize build failed. Check ./collectors/gitlabreceiver/.env file."; \
+		exit 1; \
+	fi; \
+	echo "Applying resources..."; \
+	if ! kubectl apply -f /tmp/glr-resources.yaml; then \
+		echo "ERROR: kubectl apply failed. Check cluster connectivity."; \
+		exit 1; \
+	fi; \
+	echo "GitLab receiver deployed successfully!"
 
 .PHONY: eck-operator
 eck-operator:

@@ -24,6 +24,8 @@ It can optionally install the following services: (requires reading through the 
 
 ## Prerequisites
 
+> **New to command-line tools?** Check out [quickstart-prereq-readme.md](./quickstart-prereq-readme.md) for a step-by-step guide designed for less technical users.
+
 > OSX users with [Homebrew][brew] installed can install the Prerequisites by running the command `brew bundle`
 
 1. **Docker must be running** - Ensure Docker Desktop is installed and running before proceeding. The project uses k3d which requires Docker to be active.
@@ -67,9 +69,9 @@ This will:
 - ✅ Check if Docker is running
 - ✅ Verify all prerequisites are installed (k3d, kubectl, kustomize, tilt, helm)
 - ✅ Configure kubectl context automatically
-- ✅ Check GitHub receiver setup status
+- ✅ Check integration setup status (GitHub/GitLab - informational only)
 
-If any checks fail, the script will tell you exactly what to fix.
+If any checks fail, the script will tell you exactly what to fix. Integration setup is optional - you can run `make` without them.
 
 ### Option 2: Manual Setup
 
@@ -138,6 +140,36 @@ Once Tilt is running, you can access the services:
 Port forwarding is automatically enabled when running Tilt. The Tilt dashboard shows the status of all services and provides easy access to logs.
 
 **Verifying services are running:**
+
+### Step 6: Set Up Integrations (Optional)
+
+After the stack is running, you can optionally add GitHub or GitLab integrations to collect repository metrics:
+
+#### GitHub Integration
+
+```bash
+# Set up GitHub PAT interactively
+make setup-github
+
+# Deploy the GitHub receiver
+make ghr
+```
+
+See the [GitHub Integration](#github-integration) section below for detailed instructions.
+
+#### GitLab Integration
+
+```bash
+# Set up GitLab PAT interactively
+make setup-gitlab
+
+# Deploy the GitLab receiver
+make glr
+```
+
+See the [GitLab Integration](#gitlab-integration) section below for detailed instructions.
+
+**Note:** Integrations are optional. The observability stack works without them - you just won't have repository metrics.
 
 You can verify that pods are running in your cluster:
 
@@ -626,9 +658,146 @@ OpenObserve uses SQL-like syntax for querying metrics. Attribute names with dots
 
 The Git Provider Receiver is deprecated. Use the GitHub Receiver instead (instructions above).
 
-### Git Provider Receiver (GitLab)
+## GitLab Integration
 
-<!-- TODO: Add instructions for GitLab -->
+The GitLab Receiver collects metrics from your GitLab repositories and sends them to your observability stack, similar to the GitHub receiver. This enables you to track DORA metrics, contributor counts, and other repository-level metrics from GitLab.
+
+### Prerequisites
+
+- A GitLab account (GitLab.com or self-hosted instance)
+- A GitLab Personal Access Token (PAT) with appropriate permissions
+- The observability stack running (see [Quick Start](#quick-start))
+
+### Step 1: Set Up GitLab Integration (Recommended)
+
+The easiest way to configure the GitLab receiver is using the interactive setup script:
+
+```bash
+make setup-gitlab
+```
+
+This script will:
+- ✅ Guide you through creating a GitLab PAT
+- ✅ Prompt you to enter your token securely (input is hidden)
+- ✅ Save the token to the correct location
+- ✅ Provide next steps for deployment
+
+### Step 2: Manual GitLab Setup (Alternative)
+
+If you prefer to set it up manually:
+
+#### Create a GitLab Personal Access Token
+
+1. Go to GitLab and log in to your account
+2. Click your profile picture → **Edit profile**
+3. In the left sidebar, click **Access Tokens**
+4. Give your token a descriptive name (e.g., `Observability Stack`)
+5. Set an expiration date (optional but recommended)
+6. Select the following scopes:
+   - `read_api` - Required for API access
+   - `read_repository` - Required to read repository data
+   - `read_user` - Required to read user information
+7. Click **Create personal access token**
+8. **Copy the token immediately** - GitLab will only show it once!
+
+For detailed instructions, see [gitlab-pat-readme.md](./gitlab-pat-readme.md).
+
+#### Configure the GitLab Receiver
+
+1. Create the `.env` file in the GitLab receiver directory:
+
+   ```bash
+   # Create the .env file
+   touch ./collectors/gitlabreceiver/.env
+   ```
+
+2. Add your GitLab PAT to the `.env` file:
+
+   ```bash
+   # Add your token (replace YOUR_TOKEN_HERE with your actual token)
+   echo "GL_PAT=YOUR_TOKEN_HERE" > ./collectors/gitlabreceiver/.env
+   ```
+
+   Or manually edit the file:
+
+   ```bash
+   # Open the file in your editor
+   nano ./collectors/gitlabreceiver/.env
+   # Add this line:
+   GL_PAT=glpat_your_actual_token_here
+   ```
+
+   > **Security Note**: The `.env` file is in `.gitignore` and will not be committed to git. Never commit your PAT to version control.
+
+### Step 3: Customize Configuration (Optional)
+
+By default, the GitLab receiver scrapes repositories from GitLab.com. To customize:
+
+1. Edit `./collectors/gitlabreceiver/colconfig.yaml`
+2. Update the `gitlab_org` field to your GitLab organization/group name
+3. Update the `endpoint` field if using a self-hosted GitLab instance:
+   ```yaml
+   endpoint: https://your-gitlab-instance.com/
+   ```
+   (Default is `https://gitlab.com/` for GitLab.com)
+4. Update the `team.name` if you want to associate metrics with a specific team
+
+### Step 4: Deploy the GitLab Receiver
+
+With your observability stack running and the `.env` file configured:
+
+```bash
+# Ensure you're using the k3d context (usually done automatically by make)
+export KUBECONFIG=$HOME/.config/k3d/kubeconfig-otel-basic.yaml
+
+# Deploy the GitLab receiver
+make glr
+```
+
+**Note**: The `make glr` command now automatically checks if your GitLab PAT is configured. If it's missing, you'll be prompted to run `make setup-gitlab` first.
+
+This will:
+- ✅ Create a Kubernetes secret from your `.env` file
+- ✅ Deploy an OpenTelemetry Collector configured to scrape GitLab
+- ✅ Start collecting metrics from your specified repositories
+
+### Step 5: Verify the GitLab Receiver is Working
+
+1. Check that the collector pod is running:
+
+   ```bash
+   kubectl get pods -n collector | grep gitlab
+   ```
+
+   You should see `otel-gitlab-collector-*` pod in `Running` status.
+
+2. Check the collector logs:
+
+   ```bash
+   # Get the pod name first
+   kubectl get pods -n collector | grep gitlab
+   
+   # Then view logs using the pod name
+   kubectl logs -n collector otel-gitlab-collector-collector-<pod-id> --tail=50
+   ```
+
+3. View metrics in OpenObserve - GitLab metrics will appear alongside GitHub metrics, distinguished by the `vcs.vendor.name` attribute set to `gitlab`.
+
+### Troubleshooting GitLab Receiver
+
+**Issue: Pod fails to start or shows errors**
+- Verify your `.env` file exists and contains `GL_PAT=your_token`
+- Check pod logs: `kubectl logs -n collector <gitlab-pod-name>`
+
+**Issue: No metrics appearing**
+- Verify your PAT has the correct permissions (`read_api`, `read_repository`, `read_user`)
+- Check that `gitlab_org` in `colconfig.yaml` matches your GitLab organization/group
+- Verify the `endpoint` is correct if using self-hosted GitLab
+- Check collector logs for authentication errors
+
+**Issue: Wrong endpoint**
+- If using self-hosted GitLab, update the `endpoint` field in `colconfig.yaml`
+- Default is `https://gitlab.com/` for GitLab.com
 
 ## DORA
 

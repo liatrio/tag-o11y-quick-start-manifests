@@ -35,20 +35,65 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+# Detect platform
+detect_platform() {
+    case "$(uname -s)" in
+        Darwin*)
+            echo "macos"
+            ;;
+        Linux*)
+            echo "linux"
+            ;;
+        MINGW*|MSYS*|CYGWIN*)
+            echo "windows"
+            ;;
+        *)
+            echo "unknown"
+            ;;
+    esac
+}
+
 # Check if Docker is running
 check_docker() {
     print_header "Checking Docker"
     
     if ! command_exists docker; then
         print_error "Docker is not installed"
-        print_info "Install Docker Desktop from https://www.docker.com/products/docker-desktop"
-        print_info "Or run: brew install --cask docker"
+        local platform=$(detect_platform)
+        case "$platform" in
+            macos)
+                print_info "Install Docker Desktop from https://www.docker.com/products/docker-desktop"
+                print_info "Or run: brew install --cask docker"
+                ;;
+            linux)
+                print_info "Install Docker from https://docs.docker.com/get-docker/"
+                print_info "Or use your distribution's package manager"
+                ;;
+            windows)
+                print_info "Install Docker Desktop from https://www.docker.com/products/docker-desktop"
+                ;;
+            *)
+                print_info "Install Docker from https://www.docker.com/get-started"
+                ;;
+        esac
         return 1
     fi
     
     if ! docker ps >/dev/null 2>&1; then
         print_error "Docker is installed but not running"
-        print_info "Please start Docker Desktop and wait for it to fully start"
+        local platform=$(detect_platform)
+        case "$platform" in
+            macos|windows)
+                print_info "Please start Docker Desktop and wait for it to fully start"
+                ;;
+            linux)
+                print_info "Start Docker with: sudo systemctl start docker"
+                print_info "Or: sudo service docker start"
+                ;;
+            *)
+                print_info "Please start Docker and wait for it to fully start"
+                ;;
+        esac
         return 1
     fi
     
@@ -56,15 +101,68 @@ check_docker() {
     return 0
 }
 
+# Get installation instructions for a tool based on platform
+get_install_instructions() {
+    local tool=$1
+    local platform=$(detect_platform)
+    
+    case "$platform" in
+        macos)
+            if command_exists brew; then
+                echo "brew install $tool"
+            else
+                echo "Install Homebrew first, then: brew install $tool"
+            fi
+            ;;
+        linux)
+            case "$tool" in
+                k3d)
+                    echo "curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash"
+                    ;;
+                kubectl)
+                    echo "See: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/"
+                    ;;
+                kustomize)
+                    echo "curl -s \"https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh\" | bash"
+                    ;;
+                tilt)
+                    echo "curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash"
+                    ;;
+                helm)
+                    echo "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash"
+                    ;;
+                *)
+                    echo "Install $tool using your distribution's package manager"
+                    ;;
+            esac
+            ;;
+        windows)
+            case "$tool" in
+                k3d|kubectl|kustomize|tilt|helm)
+                    echo "Install $tool using Chocolatey: choco install $tool"
+                    echo "Or download from: https://github.com/$tool"
+                    ;;
+                *)
+                    echo "Install $tool from https://github.com/$tool"
+                    ;;
+            esac
+            ;;
+        *)
+            echo "Install $tool from https://github.com/$tool"
+            ;;
+    esac
+}
+
 # Check prerequisites
 check_prerequisites() {
     print_header "Checking Prerequisites"
     
     local missing=0
+    local platform=$(detect_platform)
     
     if ! command_exists k3d; then
         print_error "k3d is not installed"
-        print_info "Install with: brew install k3d"
+        print_info "Install with: $(get_install_instructions k3d)"
         missing=$((missing + 1))
     else
         print_success "k3d is installed"
@@ -72,7 +170,7 @@ check_prerequisites() {
     
     if ! command_exists kubectl; then
         print_error "kubectl is not installed"
-        print_info "Install with: brew install kubectl"
+        print_info "Install with: $(get_install_instructions kubectl)"
         missing=$((missing + 1))
     else
         print_success "kubectl is installed"
@@ -80,7 +178,7 @@ check_prerequisites() {
     
     if ! command_exists kustomize; then
         print_error "kustomize is not installed"
-        print_info "Install with: brew install kustomize"
+        print_info "Install with: $(get_install_instructions kustomize)"
         missing=$((missing + 1))
     else
         print_success "kustomize is installed"
@@ -88,7 +186,7 @@ check_prerequisites() {
     
     if ! command_exists tilt; then
         print_error "tilt is not installed"
-        print_info "Install with: brew install tilt"
+        print_info "Install with: $(get_install_instructions tilt)"
         missing=$((missing + 1))
     else
         print_success "tilt is installed"
@@ -96,7 +194,7 @@ check_prerequisites() {
     
     if ! command_exists helm; then
         print_error "helm is not installed"
-        print_info "Install with: brew install helm"
+        print_info "Install with: $(get_install_instructions helm)"
         missing=$((missing + 1))
     else
         print_success "helm is installed"
@@ -104,7 +202,9 @@ check_prerequisites() {
     
     if [ $missing -gt 0 ]; then
         print_warning "$missing prerequisite(s) missing"
-        print_info "Install all prerequisites with: brew bundle"
+        if [ "$platform" = "macos" ] && command_exists brew; then
+            print_info "On macOS with Homebrew, you can install all prerequisites with: brew bundle"
+        fi
         return 1
     fi
     
@@ -142,25 +242,43 @@ configure_kubectl() {
     fi
 }
 
-# Check GitHub receiver setup
-check_github_setup() {
-    print_header "Checking GitHub Receiver Setup"
+# Check integration setup (non-blocking)
+check_integrations() {
+    print_header "Checking Integration Setup"
     
-    local env_file="./collectors/githubreceiver/.env"
+    local github_env="./collectors/githubreceiver/.env"
+    local gitlab_env="./collectors/gitlabreceiver/.env"
+    local integrations_configured=0
     
-    if [ -f "$env_file" ]; then
-        if grep -q "GH_PAT=" "$env_file" && ! grep -q "GH_PAT=$" "$env_file" && ! grep -q "GH_PAT=YOUR_TOKEN_HERE" "$env_file"; then
-            print_success "GitHub PAT is configured"
+    # Check GitHub
+    if [ -f "$github_env" ]; then
+        if grep -q "GH_PAT=" "$github_env" && ! grep -q "GH_PAT=$" "$github_env" && ! grep -q "GH_PAT=YOUR_TOKEN_HERE" "$github_env"; then
+            print_success "GitHub integration is configured"
+            integrations_configured=$((integrations_configured + 1))
         else
-            print_warning "GitHub PAT file exists but token may not be set"
-            print_info "Edit $env_file and set your GH_PAT"
+            print_info "GitHub: Not configured (run 'make setup-github' to set up)"
         fi
     else
-        print_warning "GitHub PAT not configured"
-        print_info "To set up GitHub integration:"
-        print_info "  1. Create a GitHub PAT with 'repo' and 'read:org' permissions"
-        print_info "  2. Run: echo 'GH_PAT=your_token_here' > $env_file"
-        print_info "  3. Run: make ghr"
+        print_info "GitHub: Not configured (run 'make setup-github' to set up)"
+    fi
+    
+    # Check GitLab
+    if [ -f "$gitlab_env" ]; then
+        if grep -q "GL_PAT=" "$gitlab_env" && ! grep -q "GL_PAT=$" "$gitlab_env" && ! grep -q "GL_PAT=YOUR_TOKEN_HERE" "$gitlab_env"; then
+            print_success "GitLab integration is configured"
+            integrations_configured=$((integrations_configured + 1))
+        else
+            print_info "GitLab: Not configured (run 'make setup-gitlab' to set up)"
+        fi
+    else
+        print_info "GitLab: Not configured (run 'make setup-gitlab' to set up)"
+    fi
+    
+    if [ $integrations_configured -eq 0 ]; then
+        print_info "No integrations configured. This is optional - you can run 'make' without them."
+        print_info "To add integrations later:"
+        print_info "  - GitHub: make setup-github"
+        print_info "  - GitLab: make setup-gitlab"
     fi
 }
 
@@ -187,8 +305,8 @@ main() {
     # Configure kubectl (non-fatal)
     configure_kubectl
     
-    # Check GitHub setup (non-fatal)
-    check_github_setup
+    # Check integrations (non-fatal, informational only)
+    check_integrations
     
     echo ""
     print_header "Setup Check Complete"
