@@ -30,6 +30,16 @@ datasources:
     url: http://loki.loki.svc:3100
     editable: true
     isDefault: false
+  - name: OpenObserve Logs
+    uid: openobserve-logs
+    type: loki
+    url: http://openobserve.openobserve.svc.cluster.local:5080/api/default/
+    editable: true
+    isDefault: false
+    jsonData:
+      httpHeaderName1: 'Authorization'
+    secureJsonData:
+      httpHeaderValue1: 'Basic cm9vdEBleGFtcGxlLmNvbTpDb21wbGV4cGFzcyMxMjM='
   - name: Tempo
     type: tempo
     access: proxy

@@ -9,12 +9,16 @@
       azuredevops:
         initial_delay: 10s
         collection_interval: 300s  # 5 minutes - ADO API has rate limits
+        # Retry configuration for handling rate limits and transient failures
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 30s
+          max_elapsed_time: 300s  # Max 5 minutes of retries
         scrapers:
           azuredevops:
-            metrics:
-              # Optional metric - enable to get contributor counts
-              vcs.contributor.count:
-                enabled: true
+            # HTTP client timeout for slow API responses, especially Release Management API (default: 15s)
+            timeout: 120s
             organization: ${env:ADO_ORG}
             project: ${env:ADO_PROJECT}
             # Base URL for Azure DevOps API (required)
@@ -22,7 +26,11 @@
             # Optional: limit PR queries to last 30 days to reduce API calls
             limit_pull_requests: 30
             # Optional: custom search query (defaults to empty string if not set)
-            search_query: "${env:ADO_SEARCH_QUERY:-}"
+            search_query: ${env:ADO_SEARCH_QUERY}
+            # Optional: Deployment metrics configuration (all optional)
+            deployment_pipeline_name: ${env:ADO_DEPLOYMENT_PIPELINE}
+            deployment_stage_name: ${env:ADO_DEPLOYMENT_STAGE}
+            deployment_lookback_days: ${env:ADO_DEPLOYMENT_LOOKBACK_DAYS}
             auth:
               authenticator: bearertokenauth/azuredevops
 
@@ -92,4 +100,22 @@
         secretKeyRef:
           name: azuredevops-pat
           key: ADO_SEARCH_QUERY
+          optional: true
+    - name: ADO_DEPLOYMENT_PIPELINE
+      valueFrom:
+        secretKeyRef:
+          name: azuredevops-pat
+          key: ADO_DEPLOYMENT_PIPELINE
+          optional: true
+    - name: ADO_DEPLOYMENT_STAGE
+      valueFrom:
+        secretKeyRef:
+          name: azuredevops-pat
+          key: ADO_DEPLOYMENT_STAGE
+          optional: true
+    - name: ADO_DEPLOYMENT_LOOKBACK_DAYS
+      valueFrom:
+        secretKeyRef:
+          name: azuredevops-pat
+          key: ADO_DEPLOYMENT_LOOKBACK_DAYS
           optional: true

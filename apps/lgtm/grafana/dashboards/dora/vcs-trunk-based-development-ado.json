@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "VCS metrics for Azure DevOps repositories. Note: PR count and approval time metrics are not yet implemented in the ADO receiver. Includes metrics that align with Trunk Based Development and Small Batch Delivery.",
+  "description": "VCS metrics for Azure DevOps repositories. Note: PR approval time metrics are not yet implemented in the ADO receiver. Includes metrics that align with Trunk Based Development and Small Batch Delivery.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -31,7 +31,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "openobserve-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -94,7 +94,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -186,7 +186,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -283,7 +283,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -387,7 +387,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -457,7 +457,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -534,7 +534,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -604,7 +604,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -705,7 +705,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "vcs_change_duration{vcs_repository_name=~\"$repo\", team_name=~\"$team\",vcs_change_state=\"open\"} / 86400",
@@ -782,7 +782,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -848,7 +848,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -914,7 +914,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "ceil(avg by(team_name) (vcs_change_count{ vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"})) > 1",
@@ -980,7 +980,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "avg by(vcs_repository_name) (vcs_ref_time{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}) / 86400",
@@ -1076,7 +1076,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "vcs_contributor_count{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
@@ -1175,7 +1175,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "vcs_ref_count{vcs_repository_name=~\"$repo\", team_name=~\"$team\"} - 1",
@@ -1272,7 +1272,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "vcs_ref_time{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
@@ -1371,7 +1371,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -1472,7 +1472,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "vcs_change_duration{vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"}",
@@ -1484,103 +1484,6 @@
         }
       ],
       "title": "Open Pull Request Age",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": true,
-            "axisCenteredZero": false,
-            "axisColorMode": "series",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 50,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 77
-      },
-      "id": 13,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "maxHeight": 600,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "vcs_change_time_to_approval{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{vcs_repository_name}}/{{branch_name}}",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Approved Pull Request Age",
       "type": "timeseries"
     },
     {
@@ -1665,7 +1568,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "vcs_change_count{vcs_change_state=\"merged\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
@@ -1762,7 +1665,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "openobserve-metrics"
           },
           "editorMode": "code",
           "expr": "vcs_change_time_to_merge{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}",
@@ -1775,6 +1678,176 @@
       ],
       "title": "Merged Pull Request Age",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "openobserve-metrics"
+      },
+      "description": "Code coverage percentage by repository and branch",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 40
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 100
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": ["last", "mean"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "openobserve-metrics"
+          },
+          "editorMode": "code",
+          "expr": "vcs_code_coverage{team_name=~\"$team\", vcs_repository_name=~\"$repo\"}",
+          "instant": false,
+          "legendFormat": "{{vcs_repository_name}} - {{vcs_ref_head_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Code Coverage by Repository",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "openobserve-metrics"
+      },
+      "description": "Average code coverage across all repositories",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 100
+      },
+      "id": 31,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["mean"],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "openobserve-metrics"
+          },
+          "editorMode": "code",
+          "expr": "avg(vcs_code_coverage{team_name=~\"$team\", vcs_repository_name=~\"$repo\"})",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Average Code Coverage",
+      "type": "gauge"
     }
   ],
   "preload": false,
@@ -1841,7 +1914,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},

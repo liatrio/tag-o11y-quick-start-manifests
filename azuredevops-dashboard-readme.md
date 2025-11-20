@@ -23,7 +23,7 @@ The ADO dashboard differs from the GitHub dashboard in several ways:
 |---------|------------------|---------------|
 | Organization filter | ✅ Yes | ❌ No (ADO doesn't expose this) |
 | Metric suffix | `_seconds` | No suffix |
-| PR count metrics | ✅ Yes | ❌ Not implemented yet |
+| PR count metrics | ✅ Yes | ✅ Yes |
 | Approval time metrics | ✅ Yes | ❌ Not implemented yet |
 | Security/CVE metrics | ✅ Yes | ❌ Not available |
 | Label names | `repository_name` | `vcs_repository_name` |
