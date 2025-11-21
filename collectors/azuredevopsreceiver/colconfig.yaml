@@ -31,6 +31,13 @@
             deployment_pipeline_name: ${env:ADO_DEPLOYMENT_PIPELINE}
             deployment_stage_name: ${env:ADO_DEPLOYMENT_STAGE}
             deployment_lookback_days: ${env:ADO_DEPLOYMENT_LOOKBACK_DAYS}
+            # Optional: Work item metrics configuration
+            # Customize this list to match your Azure DevOps work item types
+            # Common types: "User Story", "Bug", "Task", "Feature", "Epic"
+            work_item_types:
+              - "User Story"
+              - "Bug"
+            work_item_lookback_days: ${env:ADO_WORK_ITEM_LOOKBACK_DAYS}
             auth:
               authenticator: bearertokenauth/azuredevops
 
@@ -118,4 +125,10 @@
         secretKeyRef:
           name: azuredevops-pat
           key: ADO_DEPLOYMENT_LOOKBACK_DAYS
+          optional: true
+    - name: ADO_WORK_ITEM_LOOKBACK_DAYS
+      valueFrom:
+        secretKeyRef:
+          name: azuredevops-pat
+          key: ADO_WORK_ITEM_LOOKBACK_DAYS
           optional: true

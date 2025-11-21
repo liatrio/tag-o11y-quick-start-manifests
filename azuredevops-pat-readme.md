@@ -29,17 +29,26 @@ A **Personal Access Token (PAT)** is used to authenticate with Azure DevOps when
 
 ## **Step 4: Set Token Permissions**
 
-For the Azure DevOps receiver to collect VCS metrics, you need the following **minimum permissions**:
+For the Azure DevOps receiver to collect metrics, you need the following permissions:
 
-### Required Scopes:
-- ✅ **Code** → **Read** (to access repository information)
+### Required Scopes (VCS Metrics):
+- ✅ **Code** → **Read** (to access repository information, branches, and pull requests)
 - ✅ **Project and Team** → **Read** (to access project metadata)
 
-### Optional (for future features):
-- **Work Items** → **Read** (if work item metrics are added)
-- **Build** → **Read** (if build metrics are added)
+### Optional Scopes (Additional Features):
+- **Release** → **Read** (required for deployment metrics from Release Management)
+- **Work Items** → **Read** (required for work item cycle time and age metrics)
+- **Build** → **Read** (for future build metrics support)
 
-**Important:** Use the principle of least privilege - only grant the permissions needed.
+**Important:** Use the principle of least privilege - only grant the permissions needed for your use case.
+
+### Permission Matrix by Feature:
+
+| Feature | Required Scopes |
+|---------|----------------|
+| VCS Metrics (branches, PRs, coverage) | Code (Read), Project and Team (Read) |
+| Deployment Metrics | Code (Read), Project and Team (Read), **Release (Read)** |
+| Work Item Metrics | Code (Read), Project and Team (Read), **Work Items (Read)** |
 
 ---
 
@@ -61,10 +70,22 @@ For the Azure DevOps receiver to collect VCS metrics, you need the following **m
    ```
 3. Add your credentials:
    ```bash
+   # Required
    ADO_PAT=your_personal_access_token_here
    ADO_ORG=your_organization_name
    ADO_PROJECT=your_project_name
-   ADO_SEARCH_QUERY=  # Optional: filter repos by name (e.g., "service")
+   
+   # Optional: VCS configuration
+   ADO_SEARCH_QUERY=  # Filter repos by name (e.g., "service")
+   
+   # Optional: Deployment metrics (requires Release Read permission)
+   ADO_DEPLOYMENT_PIPELINE=your_release_pipeline_name
+   ADO_DEPLOYMENT_STAGE=Production
+   ADO_DEPLOYMENT_LOOKBACK_DAYS=30
+   
+   # Optional: Work item metrics (requires Work Items Read permission)
+   # Note: work_item_types is configured in colconfig.yaml
+   ADO_WORK_ITEM_LOOKBACK_DAYS=30
    ```
 
 ### Security Notes:

@@ -52,3 +52,6 @@ configMapGenerator:
   - name: dashboard-ado-dora-simple
     files:
       - dashboards/dora/ado-dora-metrics-simple.json
+  - name: dashboard-ado-work-items
+    files:
+      - dashboards/dora/ado-work-items.json

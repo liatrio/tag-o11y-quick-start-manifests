@@ -6,12 +6,31 @@ This guide explains how to use the Azure DevOps VCS metrics dashboard with your 
 
 ## Overview
 
-The Azure DevOps dashboard (`vcs-trunk-based-development-ado.json`) provides visualization of VCS metrics collected from Azure DevOps repositories, including:
+This guide covers three Azure DevOps Grafana dashboards:
 
+1. **VCS Metrics Dashboard** (`vcs-trunk-based-development-ado.json`) - VCS metrics for trunk-based development
+2. **DORA Deployment Dashboard** (`ado-dora-metrics-simple.json`) - Deployment frequency, duration, and status
+3. **Work Items Dashboard** (`ado-work-items.json`) - Work item cycle time, age, and counts
+
+### VCS Metrics Dashboard
+Provides visualization of VCS metrics collected from Azure DevOps repositories:
 - **Branch Metrics**: Branch count, age, and distribution
 - **Pull Request Metrics**: Open PR duration and merged PR age
 - **Repository Metrics**: Repository and contributor counts
+- **Code Coverage**: Coverage percentage by repository
 - **Trunk-Based Development Indicators**: Average branch age and count
+
+### DORA Deployment Dashboard
+Tracks deployment metrics from Azure DevOps Release Management:
+- **Deployment Frequency**: Count of deployments by service and status
+- **Deployment Duration**: Average deployment time
+- **Last Deployment**: Timestamp of most recent deployment
+
+### Work Items Dashboard
+Monitors work item metrics for tracking development flow:
+- **Cycle Time**: Time from creation to closure for completed items
+- **Age**: Time since creation for open items
+- **Counts**: Number of items by type and state
 
 ---
 
@@ -52,11 +71,25 @@ The ADO dashboard differs from the GitHub dashboard in several ways:
 Create `.env` file in `collectors/azuredevopsreceiver/`:
 
 ```bash
+# Required
 ADO_PAT=your_personal_access_token
 ADO_ORG=your_organization_name
 ADO_PROJECT=your_project_name
-ADO_SEARCH_QUERY=  # Optional: filter repos (e.g., "service")
+
+# Optional: VCS configuration
+ADO_SEARCH_QUERY=  # Filter repos (e.g., "service")
+
+# Optional: Deployment metrics configuration
+ADO_DEPLOYMENT_PIPELINE=your_release_pipeline_name
+ADO_DEPLOYMENT_STAGE=Production
+ADO_DEPLOYMENT_LOOKBACK_DAYS=30
+
+# Optional: Work item metrics configuration
+# Note: work_item_types is configured in colconfig.yaml as a YAML array
+ADO_WORK_ITEM_LOOKBACK_DAYS=30
 ```
+
+**Note:** To enable deployment metrics, both `ADO_DEPLOYMENT_PIPELINE` and `ADO_DEPLOYMENT_STAGE` must be set. Work item types are configured in `colconfig.yaml`.
 
 ### 2. Deploy with Tilt
 
@@ -69,37 +102,61 @@ DEPLOY_ADO=true DEPLOY_LGTM=true make
 
 1. Navigate to [http://localhost:3001](http://localhost:3001)
 2. Login with default credentials (check Grafana docs)
-3. Go to **Dashboards** → **DORA** → **DORA VCS Metrics - Azure DevOps**
+3. Go to **Dashboards** → **DORA** and select:
+   - **DORA VCS Metrics - Azure DevOps** (VCS dashboard)
+   - **DORA Deployment Metrics - Azure DevOps** (Deployment dashboard)
+   - **Azure DevOps Work Items** (Work items dashboard)
 
 ### 4. Configure Dashboard Variables
 
-The dashboard has two variables:
-
+**VCS Dashboard:**
 - **team**: Filter by team name (from `team.name` resource attribute)
 - **repo**: Filter by repository name
+- Both support multi-select and "All" option
 
-Both support multi-select and "All" option.
+**Deployment Dashboard:**
+- No variables - shows all deployments
+
+**Work Items Dashboard:**
+- No variables - shows all work items by type and state
 
 ---
 
 ## Available Metrics
 
-### Implemented Metrics
+### VCS Metrics
 
 | Metric | Description | Type |
 |--------|-------------|------|
 | `vcs_repository_count` | Number of repositories | Gauge |
-| `vcs_contributor_count` | Number of contributors per repo | Gauge |
+| `vcs_contributor_count` | Number of contributors per repo | Gauge (optional) |
 | `vcs_ref_count` | Number of branches/refs per repo | Gauge |
 | `vcs_ref_time` | Age of branches in seconds | Gauge |
 | `vcs_change_duration` | Duration of open PRs in seconds | Gauge |
-| `vcs_change_time_to_merge` | Time to merge completed PRs | Histogram |
+| `vcs_change_count` | Number of PRs by state (open/merged) | Gauge |
+| `vcs_change_time_to_merge` | Time to merge completed PRs | Gauge |
+| `vcs_code_coverage` | Code coverage percentage | Gauge |
+
+### Deployment Metrics
+
+| Metric | Description | Type |
+|--------|-------------|------|
+| `deploy_deployment_count` | Number of deployments by service and status | Sum |
+| `deploy_deployment_duration` | Average deployment duration | Gauge |
+| `deploy_deployment_last_timestamp` | Unix timestamp of last deployment | Gauge |
+
+### Work Item Metrics
+
+| Metric | Description | Type |
+|--------|-------------|------|
+| `work_item_cycle_time` | Time from creation to closure (seconds) | Gauge |
+| `work_item_age` | Time since creation for open items (seconds) | Gauge |
+| `work_item_count` | Number of work items by type and state | Gauge |
 
 ### Not Yet Implemented
 
 | Metric | Status | Notes |
 |--------|--------|-------|
-| `vcs_change_count` | ❌ Not implemented | PR counts by state |
 | `vcs_change_time_to_approval` | ❌ Not implemented | Requires approval timestamp from API |
 | `vcs_cve_count` | ❌ Not available | Security metrics not provided by ADO receiver |
 
