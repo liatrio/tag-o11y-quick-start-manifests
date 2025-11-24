@@ -1195,6 +1195,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Count of open pull requests over time\n\nQuery: vcs_change_count{vcs_change_state=\"open\", vcs_repository_name=~\"$repo\"}\n\nThis time series displays the number of open pull requests for each repository over time. The vcs_change_count metric is filtered for the open state. Each line represents a repository. Increasing trends may indicate review bottlenecks or accumulating PRs. Stable or decreasing trends suggest healthy PR throughput.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1298,6 +1299,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Age of each open pull request\n\nQuery: vcs_change_duration{vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"}\n\nThis time series shows the age (in seconds) of each individual open pull request. Each line represents a specific PR. The vcs_change_duration metric tracks how long each PR has been in the open state. PRs aging as horizontal lines need attention. This helps identify stale PRs that may need follow-up or closure.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1395,6 +1397,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Count of merged pull requests over time\n\nQuery: vcs_change_count{vcs_change_state=\"merged\", vcs_repository_name=~\"$repo\", team_name=~\"$team\"}\n\nThis time series shows the number of merged pull requests for each repository over time. The vcs_change_count metric is filtered for the merged state. Each line represents a repository. This tracks PR throughput and merge velocity. Higher values indicate more frequent merges, which is positive for continuous integration.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1491,6 +1494,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Time to merge for merged pull requests\n\nQuery: vcs_change_time_to_merge{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}\n\nThis time series shows the time-to-merge (in seconds) for each merged pull request. The vcs_change_time_to_merge metric captures the duration from PR creation to merge. Each point represents a merged PR. Lower values indicate faster review and merge cycles, which is a key metric for small batch delivery and continuous integration.",
       "fieldConfig": {
         "defaults": {
           "color": {

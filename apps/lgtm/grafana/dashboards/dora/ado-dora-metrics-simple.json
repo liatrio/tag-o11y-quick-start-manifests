@@ -14,7 +14,7 @@
         "type": "prometheus",
         "uid": "openobserve-metrics"
       },
-      "description": "Total deployments by status",
+      "description": "Total deployments by status\n\nQuery: deploy_deployment_count\n\nThis metric shows the count of deployments grouped by service_name and deployment_status labels. The collector scrapes deployment data from Azure DevOps Release Management API and tracks each deployment's status (succeeded, failed, inProgress, etc.). Each time series represents a unique combination of service and status.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -105,7 +105,7 @@
         "type": "prometheus",
         "uid": "openobserve-metrics"
       },
-      "description": "Average deployment duration by service",
+      "description": "Average deployment duration by service\n\nQuery: deploy_deployment_average_duration\n\nThis metric calculates the average time (in seconds) a deployment takes from start to completion for each service. The duration is computed from the startedOn and completedOn timestamps in the Azure DevOps deployment data. Lower values indicate faster deployments.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -182,7 +182,7 @@
             "uid": "openobserve-metrics"
           },
           "editorMode": "code",
-          "expr": "deploy_deployment_duration",
+          "expr": "deploy_deployment_average_duration",
           "legendFormat": "{{service_name}}",
           "range": true,
           "refId": "A"
@@ -196,7 +196,7 @@
         "type": "prometheus",
         "uid": "openobserve-metrics"
       },
-      "description": "Deployment Frequency (deployments per day)",
+      "description": "Deployment Frequency (deployments per day)\n\nQuery: sum(deploy_deployment_count{deployment_status=\"succeeded\"})\n\nThis aggregates all successful deployments across all services. The query filters for only succeeded deployments and sums them to provide a total count. This is a key DORA metric indicating deployment frequency. Higher values suggest more frequent releases.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -265,7 +265,7 @@
         "type": "prometheus",
         "uid": "openobserve-metrics"
       },
-      "description": "Average deployment duration across all services",
+      "description": "Average deployment duration across all services\n\nQuery: avg(deploy_deployment_average_duration)\n\nThis calculates the mean deployment duration across all services by averaging the deploy_deployment_average_duration metric. The result shows overall deployment performance in seconds. This helps identify if deployment times are trending up or down across the organization.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -320,7 +320,7 @@
             "uid": "openobserve-metrics"
           },
           "editorMode": "code",
-          "expr": "avg(deploy_deployment_duration)",
+          "expr": "avg(deploy_deployment_average_duration)",
           "legendFormat": "Avg Duration",
           "range": true,
           "refId": "A"
@@ -334,7 +334,7 @@
         "type": "prometheus",
         "uid": "openobserve-metrics"
       },
-      "description": "Time of the most recent deployment",
+      "description": "Time of the most recent deployment\n\nQuery: max(deploy_deployment_last_timestamp) * 1000\n\nThis finds the most recent deployment timestamp across all services using the max() function on deploy_deployment_last_timestamp. The result is multiplied by 1000 to convert from seconds to milliseconds for Grafana's dateTimeFromNow formatter, which displays how long ago the last deployment occurred.",
       "fieldConfig": {
         "defaults": {
           "color": {
