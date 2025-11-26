@@ -8,7 +8,7 @@
     receivers:
       azuredevops:
         initial_delay: 10s
-        collection_interval: 300s  # 5 minutes - ADO API has rate limits
+        collection_interval: 900s  # 15 minutes - ADO API has rate limits
         # Retry configuration for handling rate limits and transient failures
         retry_on_failure:
           enabled: true
@@ -32,12 +32,8 @@
             deployment_stage_name: ${env:ADO_DEPLOYMENT_STAGE}
             deployment_lookback_days: ${env:ADO_DEPLOYMENT_LOOKBACK_DAYS}
             # Optional: Work item metrics configuration
-            # Customize this list to match your Azure DevOps work item types
-            # Common types: "User Story", "Bug", "Task", "Feature", "Epic"
-            work_item_types:
-              - "User Story"
-              - "Bug"
-            work_item_lookback_days: ${env:ADO_WORK_ITEM_LOOKBACK_DAYS}
+            work_items_enabled: true
+            work_item_lookback_days: 30
             auth:
               authenticator: bearertokenauth/azuredevops
 
@@ -125,10 +121,4 @@
         secretKeyRef:
           name: azuredevops-pat
           key: ADO_DEPLOYMENT_LOOKBACK_DAYS
-          optional: true
-    - name: ADO_WORK_ITEM_LOOKBACK_DAYS
-      valueFrom:
-        secretKeyRef:
-          name: azuredevops-pat
-          key: ADO_WORK_ITEM_LOOKBACK_DAYS
           optional: true

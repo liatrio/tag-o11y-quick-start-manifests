@@ -106,6 +106,7 @@
           "refId": "A"
         }
       ],
+      "description": "Distribution of branch ages across repositories (histogram)\n\nQuery: vcs_ref_time{vcs_repository_name=~\"$repo\", team_name=~\"$team\"} / 86400\n\nThis histogram shows the distribution of branch ages in days. Each bar represents a bucket of branches with similar ages. The vcs_ref_time metric measures how long each branch has existed since creation from the default branch. Trunk-based development encourages short-lived branches, so most branches should cluster in lower age buckets.",
       "title": "Branch Time Buckets",
       "transformations": [
         {
@@ -202,6 +203,7 @@
           "useBackend": false
         }
       ],
+      "description": "Distribution of open pull request ages (histogram)\n\nQuery: vcs_change_duration{vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"} / 86400\n\nThis histogram shows the distribution of how long open pull requests have been waiting. Each bar represents a bucket of PRs with similar open durations in days. PRs clustering in lower buckets indicate healthy review cycles. PRs in higher buckets may need attention or follow-up.",
       "title": "Pull Request Open Time Buckets",
       "transformations": [
         {
@@ -234,7 +236,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "",
+      "description": "Average age of all branches across the team (stat)\n\nQuery: avg by(team_name) (vcs_ref_time{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}) / 86400\n\nThis stat shows the average branch age in days across all repositories for the selected team. The vcs_ref_time metric tracks how long branches have existed. Lower values indicate adherence to trunk-based development practices with short-lived feature branches.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -306,7 +308,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "",
+      "description": "Branch age over time for each repository and branch (timeseries)\n\nQuery: vcs_ref_time{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}\n\nThis time series shows the age of each branch in seconds over time. Each line represents a specific branch in a repository. The vcs_ref_time metric tracks how long branches have existed since creation from the default branch. Lines trending upward indicate aging branches that may need to be merged or cleaned up.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -410,7 +412,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Average Open Branches",
+      "description": "Average number of open branches across the team (stat)\n\nQuery: avg by(team_name) (vcs_ref_count{vcs_repository_name=~\"$repo\", team_name=~\"$team\"})\n\nThis stat shows the average number of branches per repository for the selected team. The vcs_ref_count metric counts all branches in each repository. Lower values suggest teams are practicing trunk-based development with fewer parallel workstreams. High values may indicate too many long-lived branches.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -480,7 +482,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "",
+      "description": "Number of open branches per repository (bar gauge)\n\nQuery: avg by(vcs_repository_name) (vcs_ref_count{team_name=~\"$team\", vcs_repository_name=~\"$repo\"} > 1)\n\nDisplays the average count of open branches for each repository as horizontal bars. The vcs_ref_count metric is filtered to show only repositories with more than 1 branch (excluding just main). Each bar represents a repository. Longer bars indicate more parallel workstreams or feature branches, which can hinder continuous integration.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -619,6 +621,7 @@
           "useBackend": false
         }
       ],
+      "description": "Average duration of open pull requests in days (stat)\n\nQuery: avg by(team_name) (vcs_change_duration{team_name=~\"$team\", vcs_repository_name=~\"$repo\", vcs_change_state=\"open\"}) / 86400\n\nThis stat shows the average time that open PRs have been waiting for review/merge. The vcs_change_duration metric measures how long each PR has been in the open state. Lower values indicate faster review cycles. High values suggest bottlenecks in the code review process.",
       "title": "Average Open Pull Request Duration (Days)",
       "type": "stat"
     },
@@ -627,6 +630,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Age of each open pull request over time (timeseries)\n\nQuery: vcs_change_duration{vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"} / 86400\n\nThis time series shows the age of each open pull request in days. Each line represents a specific open PR. The vcs_change_duration metric tracks how long each PR has been open. Rising lines indicate PRs aging over time. PRs that appear as horizontal lines at high values need immediate attention.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -797,6 +801,7 @@
           "useBackend": false
         }
       ],
+      "description": "Total number of repositories for the team (stat)\n\nQuery: vcs_repository_count{team_name=~\"$team\"}\n\nThis stat shows the total count of repositories being monitored for the selected team. The vcs_repository_count metric provides a simple count of all repositories in the Azure DevOps project.",
       "title": "Repo Count",
       "type": "stat"
     },
@@ -805,6 +810,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Average number of branches per repository (gauge)\n\nQuery: ceil(avg by(team_name) (vcs_ref_count{vcs_repository_name=~\"$repo\", team_name=~\"$team\"})) > 1\n\nThis gauge shows the average branch count across all repositories. The vcs_ref_count metric counts branches per repository, and this query averages across all repos. Values > 1 are shown (excluding repos with only main branch). Lower values indicate trunk-based development practices.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -925,6 +931,7 @@
           "refId": "B"
         }
       ],
+      "description": "Average number of open pull requests per repository (gauge)\n\nQuery: ceil(avg by(team_name) (vcs_change_count{vcs_repository_name=~\"$repo\", team_name=~\"$team\", vcs_change_state=\"open\"})) > 1\n\nThis gauge shows the average count of open PRs across repositories. The vcs_change_count metric with state=open counts open PRs per repository. Lower values indicate PRs are being reviewed and merged promptly. High values may suggest review bottlenecks.",
       "title": "Average  Open Pull Request Count",
       "type": "gauge"
     },
@@ -933,6 +940,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Average branch age per repository in days (gauge)\n\nQuery: avg by(vcs_repository_name) (vcs_ref_time{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}) / 86400\n\nThis gauge shows the average branch age for each repository. Each gauge represents one repository. The vcs_ref_time metric tracks branch age in seconds, divided by 86400 to convert to days. Repositories with high average branch ages may have stale branches that need cleanup.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1090,6 +1098,7 @@
           "refId": "B"
         }
       ],
+      "description": "Number of branches per repository over time (timeseries)\n\nQuery: vcs_ref_count{vcs_repository_name=~\"$repo\", team_name=~\"$team\"} - 1\n\nThis time series shows the branch count for each repository over time (minus 1 to exclude the main branch). Each line represents a repository. The vcs_ref_count metric tracks the total number of branches. Rising lines indicate branch accumulation. Trunk-based development encourages keeping this number low.",
       "title": "Branch Count",
       "type": "timeseries"
     },
@@ -1098,6 +1107,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Age of each branch over time (timeseries)\n\nQuery: vcs_ref_time{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}\n\nThis time series shows the age (in seconds) of each branch over time. Each line represents a specific branch. The vcs_ref_time metric measures how long each branch has existed since creation from the default branch. Consistently rising lines indicate aging branches. Short-lived branches that disappear quickly indicate healthy practices.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1592,7 +1602,7 @@
         "type": "prometheus",
         "uid": "openobserve-metrics"
       },
-      "description": "Code coverage percentage by repository and branch",
+      "description": "Code coverage percentage by repository and branch (timeseries)\n\nQuery: vcs_code_coverage{vcs_repository_name=~\"$repo\", team_name=~\"$team\"}\n\nThis time series shows the code coverage percentage for each repository and branch over time. The vcs_code_coverage metric is collected from Azure DevOps build code coverage reports. Higher percentages indicate better test coverage. Dropping coverage may indicate new code without corresponding tests.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1693,7 +1703,7 @@
         "type": "prometheus",
         "uid": "openobserve-metrics"
       },
-      "description": "Average code coverage across all repositories",
+      "description": "Average code coverage across all repositories (gauge)\n\nQuery: avg(vcs_code_coverage{team_name=~\"$team\", vcs_repository_name=~\"$repo\"})\n\nThis gauge shows the average code coverage percentage across all monitored repositories. The vcs_code_coverage metric is collected from Azure DevOps build reports and averaged across all repos. DORA research suggests elite performers typically have higher code coverage. Green (>80%), Yellow (60-80%), Red (<60%).",
       "fieldConfig": {
         "defaults": {
           "color": {

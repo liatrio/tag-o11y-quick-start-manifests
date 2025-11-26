@@ -41,7 +41,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -132,7 +132,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -388,6 +388,81 @@
         }
       ],
       "title": "Last Deployment Time",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "openobserve-metrics"
+      },
+      "description": "Change Failure Rate (CFR) - Percentage of deployments that failed\n\nQuery: (sum(deploy_deployment_count{deployment_status=\"failed\"}) / sum(deploy_deployment_count)) * 100\n\nThis DORA metric calculates the percentage of deployments with status=failed. The scraper normalizes Azure DevOps statuses to OTel semantic conventions:\n\nCounted as FAILED: failed, partiallySucceeded, notDeployed (queued but never executed)\nCounted as SUCCEEDED: succeeded\nSkipped (non-final): inProgress, undefined\n\nLower is better. DORA benchmarks: Elite <15%, High 16-30%, Medium 31-45%, Low >45%.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 15
+              },
+              {
+                "color": "orange",
+                "value": 30
+              },
+              {
+                "color": "red",
+                "value": 45
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 17
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "openobserve-metrics"
+          },
+          "editorMode": "code",
+          "expr": "(sum(deploy_deployment_count{deployment_status=\"failed\"}) / sum(deploy_deployment_count)) * 100",
+          "legendFormat": "Change Failure Rate",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Change Failure Rate",
       "type": "stat"
     }
   ],
