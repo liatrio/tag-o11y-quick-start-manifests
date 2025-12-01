@@ -1,0 +1,20 @@
+# Azure DevOps Receiver Tiltfile
+# Deploys the Azure DevOps metrics scraper collector
+
+if k8s_context() != "k3d-otel-basic":
+  fail("Expected context to be k3d-otel-basic")
+
+k8s_yaml(kustomize("."), allow_duplicates=True)
+
+k8s_resource(
+  objects=[
+    "otel-azuredevops-collector:opentelemetrycollector"
+  ],
+  new_name="otel-azuredevops-collector",
+  labels=[
+    "otel-azuredevops-collector"
+  ],
+  resource_deps=[
+    "opentelemetry-operator-controller-manager"
+  ]
+)

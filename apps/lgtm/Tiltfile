@@ -5,7 +5,7 @@ k8s_yaml(kustomize("."), allow_duplicates=True)
 
 k8s_resource(
   workload="grafana",
-  port_forwards=3000,
+  port_forwards=3001,  # Changed from 3000 to avoid conflict with HyperDX
   labels=[
     "default-apps"
   ]

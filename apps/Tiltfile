@@ -5,12 +5,13 @@ USE_ARGO = os.getenv("DEPLOY_ARGO", False)
 USE_WEBHOOK = os.getenv("DEPLOY_WEBHOOK", False)
 USE_GITLAB = os.getenv("DEPLOY_GITLAB", False)
 USE_GITHUB = os.getenv("DEPLOY_GITHUB", False)
+USE_ADO = os.getenv("DEPLOY_ADO", False)
 USE_LGTM = os.getenv("DEPLOY_LGTM", False)
 USE_JAEGER = os.getenv("DEPLOY_JAEGER", False)
 
 include("../cluster-infra/cert-manager/Tiltfile")
 include("../cluster-infra/otel-operator/Tiltfile")
-include("../cluster-infra/clickstack/Tiltfile")
+# include("../cluster-infra/clickstack/Tiltfile")  # Disabled - not needed for ADO work
 
 if USE_ARGO:
     include("./argocd/Tiltfile")
@@ -23,6 +24,9 @@ if USE_GITLAB:
 
 if USE_GITHUB:
     include("../collectors/githubreceiver/Tiltfile")
+
+if USE_ADO:
+    include("../collectors/azuredevopsreceiver/Tiltfile")
 
 if USE_LGTM:
     include("./lgtm/Tiltfile")

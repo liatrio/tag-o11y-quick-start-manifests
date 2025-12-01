@@ -126,6 +126,52 @@ To deploy the GitHub Receiver
 
 <!-- TODO: Add instructions for GitLab -->
 
+### Azure DevOps Receiver
+
+To deploy the Azure DevOps Receiver and visualize VCS, deployment, and work item metrics in Grafana:
+
+1. **Create an Azure DevOps Personal Access Token (PAT)**
+   - See [azuredevops-pat-readme.md](./azuredevops-pat-readme.md) for detailed instructions
+   - Required scopes: 
+     - **Code (Read)** - for VCS metrics
+     - **Project and Team (Read)** - for project access
+     - **Release (Read)** - for deployment metrics (optional)
+     - **Work Items (Read)** - for work item metrics (optional)
+
+2. **Configure the receiver**
+   - Create a `./collectors/azuredevopsreceiver/.env` file with:
+     ```bash
+     # Required
+     ADO_PAT=your_personal_access_token
+     ADO_ORG=your_organization_name
+     ADO_PROJECT=your_project_name
+     ADO_SEARCH_QUERY=  # Optional: filter repos by name
+     
+     # Optional: Deployment metrics (leave blank to disable)
+     ADO_DEPLOYMENT_PIPELINE=Your Release Pipeline Name
+     ADO_DEPLOYMENT_STAGE=Production
+     ADO_DEPLOYMENT_LOOKBACK_DAYS=30
+     
+     # Optional: Work item metrics (leave blank to disable)
+     # Note: work_item_types is configured in colconfig.yaml
+     ADO_WORK_ITEM_LOOKBACK_DAYS=30
+     ```
+
+3. **Deploy with ADO receiver and Grafana**
+   ```bash
+   DEPLOY_ADO=true DEPLOY_LGTM=true make
+   ```
+
+4. **Access the dashboards**
+   - Navigate to [http://localhost:3001](http://localhost:3001)
+   - **VCS Metrics:** **Dashboards** → **DORA** → **DORA VCS Metrics - Azure DevOps**
+   - **Deployment Metrics:** **Dashboards** → **DORA** → **DORA Deployment Metrics - Azure DevOps**
+   - **Work Item Metrics:** **Dashboards** → **DORA** → **Azure DevOps Work Items**
+
+For detailed setup and troubleshooting, see:
+- [azuredevops-dashboard-readme.md](./azuredevops-dashboard-readme.md) - Complete dashboard guide
+- [azuredevops-pat-readme.md](./azuredevops-pat-readme.md) - PAT setup and permissions
+
 ## DORA
 
 The DORA Collector leverages the WebHook Events OpenTelemetry Receiver. As
