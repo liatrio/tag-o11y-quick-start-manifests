@@ -39,19 +39,21 @@ configMapGenerator:
     files:
       - dashboards/demo/spanmetrics.json
 
-  # DORA dashboards
+  # DORA dashboards (GitLab)
   - name: dashboard-dora-metrics
     files:
       - dashboards/dora/dora-metrics.json
   - name: dashboard-dora-vcs-trunk-based-development
     files:
       - dashboards/dora/vcs-trunk-based-development.json
-  - name: dashboard-dora-vcs-ado
+
+  # Azure DevOps dashboards
+  - name: dashboard-ado-vcs-metrics
     files:
-      - dashboards/dora/vcs-trunk-based-development-ado.json
-  - name: dashboard-ado-dora-simple
+      - dashboards/ado/ado-vcs-metrics.json
+  - name: dashboard-ado-deployments
     files:
-      - dashboards/dora/ado-dora-metrics-simple.json
+      - dashboards/ado/ado-deployments.json
   - name: dashboard-ado-work-items
     files:
-      - dashboards/dora/ado-work-items.json
+      - dashboards/ado/ado-work-items.json

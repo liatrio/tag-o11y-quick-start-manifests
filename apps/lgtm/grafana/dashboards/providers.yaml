@@ -19,3 +19,11 @@ providers:
     editable: true
     options:
       path: /etc/grafana/provisioning/dashboards/dora
+  - name: "Azure DevOps Dashboards"
+    orgId: 1
+    folder: "Azure DevOps"
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/ado

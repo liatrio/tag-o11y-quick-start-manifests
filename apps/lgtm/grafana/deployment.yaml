@@ -70,17 +70,19 @@ spec:
             - name: dashboard-spanmetrics
               mountPath: /etc/grafana/provisioning/dashboards/demo/spanmetrics.json
 
-            # DORA dashboards
+            # DORA dashboards (GitLab)
             - name: dashboard-dora-metrics
               mountPath: /etc/grafana/provisioning/dashboards/dora/dora-metrics.json
             - name: dashboard-dora-vcs-trunk-based-development
               mountPath: /etc/grafana/provisioning/dashboards/dora/vcs-trunk-based-development.json
-            - name: dashboard-dora-vcs-ado
-              mountPath: /etc/grafana/provisioning/dashboards/dora/vcs-trunk-based-development-ado.json
-            - name: dashboard-ado-dora-simple
-              mountPath: /etc/grafana/provisioning/dashboards/dora/ado-dora-metrics-simple.json
+
+            # Azure DevOps dashboards
+            - name: dashboard-ado-vcs-metrics
+              mountPath: /etc/grafana/provisioning/dashboards/ado/ado-vcs-metrics.json
+            - name: dashboard-ado-deployments
+              mountPath: /etc/grafana/provisioning/dashboards/ado/ado-deployments.json
             - name: dashboard-ado-work-items
-              mountPath: /etc/grafana/provisioning/dashboards/dora/ado-work-items.json
+              mountPath: /etc/grafana/provisioning/dashboards/ado/ado-work-items.json
 
       volumes:
         - name: pv
@@ -110,19 +112,21 @@ spec:
           configMap:
             name: dashboard-spanmetrics
 
-        # DORA dashboards
+        # DORA dashboards (GitLab)
         - name: dashboard-dora-metrics
           configMap:
             name: dashboard-dora-metrics
         - name: dashboard-dora-vcs-trunk-based-development
           configMap:
             name: dashboard-dora-vcs-trunk-based-development
-        - name: dashboard-dora-vcs-ado
+
+        # Azure DevOps dashboards
+        - name: dashboard-ado-vcs-metrics
           configMap:
-            name: dashboard-dora-vcs-ado
-        - name: dashboard-ado-dora-simple
+            name: dashboard-ado-vcs-metrics
+        - name: dashboard-ado-deployments
           configMap:
-            name: dashboard-ado-dora-simple
+            name: dashboard-ado-deployments
         - name: dashboard-ado-work-items
           configMap:
             name: dashboard-ado-work-items
