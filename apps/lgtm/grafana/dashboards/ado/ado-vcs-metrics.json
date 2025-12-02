@@ -1837,7 +1837,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "DORA VCS Metrics - Azure DevOps",
+  "title": "Azure DevOps - VCS & Repository Metrics",
   "uid": "ado-vcs-metrics",
   "version": 1,
   "weekStart": ""
