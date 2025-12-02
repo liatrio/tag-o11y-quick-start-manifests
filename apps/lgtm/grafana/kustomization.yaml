@@ -39,7 +39,7 @@ configMapGenerator:
     files:
       - dashboards/demo/spanmetrics.json
 
-  # DORA dashboards (GitLab)
+  # DORA dashboards
   - name: dashboard-dora-metrics
     files:
       - dashboards/dora/dora-metrics.json

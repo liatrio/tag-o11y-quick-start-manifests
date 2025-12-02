@@ -112,7 +112,7 @@ spec:
           configMap:
             name: dashboard-spanmetrics
 
-        # DORA dashboards (GitLab)
+        # DORA dashboards
         - name: dashboard-dora-metrics
           configMap:
             name: dashboard-dora-metrics
