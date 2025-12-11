@@ -54,11 +54,11 @@ gpr:
 
 .PHONY: ghr
 ghr:
-	kubectl apply -k ./collectors/githubreceiver/
+	DEPLOY_GITHUB=true $(MAKE) default
 
 .PHONY: glr
 glr:
-	kubectl apply -k ./collectors/gitlabreceiver/
+	DEPLOY_GITLAB=true $(MAKE) default
 
 .PHONY: eck-operator
 eck-operator:
@@ -75,8 +75,8 @@ eck: cert-manager otel-operator eck-operator
 	kubectl apply -k ./collectors/gateway-eck/
 
 .PHONY: dora
-dora: default
-	kubectl apply -k ./collectors/webhook/
+dora:
+	DEPLOY_WEBHOOK=true $(MAKE) default
 
 .PHONY: ngrok
 ngrok:

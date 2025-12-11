@@ -1,0 +1,69 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: openobserve-dashboard-bootstrap
+  namespace: openobserve
+  labels:
+    app: openobserve-bootstrap
+spec:
+  ttlSecondsAfterFinished: 60
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: bootstrap
+          image: curlimages/curl:8.11.0
+          env:
+            - name: OO_BASE_URL
+              value: "http://openobserve.openobserve.svc.cluster.local:5080"
+            - name: OO_ORG
+              valueFrom:
+                secretKeyRef:
+                  name: openobserve-creds
+                  key: OO_ORG
+            - name: OO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: openobserve-creds
+                  key: OO_USER
+            - name: OO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: openobserve-creds
+                  key: OO_PASSWORD
+          volumeMounts:
+            - name: dashboards
+              mountPath: /dashboards
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              echo "Waiting for OpenObserve to be ready..."
+              until curl -fsS "${OO_BASE_URL}/healthz" >/dev/null 2>&1; do
+                echo "OpenObserve not ready, waiting..."
+                sleep 5
+              done
+              echo "OpenObserve is ready!"
+
+              echo "Importing dashboards from /dashboards..."
+              for f in /dashboards/*.json; do
+                [ -e "$f" ] || continue
+                echo "Importing $f..."
+                if curl -fsS -u "${OO_USER}:${OO_PASSWORD}" \
+                  -H "Content-Type: application/json" \
+                  --data @"$f" \
+                  "${OO_BASE_URL}/api/${OO_ORG}/dashboards"; then
+                  echo "✓ Imported $f"
+                else
+                  echo "✗ Failed to import $f (continuing anyway)"
+                fi
+              done
+              echo "Dashboard import complete!"
+
+      volumes:
+        - name: dashboards
+          configMap:
+            name: openobserve-dashboards

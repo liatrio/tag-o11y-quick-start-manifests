@@ -7,4 +7,14 @@ namespace: openobserve
 resources:
   - ../../cluster-infra/namespace/
   - sts.yaml
+  - secret.yaml
+  - dashboard-bootstrap-job.yaml
+
+configMapGenerator:
+  - name: openobserve-dashboards
+    files:
+      - dashboards/engineering-effectiveness.dashboard.json
+
+generatorOptions:
+  disableNameSuffixHash: true
 
