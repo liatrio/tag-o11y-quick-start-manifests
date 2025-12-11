@@ -2,6 +2,15 @@
 
 This deployment runs [OpenObserve](https://openobserve.ai/) with automatic dashboard provisioning.
 
+> [!WARNING]
+> **Why the bootstrap Job hack?**
+>
+> OpenObserve does **not** currently support initializing dashboards from files at startup.
+> This is a known feature request: [openobserve/openobserve#7073](https://github.com/openobserve/openobserve/issues/7073)
+>
+> Until native support is added, we use a Kubernetes Job that POSTs dashboard JSON to the API on startup.
+> Once this feature lands upstream, this workaround can be removed.
+
 ## Quick Start
 
 ```bash
